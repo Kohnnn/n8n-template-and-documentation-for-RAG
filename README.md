@@ -95,11 +95,11 @@ Workflows can be executed via:
 - Consider batch processing for high-volume operations
 
 ##Here some source to learn more about n8n
-[Full basic - No prerequisites](https://youtu.be/c0Dqnd4HU8w)
-[Overall guide - No prerequisites](https://youtu.be/ZHH3sr234zY)
-[Webhook guide if you want to self host](https://youtu.be/kq5bmrjPPAY)
-[Neat tricks](https://youtu.be/NBhARSnjvwg)
-[MOST IMPORTANT](https://cdn11.bigcommerce.com/s-v7bssafn/images/stencil/760x600/products/1022/5529/20240624-DSC_3994-Edit__76162.1719226837.jpg?c=2)
+[Full basic - No prerequisites](https://youtu.be/c0Dqnd4HU8w)<br>
+[Overall guide - No prerequisites](https://youtu.be/ZHH3sr234zY)<br>
+[Webhook guide if you want to self host](https://youtu.be/kq5bmrjPPAY)<br>
+[Neat tricks](https://youtu.be/NBhARSnjvwg)<br>
+[MOST IMPORTANT](https://cdn11.bigcommerce.com/s-v7bssafn/images/stencil/760x600/products/1022/5529/20240624-DSC_3994-Edit__76162.1719226837.jpg?c=2)<br>
 
 ## Credits
 
