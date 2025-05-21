@@ -54,15 +54,6 @@ The RAG system is implemented with the following components:
 | Media Production | 15+ | Video and image generation workflows |
 | Miscellaneous | 5+ | Utility and specialized workflows |
 
-## Implementation Requirements
-
-### System Prerequisites
-
-- n8n instance (v0.214.0+)
-- Node.js (v16+)
-- Docker (for containerized deployments)
-- Vector database instance (Qdrant recommended)
-
 ### API Credentials
 
 The following credentials are required for full functionality:
@@ -71,26 +62,6 @@ The following credentials are required for full functionality:
 - Vector database API credentials
 - Service-specific API keys (YouTube, Twitter, etc. as needed)
 
-### Memory Requirements
-
-- Minimum 4GB RAM for basic workflows
-- 8GB+ RAM recommended for complex RAG implementations
-- 20GB+ storage for documentation corpus and embedding data
-
-## Usage Instructions
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/username/n8n-rag-agent.git
-
-# Navigate to repository
-cd n8n-rag-agent
-
-# Import workflows to n8n (using n8n CLI)
-n8n import:workflow --input=*.json
-```
 
 ### Configuration
 
@@ -123,15 +94,20 @@ Workflows can be executed via:
 - Workflow generation may take 10-30 seconds for complex implementations
 - Consider batch processing for high-volume operations
 
+##Here some source to learn more about n8n
+[Full basic - No prerequisites](https://youtu.be/c0Dqnd4HU8w)
+[Overall guide - No prerequisites](https://youtu.be/ZHH3sr234zY)
+[Webhook guide if you want to self host](https://youtu.be/kq5bmrjPPAY)
+[Neat tricks](https://youtu.be/NBhARSnjvwg)
+[MOST IMPORTANT](https://cdn11.bigcommerce.com/s-v7bssafn/images/stencil/760x600/products/1022/5529/20240624-DSC_3994-Edit__76162.1719226837.jpg?c=2)
+
 ## Credits
 
 - @imgroup: Real-world business implementations
-- n8n community contributors
+- n8n.io community contributors
 
 ## License
 
 [MIT License](LICENSE)
 
-## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines. 
