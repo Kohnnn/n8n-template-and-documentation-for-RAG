@@ -1,0 +1,327 @@
+{
+  "name": "Get Contact",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-2024-11-20",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-2024-11-20"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -660,
+        320
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "REDACTED_ID",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are a contact management assistant. Your responsibilities include looking up contacts, adding new contacts, or updating a contact's information.\n\nwhen you update the conacts,  you don't need to fill out all the information that is in database, just fill out the information that you are given\n\nAll the output need to be in Vietnamese.\n**Contact Management**  \n   - Use \"Get Contacts\" to retrieve contact information. \n   - Use \"Add or Update Contact\" to store new contact information or modify existing entries. \n   - Use \"notes\" when you need to leave some note that corresponding to the contact as the user request."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -520,
+        80
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Contact Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "REDACTED_API_KEY",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Response"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "REDACTED_API_KEY",
+              "name": "response",
+              "value": "An error occurred. Please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        180
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Try Again"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -740,
+        80
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1iicmMTFbe7ZOIpHw5WITjEiwc2Y6Hw-7b35AGfx7okY",
+          "mode": "list",
+          "cachedResultName": "Contact Assistant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iicmMTFbe7ZOIpHw5WITjEiwc2Y6Hw-7b35AGfx7okY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iicmMTFbe7ZOIpHw5WITjEiwc2Y6Hw-7b35AGfx7okY/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "H\u1ecd v\u00e0 T\u00ean",
+              "lookupValue": "={{ $fromAI(\"name\") }}"
+            },
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $fromAI(\"emailAdress\") }}"
+            }
+          ]
+        },
+        "combineFilters": "OR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        -440,
+        340
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Get contact",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1iicmMTFbe7ZOIpHw5WITjEiwc2Y6Hw-7b35AGfx7okY",
+          "mode": "list",
+          "cachedResultName": "Contact Assistant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iicmMTFbe7ZOIpHw5WITjEiwc2Y6Hw-7b35AGfx7okY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iicmMTFbe7ZOIpHw5WITjEiwc2Y6Hw-7b35AGfx7okY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "H\u1ecd v\u00e0 T\u00ean": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('H__v__T_n__using_to_match_', ``, 'string') }}",
+            "Email": "={{ $fromAI(\"emailAddress\") }}",
+            "C\u00f4ng Ty": "={{ $fromAI(\"company\") }}",
+            "S\u1ed1 \u0110i\u1ec7n Tho\u1ea1i": "={{ $fromAI(\"phonenumber\") }}",
+            "Note": "={{ $fromAI(\"notes\") }}"
+          },
+          "matchingColumns": [
+            "H\u1ecd v\u00e0 T\u00ean"
+          ],
+          "schema": [
+            {
+              "id": "H\u1ecd v\u00e0 T\u00ean",
+              "displayName": "H\u1ecd v\u00e0 T\u00ean",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "C\u00f4ng Ty",
+              "displayName": "C\u00f4ng Ty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "S\u1ed1 \u0110i\u1ec7n Tho\u1ea1i",
+              "displayName": "S\u1ed1 \u0110i\u1ec7n Tho\u1ea1i",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Note",
+              "displayName": "Note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        -260,
+        340
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "update a contact",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Contact Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try Again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Contact Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get contact": {
+      "ai_tool": [
+        [
+          {
+            "node": "Contact Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update a contact": {
+      "ai_tool": [
+        [
+          {
+            "node": "Contact Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "REDACTED_API_KEY",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REDACTED_API_KEY"
+  },
+  "id": "p0SgjMYCFzUJ6NQd",
+  "tags": []
+}

@@ -1,0 +1,753 @@
+{
+  "name": "Content Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1340,
+        -40
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED_API_KEY",
+          "mode": "list",
+          "cachedResultName": "Workflow Automation n8n - Automation Content Marketing",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 169553360,
+          "mode": "list",
+          "cachedResultName": "Content management",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Run"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1160,
+        -40
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Google Sheets').item.json['Brief topic'] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1w6fwYfJvS9_XYx8ho5MQiitMEdfpoYjC",
+          "mode": "list",
+          "cachedResultName": "Automating your marketing",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1w6fwYfJvS9_XYx8ho5MQiitMEdfpoYjC"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        140,
+        480
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Upload Image",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Google Drive account 2 - Vincent email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v22.0",
+        "node": "me",
+        "edge": "photos",
+        "sendBinaryData": true,
+        "binaryPropertyName": "data",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "message",
+                "value": "={{ $('Content Creation post').item.json.output }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        260,
+        760
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Facebook Graph API",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "REDACTED_ID",
+          "name": "The AI Growth Page"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Image Prompt Agent').item.json.output }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        240,
+        220
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "LinkedIn",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the web. ",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "REDACTED_API_KEY",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{searchTerm}\",\n  \"topic\": \"general\",\n  \"search_depth\": \"advanced\",\n  \"chunks_per_source\": 5,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"include_answer\": \"advanced\",\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [\"thanhnien.vn\", \"tuoitre.vn\"]\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "searchTerm",
+              "description": "What the user is searching for. "
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -980,
+        220
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Tavily",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REDACTED_ID",
+          "name": "Tavily Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=[Context]:\n- D\u1ef1a tr\u00ean ch\u1ee7 \u0111\u1ec1 b\u00e0i: \"{{ $('Google Sheets').item.json['Brief topic'] }}\"\n- N\u1ed9i dung b\u00e0i vi\u1ebft: [{{ $json.output }}]. \n\n[intruction]:\nH\u00e3y t\u1ea1o m\u1ed9t image prompt \u0111\u1ec3 t\u00f4i c\u00f3 th\u1ec3 b\u1ecf v\u00e0o Image AI Model \u0111\u1ec3 t\u1ea1o ra \u1ea3nh minh h\u1ecda s\u1eafc n\u00e9t cho b\u00e0i vi\u1ebft \u0111\u0103ng tr\u00ean facebook c\u1ee7a t\u00f4i. \u1ea2nh s\u1eafc n\u00e9t - chi ti\u1ebft v\u00e0 c\u00f3 nh\u1eefng ch\u1eef ho\u1eb7c logo \u0111\u1ec3 trong h\u00ecnh \u1ea3nh \u0111\u1ec3 minh h\u1ecda t\u1ed1t nh\u1ea5t.\n\nSize c\u1ee7a b\u00e0i facebook s\u1ebd l\u00e0 1024x1024\n\n[reminder]: \n- ch\u1eef trong h\u00ecnh ch\u1ec9 chi\u1ebfm t\u1ed1i \u0111a 20% di\u1ec7n t\u00edch, v\u00ec v\u1eady b\u1ed1 c\u1ee5c sao cho ph\u00f9 h\u1ee3p c\u00e1c h\u00ecnh infographic ho\u1eb7c h\u00ecnh \u1ea3nh viral, chu\u1ea9n k\u00edch th\u01b0\u1edbc c\u1ee7a facebook.\n- Kh\u00f4ng n\u00ean c\u00f3 logo facebook hay linkedin. \n- C\u00e0ng \u00edt ch\u1eef nh\u01b0ng v\u1eabn truy\u1ec1n t\u1ea3i \u0111\u01b0\u1ee3c th\u00f4ng \u0111i\u1ec7p th\u00ec c\u00e0ng t\u1ed1t.\n- Khi s\u1eed d\u1ee5ng ch\u1eef, n\u1ebfu nh\u01b0 ch\u1eef c\u00f9ng m\u1ed9t n\u1ed9i dung th\u00ec \u0111\u1eebng hi\u1ec3n th\u1ecb chung v\u00e0o m\u1ed9t h\u00ecnh, text trong h\u00ecnh \u1ea3nh \u00edt v\u00e0 n\u1ebfu b\u1ed5 sung th\u00ec l\u00e0 c\u00e1c text b\u1ed5 tr\u1ee3 nha. (V\u00ed d\u1ee5: l\u1ee3i \u00edch c\u1ee7a gi\u1ea5c ng\u1ee7 l\u00e0 header text, c\u00e1c text con l\u00e0: c\u1ea3i thi\u1ec7n tr\u00ed nh\u1edb, t\u0103ng mood,...)\n",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an advanced prompt-generation AI Agent that transforms Facebook/LinkedIn posts into visual prompt descriptions for generating graphic marketing materials. These visuals are designed to be paired with the post on LinkedIn, helping communicate the message in a visually engaging, brand-aligned way.\n\n## Objective:\n- Read and analyze the given  post.\n- Identify the main message, insight, or takeaway from the post.\n- Create a clear and compelling graphic prompt that can be used with a text-to-image generator.\n- The result should be a marketing-style graphic \u2014 not a literal scene or hyperrealistic photo \u2014 that:\n1) Visually supports or illustrates the key idea of the post\n2) Looks appropriate for use in a professional Facebook/LinkedIn feed\n3) Feels polished, modern, and engaging\n4) try to have statistic or text like infographic in the image\n\n## Output Instructions:\n- Output only the final image prompt. Do not output quotation marks.\n\n## Style Guidelines:\n- Think like a brand designer or marketing creative.\n- Infographic or image with insightful text is preferred but The text only maximum cover 20% of the image, less text but still convey the message is preferred.\n- The Color of brand mainly or colors that are similar(which are Start Color (Purple): `#850DBA` & End Color (Turquoise Blue): `#00CCFF`)\n- Theme: technology, futuristic.\n- Detailed guideline brief for the image AI model to generate."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -280,
+        -40
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Image Prompt Agent"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        480
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Convert to Binary"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Image\n",
+        "height": 520,
+        "width": 300,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        160
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Image Prompt\n",
+        "height": 260,
+        "width": 440,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -380,
+        -140
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\n- Topic of Post: {{ $json['Brief topic'] }}\n- Note for Researching: {{ $json['Note Research'] }}\n- L\u01b0u \u00fd khi vi\u1ebft (n\u1ebfu c\u00f3): {{ $json['l\u01b0u \u00fd khi vi\u1ebft'] }}\n- Vi\u1ebft b\u1eb1ng ti\u1ebfng Vi\u1ec7t.\n- \u0110\u01b0a nh\u1eefng statistic, d\u1eef li\u1ec7u, fact v\u00e0o trong b\u00e0i.",
+        "options": {
+          "systemMessage": "=# Overview\nYou are a professional content marketer with 10 years of knowledge.\n\nBased on the knowledge that is given, your task is to create engaging & informative content for the Facebook post of the brand. The content also needs to match the guideline/requirements that are given.\n\nYou need to read some of the examples of the content to emulate its writing style.\n\nYou are an AI agent specialized in creating professional, educational, and engaging social media posts (Facebook, Linkedin) based on any topic provided by the user.\n\n## Tools\n1. Tavily: Use this tool to search the latest, accurate & in-depth information about the user's topic request (limit to 2 researches only)\n2. Content Examples: Use this tool to retrieve content examples from the brand or author, in order to emulate their tone of voice and writing style.\n3. Think: Use this tool before generating the content (before the final step) to analyze the data and consider the approach to create the best content.\n\n## Brand information:\n- Target Audience: {{ $json['Target audience'] }}\n- Brand name: {{ $json['T\u00ean Brand'] }}\n- Brand description: {{ $json['Brand Description'] }}\n- Brand image: {{ $json['Brand image'] }}\n- Solution: {{ $json.Solution }}\n- Target market: {{ $json['Target Market'] }}\n## Objectives:\n\nAlways begin by conducting a real-time search using the Tavily tool to gather the most accurate, up-to-date information on the topic. After that, analyze the Content Examples to Emulate the writing style and the tone.\n\nThe post should be written to appeal to the provided target audience.\n\nBased on your research, generate a well-structured Facebook post that:\n1. Starts with an engaging, professional and emotional trigger hook (do not use hey, hi or hello at the beginning) \n - This hook will be the title of the post, so it should have emotional trigger and a line break between the content and the title.\n2. S\u1eed d\u1ee5ng x\u01b0ng h\u00f4 \"m\u00ecnh\" v\u00e0 \"b\u1ea1n\" ho\u1eb7c \"TAG\" v\u00e0 \"b\u1ea1n\".\n3. S\u1eed d\u1ee5ng v\u00e0i emoji cho b\u00e0i facebook.\u00a0(use only when highly relevant and minimal)\n4. M\u00f4 ph\u1ecfng l\u1ea1i gi\u1ecdng v\u0103n \u0111\u00e3 \u0111\u01b0\u1ee3c h\u1ecdc \u1edf tr\u01b0\u1edbc.\n5. B\u00e0i vi\u1ebft n\u00ean \u0111\u01b0a ra nhi\u1ec1u s\u1ed1 li\u1ec7u, statistic, facts ho\u1eb7c case study c\u00e0ng nhi\u1ec1u c\u00e0ng t\u1ed1t cho vi\u1ec7c ch\u1ee9ng minh lu\u1eadn \u0111i\u1ec3m/lu\u1eadn c\u1eed. (n\u1ebfu c\u00f3).\n6. Cho 3 Hashtag li\u00ean quan cu\u1ed1i b\u00e0i.\n7. B\u00e0i vi\u1ebft \u0111\u01b0\u1ee3c chia th\u00e0nh nhi\u1ec1u \u0111o\u1ea1n nh\u1ecf \u0111\u1ec3 t\u1ed1i \u01b0u readability tr\u00ean \u0111i\u1ec7n tho\u1ea1i.\u00a0\u00a0\n8. K\u1ebft th\u00fac v\u1edbi m\u1ed9t CTA (e.g., asking for thoughts, feedback, or shares)Ends with a clear call to action (e.g., asking for thoughts, feedback, or shares)\n9. The content should be around 150 - 300 words. If the topic need to go to detailed, try explain it cleary.\n10. {speak conversational throughout} \n{Use Vietnamese language & grammar}{Add power words}\n\n## Output Instructions:\n- Your ONLY output should be the final Facebook/Linkedin post text without the markdown format (format text only)\n- Do not include explanations, notes, or anything beyond the post itself.\n\n## Example Workflow:\n1) Receive a topic (e.g., \u201cThe ROI of warehouse automation\u201d)\n2) Use Tavily to search and gather recent information or case studies\n3) Retrieve the Content examples of the brand/author from \"Content Examples\" \n4) Analyze the Writing style, tone of voice and everything relate.\n5) Draft a Facebook/Linkedin post using all the information that you have garthered.\n6) Format it with source citations, clean structure, optional hashtags, a CTA and follow the content guidlines.\n\n## final reminder:\n\nThe content only focus on giving value, do not sell or introduce the brand. Just mention the brand is enough."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -840,
+        -40
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Content Creation post"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        220
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use This Tool to look for content examples that were used before in order to emulate the writing style & the tone of voice of the brand/author.",
+        "operation": "get",
+        "documentURL": "REDACTED_API_KEY"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -800,
+        220
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Content Examples",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do Email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "REDACTED_API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "size",
+              "value": "1024x1024"
+            },
+            {
+              "name": "quality",
+              "value": "high"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -160,
+        220
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Generate Image"
+    },
+    {
+      "parameters": {
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "writer",
+            "type": "anyone",
+            "allowFileDiscovery": true
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        340,
+        480
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "share quy\u1ec1n",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Google Drive account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED_API_KEY",
+          "mode": "list",
+          "cachedResultName": "Workflow Automation n8n - Automation Content Marketing",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 169553360,
+          "mode": "list",
+          "cachedResultName": "Content management",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Complete",
+            "Brief topic": "={{ $('Google Sheets').item.json['Brief topic'] }}",
+            "Drive \u1ea3nh": "={{ $('Upload Image').item.json.webViewLink }}"
+          },
+          "matchingColumns": [
+            "Brief topic"
+          ],
+          "schema": [
+            {
+              "id": "T\u00ean Brand",
+              "displayName": "T\u00ean Brand",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Brand Description",
+              "displayName": "Brand Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Brand image",
+              "displayName": "Brand image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Target audience",
+              "displayName": "Target audience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Solution",
+              "displayName": "Solution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Target Market",
+              "displayName": "Target Market",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Brief topic",
+              "displayName": "Brief topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Note Research",
+              "displayName": "Note Research",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "l\u01b0u \u00fd khi vi\u1ebft",
+              "displayName": "l\u01b0u \u00fd khi vi\u1ebft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Facebook post ID",
+              "displayName": "Facebook post ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Drive \u1ea3nh",
+              "displayName": "Drive \u1ea3nh",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        580,
+        480
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Content Generation\n\n",
+        "height": 560,
+        "width": 640,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1020,
+        -160
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-3-7-sonnet-20250219",
+          "cachedResultName": "Claude 3.7 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -640,
+        220
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Content Creation post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image": {
+      "main": [
+        [
+          {
+            "node": "share quy\u1ec1n",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Graph API": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn": {
+      "main": [
+        []
+      ]
+    },
+    "Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Creation post",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Prompt Agent": {
+      "main": [
+        [
+          {
+            "node": "Generate Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to Binary": {
+      "main": [
+        [
+          {
+            "node": "Upload Image",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Facebook Graph API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Creation post": {
+      "main": [
+        [
+          {
+            "node": "Image Prompt Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Creation post",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Examples": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Creation post",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image": {
+      "main": [
+        [
+          {
+            "node": "Convert to Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "share quy\u1ec1n": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Creation post",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Image Prompt Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "REDACTED_API_KEY",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REDACTED_API_KEY"
+  },
+  "id": "6oTsCThdgPAt4SBw",
+  "tags": []
+}

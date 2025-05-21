@@ -1,0 +1,516 @@
+{
+  "meta": {
+    "instanceId": "auto-blog-generator-workflow"
+  },
+  "nodes": [
+    {
+      "id": "schedule-trigger",
+      "name": "Weekly Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        100,
+        300
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "minuteInterval": 1,
+              "dayInterval": 7
+            }
+          ]
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "style-reference-upload",
+      "name": "Style Reference Upload",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        300,
+        150
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.openai.com/v1/files",
+        "authentication": "headerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "multipart/form-data"
+            }
+          ]
+        },
+        "options": {
+          "formData": {
+            "purpose": "assistants",
+            "file": "={{ $json.styleReferenceBinary }}"
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "OpenAI API Key"
+        }
+      },
+      "typeVersion": 4
+    },
+    {
+      "id": "content-generation",
+      "name": "Generate Blog Content",
+      "type": "n8n-nodes-base.openAi",
+      "position": [
+        500,
+        300
+      ],
+      "parameters": {
+        "authentication": "apiKey",
+        "operation": "completion",
+        "model": "gpt-4",
+        "options": {
+          "temperature": 0.7,
+          "maxTokens": 2500,
+          "topP": 1,
+          "frequencyPenalty": 0.5,
+          "presencePenalty": 0.2
+        },
+        "prompt": "You're tasked with writing a weekly blog post that will be published on my GitHub Pages site at https://github.com/Kohnnn/Kohnnn.github.io.\n\nThe blog post should match my writing style based on the provided reference materials. The post should be formatted in markdown and include:\n\n1. A title with the current date: # Weekly Blog Post - {{ $now.format('MMMM D, YYYY') }}\n2. An introduction that hooks the reader\n3. Main content section with 2-3 key points\n4. A conclusion that summarizes the post\n5. Related links section if applicable\n\nTopic for this week's post: {{ $json.topic }}\n\nPlease write a complete blog post between 800-1200 words in my personal style. Include appropriate formatting, including headers, lists, and emphasis where appropriate. The content should be insightful and valuable to readers."
+      },
+      "credentials": {
+        "openAiApi": {
+          "name": "OpenAI account"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "format-github-content",
+      "name": "Format for GitHub",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        700,
+        300
+      ],
+      "parameters": {
+        "options": {
+          "dotNotation": true
+        },
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "fileName",
+              "value": "={{ '_posts/' + $now.format('YYYY-MM-DD') + '-weekly-blog-post.md' }}"
+            },
+            {
+              "name": "content",
+              "value": "=---\nlayout: post\ntitle: \"Weekly Blog Post - {{ $now.format('MMMM D, YYYY') }}\"\ndate: {{ $now.format('YYYY-MM-DD HH:mm:ss ZZ') }}\ncategories: blog weekly-update\n---\n\n{{ $json.text }}"
+            },
+            {
+              "name": "commitMessage",
+              "value": "Add weekly blog post for {{ $now.format('YYYY-MM-DD') }}"
+            },
+            {
+              "name": "postId",
+              "value": "={{ $now.format('YYYY-MM-DD') }}-post"
+            }
+          ]
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "github-repo-access",
+      "name": "GitHub Operations",
+      "type": "n8n-nodes-base.github",
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "resource": "file",
+        "operation": "create",
+        "owner": "Kohnnn",
+        "repository": "Kohnnn.github.io",
+        "filePath": "={{ $json.fileName }}",
+        "fileContent": "={{ $json.content }}",
+        "commitMessage": "={{ $json.commitMessage }}"
+      },
+      "credentials": {
+        "githubApi": {
+          "name": "GitHub account"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "webhook-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        100,
+        450
+      ],
+      "webhookId": "auto-blog-webhook",
+      "parameters": {
+        "path": "generate-blog",
+        "responseMode": "responseNode",
+        "options": {
+          "responseData": "lastNode"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "input-data",
+      "name": "Set Blog Topic",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        300,
+        300
+      ],
+      "parameters": {
+        "options": {
+          "dotNotation": true
+        },
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "topic",
+              "value": "={{ $json.topic || \"The future of AI and its impact on workflow automation\" }}"
+            },
+            {
+              "name": "styleReferenceBinary",
+              "value": "={{ $json.styleReference || \"path/to/your/reference/file.md\" }}"
+            }
+          ]
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "merge-triggers",
+      "name": "Merge Triggers",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        300,
+        350
+      ],
+      "parameters": {
+        "mode": "mergeByIndex"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "notify-success",
+      "name": "Send Success Notification",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1100,
+        300
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "id": "create-embeddings",
+      "name": "Create Embeddings",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        700,
+        150
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.openai.com/v1/embeddings",
+        "authentication": "headerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "name": "model",
+              "value": "text-embedding-ada-002"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "OpenAI API Key"
+        }
+      },
+      "typeVersion": 4
+    },
+    {
+      "id": "initialize-qdrant-collection",
+      "name": "Initialize Qdrant Collection",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        300,
+        40
+      ],
+      "parameters": {
+        "method": "PUT",
+        "url": "=http://localhost:6333/collections/blog_posts",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "qdrantApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"vectors\": {\n    \"size\": 1536,\n    \"distance\": \"Cosine\"\n  }\n}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": true
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "qdrantApi": {
+          "name": "QdrantApi account"
+        }
+      },
+      "typeVersion": 4
+    },
+    {
+      "id": "store-in-qdrant",
+      "name": "Store in Qdrant",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        900,
+        150
+      ],
+      "parameters": {
+        "method": "PUT",
+        "url": "=http://localhost:6333/collections/blog_posts/points",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "qdrantApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"points\": [\n    {\n      \"id\": \"{{ $json.postId }}\",\n      \"vector\": {{ $json.data[0].embedding }},\n      \"payload\": {\n        \"topic\": \"{{ $json.topic }}\",\n        \"title\": \"Weekly Blog Post - {{ $now.format('MMMM D, YYYY') }}\",\n        \"date\": \"{{ $now.format('YYYY-MM-DD') }}\",\n        \"content\": {{ JSON.stringify($json.text) }},\n        \"fileName\": \"{{ $json.fileName }}\"\n      }\n    }\n  ]\n}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": true
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "qdrantApi": {
+          "name": "QdrantApi account"
+        }
+      },
+      "typeVersion": 4
+    },
+    {
+      "id": "search-similar-content",
+      "name": "Search Similar Content",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        500,
+        40
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=http://localhost:6333/collections/blog_posts/points/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "qdrantApi", 
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"vector\": {{ $json.data[0].embedding }},\n  \"limit\": 5,\n  \"with_payload\": true\n}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": true
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "qdrantApi": {
+          "name": "QdrantApi account"
+        }
+      },
+      "typeVersion": 4
+    },
+    {
+      "id": "reference-previous-posts",
+      "name": "Reference Previous Posts",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        900,
+        40
+      ],
+      "parameters": {
+        "jsCode": "// Get the search results from previous blog posts\nconst searchResults = $input.item.json.body.result || [];\n\n// If there are no previous posts, return original content\nif (searchResults.length === 0) {\n  return $input.item;\n}\n\n// Add references to previous related posts\nlet references = \"\\n\\n## Related Posts\\n\";\n\nfor (const result of searchResults) {\n  if (result.payload) {\n    references += `- [${result.payload.title}](https://kohnnn.github.io/${result.payload.fileName.replace('_posts/', '').replace('.md', '')}/)\\n`;\n  }\n}\n\n// Add the references to the content\nconst originalContent = $input.item.json.content;\nconst enhancedContent = originalContent + references;\n\n// Return the modified item\nreturn {\n  json: {\n    ...$input.item.json,\n    content: enhancedContent\n  }\n};"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "schedule-trigger": {
+      "main": [
+        [
+          {
+            "node": "input-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "content-generation": {
+      "main": [
+        [
+          {
+            "node": "format-github-content",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "create-embeddings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format-github-content": {
+      "main": [
+        [
+          {
+            "node": "github-repo-access",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "github-repo-access": {
+      "main": [
+        [
+          {
+            "node": "notify-success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "webhook-trigger": {
+      "main": [
+        [
+          {
+            "node": "merge-triggers",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "input-data": {
+      "main": [
+        [
+          {
+            "node": "merge-triggers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge-triggers": {
+      "main": [
+        [
+          {
+            "node": "content-generation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "style-reference-upload",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "initialize-qdrant-collection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-embeddings": {
+      "main": [
+        [
+          {
+            "node": "store-in-qdrant",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "search-similar-content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search-similar-content": {
+      "main": [
+        [
+          {
+            "node": "reference-previous-posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reference-previous-posts": {
+      "main": [
+        [
+          {
+            "node": "github-repo-access",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+} 

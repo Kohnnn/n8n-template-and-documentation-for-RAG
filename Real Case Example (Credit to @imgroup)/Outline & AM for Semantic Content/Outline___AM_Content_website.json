@@ -1,0 +1,1197 @@
+{
+  "name": "Outline & AM Content website",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "REDACTED_API_KEY",
+              "name": "formData",
+              "type": "object",
+              "value": "={{ $json }}"
+            },
+            {
+              "id": "REDACTED_API_KEY",
+              "name": "projectId",
+              "type": "string",
+              "value": "={{ $now.valueOf() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "REDACTED_API_KEY",
+      "name": "Process Form Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -280,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Based on the Google HelpFul Content & the Checklist Outline & Article Methodology that you have been provided in the MCP_Checklist_Semantic_Content.\nI want you to create the outline for the content of the query \"{{ $('Process Form Data').item.json.formData.Query }}\".\n\nThe outline must include these required sections:[{{ $('Process Form Data').item.json.formData['outline focus'] }}]\n\n\nPlease provide a complete outline with detailed article methodology for each section.\n\n[final reminder]:\n\n1.  Output should be in {{ $('Process Form Data').item.json.formData['Output language'] }}\n2. The output should be in the markdown format to easy copy & pase to Google Doc.\n3. If the outline have a list, like 30+ checklist or 30+ benefits. Try to include the full 30+ checklist in the outline or the output of it.\n4. This is the year of 2025.\n5. The output only contain the outline & article methodology of blogpost/the content.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=[role]:\nYou are a Semantic SEO Expert knowledgeable about topical authority, semantic content, and Creating great Semantic SEO-friendly Content.\n\n\n[Tools]:\n- Perplexity_Sonar_Pro: Use this tool to Research the newest and accurate information that is needed in the Article methodology to create great semantic content that reflects the brand source context. (limit to 3 times)\n- Mcp_Checklist_Semantic_Content: Use this tool to retrieve the full requirements from the pre-loaded Google_HelpFul_Content and Checklist_Outline_and_Article_Methodology documents. **Call this tool without any input parameters.**\n- Think: Use the tool to think and ensure the final output will try its best to fulfill the search intent, the guidlines and the checklists from Mcp_checklist_semantic_content\n\n[Information about the current outline content]:\n{{\n  // Lo\u1ea1i b\u1ecf headers (##, ###), HR (---), bold (**), citations [n], link refs [n], v\u00e0 d\u1ecdn d\u1eb9p b\u1ea3ng\n  $json['Outline Content hi\u1ec7n t\u1ea1i ']\n    .replace(/^[#]+\\s*/gm, '')         // X\u00f3a ##, ### \u1edf \u0111\u1ea7u d\u00f2ng\n    .replace(/^---+\\s*$/gm, '')         // X\u00f3a d\u00f2ng ---\n    .replace(/\\*\\*/g, '')             // X\u00f3a **\n    .replace(/\\[\\d+\\]/g, '')           // X\u00f3a [1], [2]... (citations/link refs)\n    .replace(/^\\|-.*-\\|$/gm, '')       // X\u00f3a d\u00f2ng ph\u00e2n c\u00e1ch b\u1ea3ng |---|\n    .replace(/^\\|\\s*/gm, '')           // X\u00f3a | \u1edf \u0111\u1ea7u d\u00f2ng (cho b\u1ea3ng)\n    .replace(/\\s*\\|$/gm, '')           // X\u00f3a | \u1edf cu\u1ed1i d\u00f2ng (cho b\u1ea3ng)\n    .replace(/\\s*\\|\\s*/g, ' | ')       // Chu\u1ea9n h\u00f3a d\u1ea5u | trong b\u1ea3ng\n    .trim()                           // X\u00f3a kho\u1ea3ng tr\u1eafng th\u1eeba \u0111\u1ea7u/cu\u1ed1i\n}}\n\n[Search Intent of the Keywords]:\n1. The Search Intent of the keyword is: {{ $('Process Form Data').item.json.formData['M\u1ee5c \u0111\u00edch t\u00ecm ki\u1ebfm'] }}\n2. Also this is the detailed search intent:\n{{\n  // T\u01b0\u01a1ng t\u1ef1, l\u00e0m s\u1ea1ch ph\u1ea7n ph\u00e2n t\u00edch search intent chi ti\u1ebft\n  $('Store Search Intent').item.json['Search Intent analyze result']\n    .replace(/^[#]+\\s*/gm, '')\n    .replace(/^---+\\s*$/gm, '')\n    .replace(/\\*\\*/g, '')\n    .replace(/\\[\\d+\\]/g, '')\n    .replace(/^\\|-.*-\\|$/gm, '')\n    .replace(/^\\|\\s*/gm, '')\n    .replace(/\\s*\\|$/gm, '')\n    .replace(/\\s*\\|\\s*/g, ' | ')\n    .trim()\n}}\n\n[Source context of the brand]:\n1. Brand name: \"{{ $('Process Form Data').item.json.formData['Brand Name'] }}\".\n2. Brand information: \"{{ $('Process Form Data').item.json.formData['Brand information'].replace(/^- /gm, '') }}\" \n3. Brand solution: \"{{ $('Process Form Data').item.json.formData['Brand solution'].replace(/^- /gm, '') }}\" \n\n[Task/Instruction]:\nYour task is to Re-optimize, adjust or developed a detailed outline that based on the current outline and ensure the guidelines below. \n\nYou also can call the necessary tools based on the user request. \n\n[Guidlines for the outline]\nI/ Structure & Flow:\n\nThe outline will proceed from the \"Outline focus\" and \"title\" of the content to ensure the article's contextual flow, Contextual Vectors, Contextual hierarchy, and contextual Coverage. \n\n- The outline also needs to satisfy the user intent.\n\n- The outline should include one Heading 1 (H1) that serves as the central theme of the content.\n\nThe heading 2 (H2) sections will contain subtopics that directly support and elaborate on the main theme presented in the H1.\n\n- Heading 3 (H3) sections should further break down the H2 subtopics, ensuring a logical and smooth flow of information.\n\n- The content structure should be contextually coherent, with each section naturally leading to the next, maintaining a smooth and logical progression throughout the entire article.\n\nII/ Content Segmentation:\n\n- Main Content: Focus on delivering comprehensive coverage of the primary topic. This section should constitute more than 80% of the content, fully addressing the reader's queries and providing thorough explanations.\n\n- Supplemental Content: Enhance the main content with additional insights, perspectives, and supporting information. This should make up less than 20% of the content, offering extra value without diluting the main message.\n\n- Ensure a seamless contextual bridge between the main and supplemental content so the transition feels natural and cohesive.\n\nIII/ Optimization Criteria:\n\n- The first 10 headings (H2, H3, or even H4) should be high-quality and directly answer the reader's most pressing questions or concerns.- Group related or thematically connected headings together to maintain consistency and ease of navigation for the reader.\n\n- The supplemental content do not exceed 20% content of a whole article sometimes - should consist of questions, such as:\n-- Boolean Questions: Simple yes/no queries that clarify key points.\n-- Definitional Questions: Queries that explain or define essential terms or concepts.\n-- Grouping Questions: Questions that categorize or group related items together.\n-- Comparative Questions: Questions that compare different elements to provide deeper insights.\n\n- Do not include the article's conclusion in the content's outline.\n\nIV/ Contextual Harmony:- Maintain harmony in the hierarchical structure of headings (H2, H3, etc.) throughout the outline.\n\n- Ensure the first and last headings are interconnected through synonyms, antonyms, or related concepts to create a satisfying conclusion that ties back to the opening.- Use incremental lists where appropriate (e.g., when listing benefits or features) to enhance readability and organization.\n\nV/ Content Quality & Expertise:\n\n- The outline must demonstrate a high level of expertise and detail, ensuring the content is authoritative and credible and meets the \"user\u2019s search intent\".\n\n- The overall outline should surpass existing content on the topic in terms of depth, quality, and user satisfaction, ensuring it ranks well on search engines like Google.\n\n[Guidelines for the article methodology]:\n\nFor each sections / heading, give me a corresponding article methodology (or detailed brief), that includes: \n- The content format: you will use bullet points, paragraphs, or tabular to write the content.\n- Estimate words: should be written\n- Main Ideas: what ideas/content should be included/addressed/proceed in the heading correspondingly to ensure the context coverage of the section accordingly, contextual vectors, contextual hierarchy & contextual flow of the whole content? (What content should be included in this corresponding heading/section?)]\n- What examples, data, or evidence to include\n- How this section connects to others\n\nYour outline should be comprehensive, strategic, and provide clear guidance for content creation that will outperform existing content on the same topic.\n\n[Examples output]:\n\nOkay, I understand. The \"Article Methodology\" description applies to the entire group of H3s following it, not just the first one. Similarly, the methodology for the tools applies to all listed tools.\n\nHere is the revised Markdown reflecting that structure:\n\n---\n\n# SEO Onpage l\u00e0 g\u00ec? H\u01b0\u1edbng d\u1eabn 20+ ti\u00eau chu\u1ea9n \u01b0u Onpage 2025\n\nvi\u1ebft Introduction \u1edf \u0111\u00e2y.\n\nT\u00f3m t\u1eaft v\u1ec1 Onpage SEO t\u1ea7m quan tr\u1ecdng ra sao? V\u00e0 \u0111\u01b0a c\u1ee5 th\u1ec3 3 case study t\u1eeb \u0111\u1ea7u v\u1ec1 vi\u1ec7c t\u1ed1i \u01b0u SEO Onpage gi\u00fap \u0111\u1ea1t k\u1ebft qu\u1ea3 c\u1ee5 th\u1ec3 Organic Traffic g\u00ec? c\u00e1c keywords \u0111\u1ea1i di\u1ec7n n\u00e0o l\u00ean top nh\u01b0ng kh\u00f4ng c\u1ea7n backlink (2 - 3 case, v\u00ed d\u1ee5: Sanf, Euro Travel, TOTO).\n\nn\u00f3i t\u00f3m t\u1eaft v\u1ec1 Onpage & Offpage kh\u00e1c nhau ra sao? V\u00e0 t\u1ea1i sao t\u1eadp trung master onpage l\u1ea1i quan tr\u1ecdng h\u01a1n l\u00e0 Offpage?\n\nN\u00f3i v\u1ec1 b\u00e0i vi\u1ebft n\u00e0y s\u1ebd \u0111\u1ec1 c\u1eadp:\n- Ti\u00eau ch\u00ed onpage basic nh\u01b0ng h\u00f4ng ph\u1ea3i ai c\u0169ng l\u00e0m \u0111\u00fang & \u0111\u1ee7.\n- Ti\u00eau ch\u00ed onpage n\u00e2ng cao n\u00e0o? V\u00e0 vi\u1ec7c \u1ee9ng d\u1ee5ng t\u1ed1i \u01b0u onpage n\u00e2ng cao gi\u00fap \u0111\u1ea1t c\u00e1c l\u1ee3i \u00edch ra sao v\u1edbi \u0111\u1ed1i th\u1ee7?\n  + c\u1ee5 th\u1ec3 n\u00f3i c\u00e1c ti\u00eau ch\u00ed onpage n\u00e2ng cao m\u00ecnh n\u00f3i l\u00e0 g\u00ec m\u1ed9t c\u00e1ch gi\u1edbi thi\u1ec7u ng\u1eafn g\u1ecdn v\u00e0 gi\u1ecdng kh\u1eb3ng \u0111\u1ecbnh r\u1eb1ng \u0111a ph\u1ea7n m\u1ecdi ng\u01b0\u1eddi kh\u00f4ng bi\u1ebft.\n\n\u1ea2nh c\u1ee5 th\u1ec3 v\u1ec1 t\u1ed5ng h\u1ee3p to\u00e0n b\u1ed9 check list t\u1ed1i \u01b0u SEO Onpage t\u1eeb c\u01a1 b\u1ea3n \u0111\u1ebfn n\u00e2ng cao\n\nNgo\u00e0i ra, chuy\u1ec3n ti\u1ebfp n\u1ed9i dung v\u1ec1 supplement content th\u00f4ng qua vi\u1ec7c (c\u00e1c c\u00f4ng c\u1ee5 h\u1ed7 tr\u1ee3 t\u1ed1i \u01b0u SEO nhanh ch\u00f3ng, l\u1eabn c\u00e1c c\u00e2u h\u1ecfi \u0111\u1eb7t ra l\u00fac t\u1ed1i \u01b0u SEO)?\n\n2. \u01af\u1edbc t\u00ednh: 150 - 200 t\u1eeb.\n\n\n## SEO Onpage l\u00e0 g\u00ec?\n\n1.  Tr\u1ea3 l\u1eddi d\u1ee9t kho\u00e1t, kh\u00f4ng d\u00e0i d\u00f2ng.\n    - \u0110\u1ecbnh ngh\u0129a n\u00f3i v\u1ec1:\n        + l\u00e0 g\u00ec?\n        + bao g\u1ed3m nh\u1eefng c\u00f4ng vi\u1ec7c ra sao?\n2.  N\u00f3i v\u1ec1 SEO Onpage n\u1eb1m trong quy tr\u00ecnh SEO ra sao? Th\u00f4ng th\u01b0\u1eddng tr\u01b0\u1edbc b\u01b0\u1edbc n\u00e0o v\u00e0 sau b\u01b0\u1edbc n\u00e0o? T\u1ea1i sao n\u00f3 quan tr\u1ecdng v\u1ec1 l\u1ee3i \u00edch?\n    - \u1ede l\u1ee3i \u00edch, chia s\u1ebb c\u00e1c \u0111i\u1ec3m l\u1ee3i \u00edch \u1edf format content d\u1ea1ng Bullet Point\n        + V\u1ec1 l\u1ee3i \u00edch, \u0111\u01b0a ra c\u00e1c d\u1eef li\u1ec7u ch\u1ee9ng minh, c\u1ee5 th\u1ec3: Theo t\u00e0i li\u1ec7u google t\u1ea1i sao quan tr\u1ecdng, v\u00e0 thi\u1ebft y\u1ebfu?\n        + Ngo\u00e0i c\u00e1c l\u1ee3i \u00edch gi\u00fap ranking, c\u00f3 th\u1ec3 \u0111\u01b0a c\u00e1c l\u1ee3i \u00edch kh\u00e1c nh\u01b0: Ph\u01b0\u01a1ng ph\u00e1p white hat, ti\u1ebft ki\u1ec7m chi ph\u00ed (v\u00ec kh\u00f4ng c\u1ea7n backlink), hi\u1ec7u qu\u1ea3 th\u1ec3 hi\u1ec7n nhanh ch\u00f3ng (\u0111\u01b0a r\u00f5 kho\u1ea3ng khung th\u1eddi gian test \u1edf d\u1ef1 \u00e1n GTV th\u01b0\u1eddng t\u1eeb 7 - 14 ng\u00e0y \u0111\u1ec3 th\u1ea5y k\u1ebft qu\u1ea3, trong 30 ng\u00e0y \u0111\u1ec3 fully effective).\n        + Expand evidence th\u00f4ng qua \u0111\u01b0a s\u1ed1 li\u1ec7u case study GTV (v\u00ed d\u1ee5: > 85% Project GTV l\u00e0 kh\u00f4ng s\u1eed d\u1ee5ng backlink)\n3.  \u0110\u01b0a c\u00e2u k\u1ebft lu\u1eadn v\u00e0 chuy\u1ec3n ti\u1ebfp cho vi\u1ec7c ph\u00e2n bi\u1ebft Onpage & offpage l\u00e0 t\u1ed1i \u01b0u nh\u1eefng g\u00ec?\n4. \u01af\u1edbc t\u00ednh: 250 - 300 t\u1eeb.\n### Ph\u00e2n bi\u1ec7t gi\u1eefa SEO Onpage v\u00e0 SEO Offpage\n\n1.  \u0110\u01b0a c\u00e2u tr\u1ea3 l\u1eddi d\u1ee9t kho\u00e1t m\u1ed9t c\u00e1ch t\u00f3m t\u1eaft v\u1ec1 Onpage & offpage kh\u00e1c nhau v\u1ec1 \u0111\u1ecbnh ngh\u0129a ra sao.\n    - Sau \u0111\u00f3 k\u1ebb b\u1ea3ng s\u1ef1 kh\u00e1c bi\u1ec7t v\u1ec1 c\u00f4ng vi\u1ec7c, hi\u1ec7u qu\u1ea3, nhi\u1ec7m v\u1ee5 c\u1ee7a 2 h\u1ea1ng m\u1ee5c n\u00e0y.\n2.  T\u00f3m t\u1eaft l\u1ee3i \u00edch t\u1eadp trung onpage SEO sau \u0111\u00f3 d\u00f9ng c\u00e2u chuy\u1ec3n ti\u1ebfp t\u1edbi ti\u00eau ch\u00ed t\u1ed1i \u01b0u Onpage c\u01a1 b\u1ea3n\n3. \u01af\u1edbc t\u00ednh: 120 - 180 t\u1eeb.\n\n## 11+ ti\u00eau chu\u1ea9n t\u1ed1i \u01b0u SEO Onpage \u0111\u01b0\u1ee3c Google \u01b0u ti\u00ean (K\u00e8m checklist)\n\nB\u1ed5 sung h\u00ecnh \u1ea3nh checklist, t\u01b0\u01a1ng t\u1ef1:\nhttps://blog.hubspot.com/blog/tabid/6307/bid/33655/a-step-by-step-guide-to-flawless-on-page-seo-free-template.aspx\n\n**V\u1edbi m\u1ed7i section v\u1ec1 checklist trong danh s\u00e1ch d\u01b0\u1edbi \u0111\u00e2y s\u1ebd \u0111\u01b0\u1ee3c vi\u1ebft b\u00e0i theo Logic/ph\u01b0\u01a1ng ph\u00e1p sau:**\n\n1.  \u0110\u01b0a c\u00e2u tr\u1ea3 l\u1eddi d\u1ee9t kho\u00e1t v\u1ec1 \u0111\u1ecbnh ngh\u0129a \u1edf \u0111\u00e2y. (format paragaph)\n2.  Sau \u0111\u00f3 \u0111\u01b0a l\u1ee3i \u00edch t\u1ed1i \u01b0u (format paragaph)\n3.  \u0110\u01b0a ti\u00eau ch\u00ed t\u1ed1i \u01b0u \u1edf d\u1ea1ng bullet point v\u00e0 g\u1ec9ai th\u00edch ng\u1eafn g\u1ecdn t\u1ea1i sao ph\u1ea3i t\u1ed1i \u01b0u nh\u01b0 v\u1eady?\n4.  B\u1ed5 sung h\u00ecnh \u1ea3nh minh ho\u1ea1 \u1edf c\u00e1c ti\u00eau ch\u00ed t\u1ed1i \u01b0u b\u00ean d\u01b0\u1edbi \u0111\u01b0\u1ee3c li\u1ec7t k\u00ea.\n    - URL: m\u1ee5c URL ng\u1eafn & D\u00e0i.\n    - Title: C\u00f3 s\u1ed1 & kh\u00f4ng c\u00f3 s\u1ed1, gi\u00fap t\u0103ng CTR.\n    - \u0110\u00e1p \u1ee9ng search intent: m\u1ed9t h\u00ecnh v\u1ebd \u0111\u01b0\u1ee3c thi\u1ebft k\u1ebf, c\u00f3 text th\u1ec3 hi\u1ec7n ng\u1eafn g\u1ecdn 9 lo\u1ea1i intent.\n    - TOC: h\u00ecnh \u1ea3nh cho ng\u01b0\u1eddi d\u00f9ng h\u00ecnh dung TOC l\u00e0 g\u00ec.\n    - H\u00ecnh \u1ea3nh: So s\u00e1nh gi\u1eefa vi\u1ec7c ch\u00e8n t\u1eeb kho\u00e1 trong h\u00ecnh \u1ea3nh, v\u00e0 h\u00ecnh \u1ea3nh \u0111\u01b0\u1ee3c m\u00f4 t\u1ea3 r\u00f5 r\u00e0ng (descriptive image).\n    - Readability: so s\u00e1nh gi\u1eefa hai b\u00e0i c\u00f3 v\u00e0 kh\u00f4ng c\u00f3 t\u1ed1i \u01b0u.\n6. \u01af\u1edbc t\u00ednh: 150 - 200 t\u1eeb m\u1ed7i section.\n\n**L\u01b0u \u00fd:**\n1.  Lu\u00f4n gi\u1edbi thi\u1ec7u h\u00ecnh \u1ea3nh tr\u01b0\u1edbc khi \u0111\u01b0a. T\u1ee9c c\u00f3 c\u00e2u d\u1eabn d\u1eaft.\n2.  Nh\u1eefng g\u00ec m\u00e0 h\u00ecnh \u1ea3nh \u0111\u00e3 th\u1ec3 hi\u1ec7n, b\u1ea1n kh\u00f4ng c\u1ea7n n\u00f3i l\u1ea1i trong text n\u1ed9i dung (v\u00ed d\u1ee5 9 lo\u1ea1i search intent, ph\u1ea7n n\u00e0y ch\u1ec9 c\u1ea7n ghi l\u00e0 \"hi\u1ec7n t\u1ea1i c\u00f3 9 lo\u1ea1i search intent ph\u1ed5 bi\u1ebfn tr\u00ean google, \u0111\u01b0\u1ee3c th\u1ec3 hi\u1ec7n \u1edf h\u00ecnh \u1ea3nh d\u01b0\u1edbi\" l\u00e0 xong, v\u00e0 b\u1ea1n kh\u00f4ng c\u1ea7n n\u00f3i 9 lo\u1ea1i search intent g\u00ec).\n\nB\u1ea1n ch\u1ec9 n\u00f3i l\u1ea1i trong d\u1ea1ng text n\u1ebfu th\u1eadt s\u1ef1 c\u1ea7n thi\u1ebft.\n\n7.  N\u1ebfu c\u00f3 Tips, checklist t\u1ed1i \u01b0u n\u00e2ng cao trong h\u1ea1ng m\u1ee5c t\u01b0\u01a1ng \u1ee9ng. V\u00ed d\u1ee5 Title c\u00f3 checklist t\u1ed1i \u01b0u CTR ri\u00eang ch\u1eb3ng h\u1ea1n, th\u00ec b\u1ea1n n\u00ean t\u1ea1o m\u1ed9t paragrah ng\u1eafn gi\u1edbi thi\u1ec7u, sau \u0111\u00f3 n\u00f3i checklist n\u00e2ng cao ng\u1eafn g\u1ecdn (v\u00ec c\u00e1i n\u00e0y thu\u1ed9c d\u1ea1ng b\u1ed5 sung th\u00eam, v\u00ec v\u1eady checklist n\u00e2ng cao ch\u1ec9 c\u1ea7n n\u00f3i t\u1ed1i \u0111a 3 - 4 ti\u00eau ch\u00ed).\n8. \u01b0u ti\u00ean vi\u1ec7c K\u1ebb b\u1ea3ng thay v\u00ec tr\u00ecnh b\u00e0y n\u1ed9i dung bulletpoint s\u1ebd t\u1ed1i \u01b0u h\u01a1n: https://prnt.sc/V00f3Y03dll0\nTham kh\u1ea3o: https://www.semrush.com/blog/on-page-seo-checklist/#6--add-target-keywords-to-your-body-content\n\n### 1. URL\n\n### 2. Title\n\n### 3. Heading 1\n\n### 4. Heading 2-3\n\n### 5. Keyword Density\n\n### 6. Content unique, chuy\u00ean s\u00e2u v\u00e0 \u0111\u00e1p \u1ee9ng Search Intent\n\n### 7. T\u1ed1i \u01b0u Meta Description\n\n### 8. H\u00ecnh \u1ea3nh\n\n### 9. T\u1ed1i \u01b0u Semantic - LSI Keyword\n\n### 10. In \u0111\u1eadm keyword ch\u00ednh trong b\u00e0i\n\n### 11. TOC (Table of Content \u2013 M\u1ee5c l\u1ee5c)\n\n## 9+ Ti\u00eau chu\u1ea9n Onpage n\u00e2ng cao hi\u1ec7u qu\u1ea3\n\n**V\u1edbi m\u1ed7i section v\u1ec1 checklist trong danh s\u00e1ch n\u00e2ng cao d\u01b0\u1edbi \u0111\u00e2y s\u1ebd \u0111\u01b0\u1ee3c vi\u1ebft b\u00e0i theo Logic/ph\u01b0\u01a1ng ph\u00e1p sau:**\n\n1.  \u0110\u01b0a c\u00e2u tr\u1ea3 l\u1eddi d\u1ee9t kho\u00e1t v\u1ec1 \u0111\u1ecbnh ngh\u0129a \u1edf \u0111\u00e2y. (format paragaph)\n2.  Sau \u0111\u00f3 \u0111\u01b0a l\u1ee3i \u00edch t\u1ed1i \u01b0u (format paragaph)\n3.  \u0110\u01b0a ti\u00eau ch\u00ed t\u1ed1i \u01b0u \u1edf d\u1ea1ng bullet point v\u00e0 g\u1ec9ai th\u00edch ng\u1eafn g\u1ecdn t\u1ea1i sao ph\u1ea3i t\u1ed1i \u01b0u nh\u01b0 v\u1eady.\n4.  \u1ede c\u00e1c ph\u1ea7n n\u00e2ng cao, c\u00f3 nh\u1eefng m\u1ee5c m\u00ecnh s\u1ebd ch\u00e8n video, nh\u1eefng ph\u1ea7n n\u00e0y khi ch\u00e8n video th\u00ec c\u0169ng c\u00f3 ng\u1eef c\u1ea3nh d\u1eabn d\u1eaft. C\u0169ng nh\u01b0 trong n\u1ed9i dung b\u00e0i vi\u1ebft ch\u1ec9 c\u1ea7n vi\u1ebft v\u1eafn t\u1eaft \u0111\u1ecbnh ngh\u0129a, l\u00fd do & v\u00e0i checklist. C\u00f2n l\u1ea1i v\u1ec1 h\u01b0\u1edbng d\u1eabn, minh ho\u1ea1 m\u00ecnh s\u1ebd k\u00eau user coi video. C\u1ee5 th\u1ec3:\n    - Feature snippet: https://www.youtube.com/watch?v=2F27882jH5I\n    - BlockQuotes: https://www.youtube.com/watch?v=zMz_R_ZYZzw\n    - Title n\u00e2ng cao: https://www.youtube.com/watch?v=cWN9DXTt_bw\n    - Schema: https://www.youtube.com/watch?v=VNdvQMdSVdk\n5.  B\u1ed5 sung h\u00ecnh \u1ea3nh minh ho\u1ea1 \u1edf t\u01b0\u01a1ng \u1ee9ng ti\u00eau ch\u00ed t\u1ed1i \u01b0u trong m\u1ee5c n\u00e2ng cao n\u00e0y \u0111\u1ec3 User hi\u1ec3u v\u1ec1 \u0111\u1ecbnh ngh\u0129a ho\u1eb7c h\u00ecnh dung l\u00e0 t\u1ed1i \u01b0u \u1edf \u0111\u00e2u?\n6. \u01af\u1edbc t\u00ednh: 150 - 200 t\u1eeb m\u1ed7i section.\n\n**L\u01b0u \u00fd:**\n1.  Lu\u00f4n gi\u1edbi thi\u1ec7u h\u00ecnh \u1ea3nh tr\u01b0\u1edbc khi \u0111\u01b0a. T\u1ee9c c\u00f3 c\u00e2u d\u1eabn d\u1eaft.\n2.  Nh\u1eefng g\u00ec m\u00e0 h\u00ecnh \u1ea3nh \u0111\u00e3 th\u1ec3 hi\u1ec7n, b\u1ea1n kh\u00f4ng c\u1ea7n n\u00f3i l\u1ea1i trong text n\u1ed9i dung (v\u00ed d\u1ee5 9 lo\u1ea1i search intent, ph\u1ea7n n\u00e0y ch\u1ec9 c\u1ea7n ghi l\u00e0 \"hi\u1ec7n t\u1ea1i c\u00f3 9 lo\u1ea1i search intent ph\u1ed5 bi\u1ebfn tr\u00ean google, \u0111\u01b0\u1ee3c th\u1ec3 hi\u1ec7n \u1edf h\u00ecnh \u1ea3nh d\u01b0\u1edbi\" l\u00e0 xong, v\u00e0 b\u1ea1n kh\u00f4ng c\u1ea7n n\u00f3i 9 lo\u1ea1i search intent g\u00ec).\n\nB\u1ea1n ch\u1ec9 n\u00f3i l\u1ea1i trong d\u1ea1ng text n\u1ebfu th\u1eadt s\u1ef1 c\u1ea7n thi\u1ebft.\n\n### 1. Featured Snippets\n\n### 2. Internal Link v\u00e0 Outbound Link\n\n### 3. Blockquote\n\n### 4. T\u1ed1i \u01b0u ti\u00eau \u0111\u1ec1 n\u00e2ng cao\n\n### 5. Content GAP\n\n### 7. Schema Markup\n\n### 8. E-E- A- T\n\n## C\u00e1c c\u00f4ng c\u1ee5 check SEO Onpage hi\u1ec7u qu\u1ea3, ph\u1ed5 bi\u1ebfn hi\u1ec7n nay?\n\nC\u00f4ng c\u1ee5 Check SEO Onpage l\u00e0 ... Tu\u1ef3 v\u00e0o m\u1ee5c ti\u00eau v\u00e0 ng\u00e2n s\u00e1ch ... m\u00e0 t\u00ednh hi\u1ec7u qu\u1ea3 l\u00e0 kh\u00e1c nhau. Check trong qu\u00e1 tr\u00ecnh t\u1ed1i \u01b0u SEO Onpage v\u00e0 Check sau khi t\u1ed1i \u01b0u SEO Onapge. S\u1ebd c\u00f3 nh\u1eefng c\u00f4ng c\u1ee5 ... hay ... D\u01b0\u1edbi \u0111\u00e2y l\u00e0 6 c\u00f4ng c\u1ee5 Check SEO Onpage hi\u1ec7u qu\u1ea3, s\u1eafp x\u1ebfp theo ti\u00eau ch\u00ed: chi ph\u00ed --> l\u00e0m \u0111\u01b0\u1ee3c g\u00ec.\n\n**\u0110\u1ed1i v\u1edbi m\u1ed7i c\u00f4ng c\u1ee5 \u0111\u01b0\u1ee3c li\u1ec7t k\u00ea d\u01b0\u1edbi \u0111\u00e2y, c\u1ea7n tr\u00ecnh b\u00e0y theo c\u1ea5u tr\u00fac:**\n\n1. *(D\u00f9ng Incremental list, t\u1ee9c c\u00e1c c\u00f4ng c\u1ee5 ph\u1ed5 bi\u1ebfn dc d\u00f9ng r\u1ed9ng r\u1ea3i \u1edf Vi\u1ec7t Nam. V\u00ec l\u00e0 supplement content n\u00ean c\u00f3 th\u1ec3 ch\u1ec9 c\u1ea7n \u0111\u01b0a bulletpoint r\u1ed3i gi\u1edbi thi\u1ec7u kh\u00f4ng c\u1ea7n ph\u1ea3i d\u00f9ng heading 3.)*\n- l\u00e0 g\u00ec?\n- gi\u00fap g\u00ec?\n- chi ph\u00ed bao nhi\u00eau?\n2. \u01af\u1edbc t\u00ednh: 100 - 150 t\u1eeb m\u1ed7i section.\n## 1. SEOQuake\n\n## 2. Yoast SEO / Rank math\n\n## 3. Surfer SEO\n\n## 4. Website Auditor\n\n## 5. Cora SEO\n\n---"
+        }
+      },
+      "id": "REDACTED_API_KEY",
+      "name": "Content Outline Generator",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -220,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "REDACTED_API_KEY",
+              "name": "ContentOutline",
+              "type": "string",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "REDACTED_API_KEY",
+      "name": "Store Content Outline",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Create a slug for the following outline of the Blogpost/Content: \n[{{ $('Store Content Outline').item.json.ContentOutline }}]\n\nA slug in a blog post is the part of the URL that comes after the domain name and identifies a specific page. It is typically a short, descriptive phrase that summarizes the content of the post, making it easier for users and search engines to understand what the page is about. For example, in the URL www.example.com/intelligent-agents, the slug is intelligent-agents. A good slug is concise, contains relevant keywords, and avoids unnecessary words to improve readability and SEO. \n\nThe slug must be 4 or 5 words max and must include the primary keyword of the blog post which is {{ $('Process Form Data').item.json.formData.Query }}. Try it as short as possible.\n\nYour output must be the slug and nothing else so that I can copy and paste your output and put it at the end of my blog post URL to post it right away. "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -520,
+        820
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Slug",
+      "credentials": {
+        "openAiApi": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-2024-11-20",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-2024-11-20"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Extract the blog post title from the Blogpost/Content: \n[{{ $('Store Content Outline').item.json.ContentOutline }}]\n\n\nThe blog post title must include the primary keyword {{ $('Google Sheets1').item.json.Query }} and must inform the users right away of what they can expect from reading the blog post. \n\n- Don't put the output in \"\". The output should just text with no markdown or formatting. \n\nYour output must only be the blog post title and nothing else. "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -140,
+        820
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Title",
+      "credentials": {
+        "openAiApi": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-2024-11-20",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-2024-11-20"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Create a good meta description for the following blog post: \n\n[{{ $('Store Content Outline').item.json.ContentOutline }}]\n\nA good meta description for a blog post that is SEO-optimized should:\n- Be Concise: Stick to 150-160 characters to ensure the full description displays in search results. \n- Include Keywords: Incorporate semantic keywords that are relate to the main keyword which is [{{ $('Process Form Data').item.json.formData.Query }}] naturally to improve visibility and relevance to search queries \n- Provide Value: Clearly describe what the reader will learn or gain by clicking the link. \n\n- Be Engaging: Use persuasive language, such as action verbs or a question, to encourage clicks. \n\n- Align with Content: Ensure the description accurately reflects the blog post to meet user expectations and reduce bounce rates. \n\nYour output must only be the meta description and nothing else. \n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        260,
+        820
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Meta description",
+      "credentials": {
+        "openAiApi": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -700,
+        0
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED_API_KEY",
+          "mode": "list",
+          "cachedResultName": "Workflow Automation N8n - Outline & AM  Update",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Run"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -480,
+        0
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Product email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "REDACTED_API_KEY",
+              "name": "Search Intent analyze result",
+              "value": "={{ $json.choices[0].message.content }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "id": "REDACTED_API_KEY",
+      "name": "Store Search Intent",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "REDACTED_API_KEY",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "REDACTED_API_KEY",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        0
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Get top 10 Results & Analyze",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REDACTED_ID",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to Research the newest and accurate information that is needed in the Article methodology to create great semantic content that reflects the brand source context",
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "REDACTED_API_KEY",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "REDACTED_API_KEY",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "query",
+              "description": "Performs search using Perplexity based on the provided query, which can include text and URLs. ",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "REDACTED_API_KEY",
+      "name": "Perplexity_Sonar_Pro",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -200,
+        620
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REDACTED_ID",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "REDACTED_API_KEY"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        620
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Mcp_Checklist_Semantic_Content"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "REDACTED_API_KEY",
+              "name": "K\u1ebft qu\u1ea3 ph\u00e2n t\u00edch \u0111\u1ed1i th\u1ee7 top 10",
+              "value": "={{ $json.choices[0].message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        600,
+        0
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "REDACTED_API_KEY",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "REDACTED_API_KEY",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -60,
+        0
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Search Intent analyze",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REDACTED_ID",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "REDACTED_API_KEY",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "REDACTED_API_KEY",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -680,
+        360
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Create Outline of the content",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REDACTED_ID",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "REDACTED_API_KEY",
+              "name": "Outline Content hi\u1ec7n t\u1ea1i ",
+              "value": "={{ $json.choices[0].message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -480,
+        360
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        120,
+        640
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        640
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "GPT 4.1",
+      "credentials": {
+        "openAiApi": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "folderId": "15lMM-u_LW0qHn6jb5AEWZXLwtbCqyNgJ",
+        "title": "={{ $('Google Sheets1').item.json.Query }} - Outline & Article methodology"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        400,
+        360
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do Email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED_API_KEY",
+          "mode": "list",
+          "cachedResultName": "Workflow Automation N8n - Outline & AM  Update",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Google Sheets1').item.json.row_number }}",
+            "Status": "Processing",
+            "Outline Result ": "={{ $('Store Content Outline').item.json.ContentOutline }}",
+            "Link outline": "={{ $json.documentId }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Brand Name",
+              "displayName": "Brand Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Brand information",
+              "displayName": "Brand information",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Brand solution",
+              "displayName": "Brand solution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Query",
+              "displayName": "Query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Query in English",
+              "displayName": "Query in English",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "outline focus",
+              "displayName": "outline focus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Top 3 URL",
+              "displayName": "Top 3 URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Output language",
+              "displayName": "Output language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "M\u1ee5c \u0111\u00edch t\u00ecm ki\u1ebfm",
+              "displayName": "M\u1ee5c \u0111\u00edch t\u00ecm ki\u1ebfm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Outline Result ",
+              "displayName": "Outline Result ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link outline",
+              "displayName": "Link outline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "B\u1ea3n c\u0169",
+              "displayName": "B\u1ea3n c\u0169",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -700,
+        820
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Update l\u00ean Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Product email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED_API_KEY",
+          "mode": "list",
+          "cachedResultName": "Workflow Automation N8n - Outline & AM  Update",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Meta Description": "={{ $json.message.content }}",
+            "Title Content": "={{ $('Title').item.json.message.content }}",
+            "Slug": "={{ $('Slug').item.json.message.content }}",
+            "Status": "complete",
+            "row_number": "={{ $('Google Sheets1').item.json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Brand Name",
+              "displayName": "Brand Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Brand information",
+              "displayName": "Brand information",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Brand solution",
+              "displayName": "Brand solution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Query",
+              "displayName": "Query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Query in English",
+              "displayName": "Query in English",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "outline focus",
+              "displayName": "outline focus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Top 3 URL",
+              "displayName": "Top 3 URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Output language",
+              "displayName": "Output language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "M\u1ee5c \u0111\u00edch t\u00ecm ki\u1ebfm",
+              "displayName": "M\u1ee5c \u0111\u00edch t\u00ecm ki\u1ebfm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Outline Result ",
+              "displayName": "Outline Result ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link outline",
+              "displayName": "Link outline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title Content",
+              "displayName": "Title Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Slug",
+              "displayName": "Slug",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Meta Description",
+              "displayName": "Meta Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        620,
+        820
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Update Status full",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Product email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('Store Content Outline').item.json.ContentOutline }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        580,
+        360
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Update outline & AM l\u00ean GG Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do Email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-3-7-sonnet-20250219",
+          "cachedResultName": "Claude 3.7 Sonnet"
+        },
+        "options": {
+          "maxTokensToSample": 64000,
+          "thinking": true,
+          "thinkingBudget": 10000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -380,
+        620
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Process Form Data": {
+      "main": [
+        [
+          {
+            "node": "Search Intent analyze",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Outline Generator": {
+      "main": [
+        [
+          {
+            "node": "Store Content Outline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Content Outline": {
+      "main": [
+        [
+          {
+            "node": "Google Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slug": {
+      "main": [
+        [
+          {
+            "node": "Title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Title": {
+      "main": [
+        [
+          {
+            "node": "Meta description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meta description": {
+      "main": [
+        [
+          {
+            "node": "Update Status full",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Process Form Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Search Intent": {
+      "main": [
+        [
+          {
+            "node": "Get top 10 Results & Analyze",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get top 10 Results & Analyze": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity_Sonar_Pro": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Outline Generator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mcp_Checklist_Semantic_Content": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Outline Generator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Create Outline of the content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Intent analyze": {
+      "main": [
+        [
+          {
+            "node": "Store Search Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Outline of the content": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Content Outline Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Outline Generator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT 4.1": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Google Docs": {
+      "main": [
+        [
+          {
+            "node": "Update outline & AM l\u00ean GG Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update l\u00ean Sheet": {
+      "main": [
+        [
+          {
+            "node": "Slug",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update outline & AM l\u00ean GG Docs": {
+      "main": [
+        [
+          {
+            "node": "Update l\u00ean Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Outline Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "REDACTED_API_KEY",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REDACTED_API_KEY"
+  },
+  "id": "NL8JTE1QBoTkzs3t",
+  "tags": [
+    {
+      "createdAt": "2025-04-16T12:08:48.962Z",
+      "updatedAt": "2025-04-16T12:08:48.962Z",
+      "id": "Ll6zScJMpcNcI0sa",
+      "name": "content"
+    },
+    {
+      "createdAt": "2025-04-16T12:08:46.192Z",
+      "updatedAt": "2025-04-16T12:08:46.192Z",
+      "id": "jctz7bofFxzhGoTO",
+      "name": "seo"
+    }
+  ]
+}

@@ -1,0 +1,3118 @@
+{
+  "name": "Basic AI SEO KW Research n8n DataForSEO Gumroad 030125",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -860,
+        -140
+      ],
+      "id": "de6dafa0-b6cf-484a-af19-5eea69e64168",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5f4b8576-0afa-439b-9ae1-9c38822fed3b",
+              "name": "main keyword",
+              "value": "={{ $('Google Sheets KW Research Template').item.json['Main Keyword'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b887d01b-9ebb-4165-8549-f3b859270991",
+              "name": "location",
+              "value": "={{ $('Google Sheets KW Research Template').item.json.Location }}",
+              "type": "string"
+            },
+            {
+              "id": "d264138d-2a20-4545-9dba-d76b3397e40b",
+              "name": "language",
+              "value": "={{ $('Google Sheets KW Research Template').item.json.Language }}",
+              "type": "string"
+            },
+            {
+              "id": "9d53b896-b134-4dd1-9c08-4a866fb4797f",
+              "name": "limit",
+              "value": "={{ $('Google Sheets KW Research Template').item.json.Limit }}",
+              "type": "string"
+            },
+            {
+              "id": "248f44b2-4fa9-4677-9d30-d0259308d071",
+              "name": "fileName",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "a0307116-a88f-4464-a96f-947dd85db6d6",
+              "name": "fileId",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "277a5e2a-2efd-4f4a-800f-7cec431e6539",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -20,
+        -140
+      ],
+      "id": "ea6cdf26-7f97-4e3a-a457-8c75b9a1d318",
+      "name": "Set Main Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c713f1fc-c731-4ae7-ad34-2cbb3b00b876",
+              "name": "main keyword",
+              "value": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a13c9cb1-5337-4325-bab5-e43bb9a116b0",
+              "name": "Type",
+              "value": "Related",
+              "type": "string"
+            },
+            {
+              "id": "157fd666-0abb-4bd9-8bc6-b92ed797d7ed",
+              "name": "msv",
+              "value": "={{ $json.keyword_data.keyword_info.search_volume }}",
+              "type": "number"
+            },
+            {
+              "id": "33d0209e-14c5-4909-9f8a-d020626b09a9",
+              "name": "search intent",
+              "value": "={{ $json.keyword_data.search_intent_info.main_intent }}",
+              "type": "string"
+            },
+            {
+              "id": "86cf7aeb-4eb2-4b67-9d4b-968e995aa280",
+              "name": "competition",
+              "value": "={{ $json.keyword_data.keyword_info.competition_level }}",
+              "type": "string"
+            },
+            {
+              "id": "93d3f4b9-4678-4315-9c93-848ae961534d",
+              "name": "kw difficulty",
+              "value": "={{ $json.keyword_data.keyword_properties.keyword_difficulty }}",
+              "type": "number"
+            },
+            {
+              "id": "690dfafc-d329-4f29-9ffb-15fcda2a14b9",
+              "name": "keyword",
+              "value": "={{ $json.keyword_data.keyword }}",
+              "type": "string"
+            },
+            {
+              "id": "73259597-5d97-4df0-9c65-29d6d8bdc051",
+              "name": "cpc",
+              "value": "={{ $json.keyword_data.keyword_info.cpc }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        760,
+        -320
+      ],
+      "id": "8ba50cf5-647b-4985-8bbf-ccd38f0be976",
+      "name": "Set Related KW Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "tasks[0].result[0].items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        560,
+        -320
+      ],
+      "id": "97bef081-1284-4838-9723-9130d0671aa0",
+      "name": "Split Out Related KWs"
+    },
+    {
+      "parameters": {
+        "content": "## Get Related Keywords from DataForSEO and Save to Google Sheet\n\nHttp request made to DataForSEO to get related keywords of the main keyword. Results save in the Google Sheet created earlier in the workflow.",
+        "height": 300,
+        "width": 860
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        280,
+        -440
+      ],
+      "id": "e77d21d1-130a-44ae-919e-e985058772c8",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Get Keyword Suggestions from DataForSEO and Save to Google Sheet\n\nHttp request made to DataForSEO to get suggested keywords based on the main keyword. Results save in the Google Sheet created earlier in the workflow.",
+        "height": 320,
+        "width": 860
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        280,
+        -100
+      ],
+      "id": "d5fb76e8-a90f-40c6-bd7c-9fd418b55fbb",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Get Main Keyword from Template\n",
+        "height": 360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -660,
+        -320
+      ],
+      "id": "6b45fbf6-c972-4802-8773-29c0ed8f3eea",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Create New Folder, Copy Template, and Set Fields\nCreate a new folder and a sheet (from the template) with the main keyword in the folder and sheet file name.\n\nGet main keyword, location, language and limit from the original sheet.",
+        "height": 360,
+        "width": 520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -320
+      ],
+      "id": "a07621b5-6f8e-4a10-a089-a4e901200107",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "# Setup\n\n## 1. Create a folder in your Google Drive. \n### Name it: Basic AI SEO Keyword Research n8n and DataForSEO.\n\n## 2. Copy this Google sheet to your:\n### Basic AI SEO Keyword Research n8n and DataForSEO folder. \nhttps://docs.google.com/spreadsheets/d/1NKjF5_OKVx3Rptdd86GjHK9tAplMKyv2IHtjsBjOU7s/edit?usp=sharing\n\n**Make sure to remove \"copy\" from the filename.**\n\n## 3. Create DataForSEO Account\n[DataForSEO](https://app.dataforseo.com/?aff=184208)\n\n# How to use \nhttps://youtu.be/4t8sSf2JNA4\n\n## 1. Add Your DataForSEO and Google Account Credentials \n\n## 2. Enter the Main Keyword (that you want to research), Location, Language, and Limit in the Main Keyword sheet.\nThere should only be one row with the above information. If you change the location and language it must align with DataForSEO requirements for this data. \nRefer to DataForSEO api endpoint documentation for more information: https://docs.dataforseo.com/v3/dataforseo_labs/google/related_keywords/live/?bash\n\n## 3. Enter New Main Keyword in Template Keyword Research with DFSEO 010425.1\n\n### IMPORTANT\n\nEnter the a keyword that you want to research each time you run the workflow. Only one keyword can be researched at time.\n\n## 4. You Can Change the Folder and Template Names\n\n### Important\nIf you change the folder and template names, be sure to update the workflow references to Google Drive and Google Sheets\n",
+        "height": 1180,
+        "width": 760,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1700,
+        -440
+      ],
+      "id": "26d64709-5dd8-4d3e-b415-bb4105ba1726",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1NKjF5_OKVx3Rptdd86GjHK9tAplMKyv2IHtjsBjOU7s",
+          "mode": "list",
+          "cachedResultName": "Template Keyword Research with DFSEO 010425.1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NKjF5_OKVx3Rptdd86GjHK9tAplMKyv2IHtjsBjOU7s/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Main Keyword",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NKjF5_OKVx3Rptdd86GjHK9tAplMKyv2IHtjsBjOU7s/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -600,
+        -140
+      ],
+      "id": "7b32ce6f-e66d-4b97-87c2-a2c55f4af1b8",
+      "name": "Google Sheets KW Research Template",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $json['Main Keyword'] }} KW Research {{ $now.format('MM-dd-yyyy') }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1tc3-VzPDHz5cIaWJiHvLyyPgzgfKpU0K",
+          "mode": "list",
+          "cachedResultName": "Basic AI SEO Keyword Research n8n and DataForSEO",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1tc3-VzPDHz5cIaWJiHvLyyPgzgfKpU0K"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -380,
+        -140
+      ],
+      "id": "b9b76faa-674c-4d94-aebb-5abef437637c",
+      "name": "Google Drive Create KW Folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "xoxZNsYgI8cpsCEF",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "1NKjF5_OKVx3Rptdd86GjHK9tAplMKyv2IHtjsBjOU7s",
+          "mode": "id"
+        },
+        "name": "={{ $('Google Sheets KW Research Template').item.json['Main Keyword'] }} Keyword Research {{ $now.format('MMddyy') }}",
+        "sameFolder": "={{ false }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -180,
+        -140
+      ],
+      "id": "5ea5ca02-f3cd-4945-ba9b-dd5480e09bc7",
+      "name": "Google Drive Copy KW Template",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "xoxZNsYgI8cpsCEF",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Wayne Ergle\n\n### Thank you for downloading this keyword research workflow!\n\nVisit my website to learn more about WebXco services. https://www.webxco.ai/\n\nVisit my YouTube channel for a comprehensive overview on how to use this workflow as well as other n8n related content.\n\n### Products Used \n[DataForSEO](https://app.dataforseo.com/?aff=184208)\nGoogle Drive\nGoogle Sheets\n\n# This Workflow\n\nThis workflow utilizes the DataForSEO platform to perform keyword research for a given keyword. \n\nThe data includes related keywords, keyword suggestions, keyword ideas, Google Autocomplete, subtopics, top SERP results, and Google People also Ask.\n\nConsider the workflow as the basis to build comprehensive keyword research and strategies. Explore the DataForSEO api endpoint documents and you will find an incredible amount of data is provided. \n",
+        "height": 1010,
+        "width": 470,
+        "color": 6
+      },
+      "id": "95bde61a-2c69-471a-ad76-defae94ab367",
+      "name": "Sticky Note20",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2200,
+        -440
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dataforseo.com/v3/dataforseo_labs/google/keyword_suggestions/live",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[{\n        \"keyword\": \"{{ $json['main keyword'] }}\",\n        \"location_name\": \"{{ $json.location }}\",\n        \"language_name\": \"{{ $json.language }}\",\n        \"include_serp_info\": true,\n        \"include_seed_keyword\": false,\n        \"limit\": {{ $json.limit }},\n        \"ignore_synonyms\": true\n    }]\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        40
+      ],
+      "id": "df322be6-b546-4f8d-8278-f00690f73587",
+      "name": "HTTP Keyword Suggestions",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "IQMtyQkhfHlknpoa",
+          "name": "DataforSEO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dataforseo.com/v3/dataforseo_labs/google/related_keywords/live",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[{\n        \"keyword\": \"{{ $json['main keyword'] }}\",\n        \"location_name\": \"{{ $json.location }}\",\n        \"language_name\": \"{{ $json.language }}\",\n        \"include_serp_info\": true,\n        \"include_seed_keyword\": true,\n        \"limit\": {{ $json.limit }},\n  \"depth\":2\n    }]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        -320
+      ],
+      "id": "a9bfc460-2ee0-48ab-9b7d-ce6aad8a341b",
+      "name": "HTTP Related Keywords",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "IQMtyQkhfHlknpoa",
+          "name": "DataforSEO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Main Fields').item.json.fileId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1366469942,
+          "mode": "list",
+          "cachedResultName": "Related Keywords",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uH1FF4txA3R0NIaKJJOBXSTHBqOZDgj4boxqSS_O3y0/edit#gid=1366469942"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Main Keyword": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+            "Type": "={{ $json.Type }}",
+            "Keyword": "={{ $json.keyword }}",
+            "MSV": "={{ $json.msv }}",
+            "Search Intent": "={{ $json['search intent'] }}",
+            "KW Difficulty": "={{ $json['kw difficulty'] }}",
+            "Competition": "={{ $json.competition }}",
+            "CPC": "={{ $json.cpc }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Main Keyword",
+              "displayName": "Main Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MSV",
+              "displayName": "MSV",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "KW Difficulty",
+              "displayName": "KW Difficulty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competition",
+              "displayName": "Competition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        980,
+        -320
+      ],
+      "id": "6a54cdd1-7e45-4fc1-bcf3-5254e68e3a0b",
+      "name": "Add Related KWs to Related KWs Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Main Fields').item.json.fileId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2108933567,
+          "mode": "list",
+          "cachedResultName": "Master All KW Variations",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSR_0tKxhHuNFnXOMTIuB1ls8xH_EO7aQI-NsOOCYsE/edit#gid=2108933567"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Main Keyword": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+            "Type": "={{ $json.Type }}",
+            "Keyword": "={{ $json.Keyword }}",
+            "MSV": "={{ $json.MSV }}",
+            "Search Intent": "={{ $json['Search Intent'] }}",
+            "KW Difficulty": "={{ $json['KW Difficulty'] }}",
+            "Competition": "={{ $json.Competition }}",
+            "CPC": "={{ $json.CPC }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Main Keyword",
+              "displayName": "Main Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MSV",
+              "displayName": "MSV",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "KW Difficulty",
+              "displayName": "KW Difficulty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competition",
+              "displayName": "Competition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Answer",
+              "displayName": "Answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1220,
+        -320
+      ],
+      "id": "938c2c2c-746f-42e0-bfb8-c02558f33983",
+      "name": "Add Related KWs to Master all KW Variations Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Main Fields').item.json.fileId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1051280433,
+          "mode": "list",
+          "cachedResultName": "Keyword Suggestions",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSR_0tKxhHuNFnXOMTIuB1ls8xH_EO7aQI-NsOOCYsE/edit#gid=1051280433"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Main Keyword": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+            "Type": "={{ $json.Type }}",
+            "Keyword": "={{ $json.keyword }}",
+            "MSV": "={{ $json.msv }}",
+            "Search Intent": "={{ $json['search intent'] }}",
+            "KW Difficulty": "={{ $json['kw difficulty'] }}",
+            "Competition": "={{ $json.competition }}",
+            "CPC": "={{ $json.cpc }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Main Keyword",
+              "displayName": "Main Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MSV",
+              "displayName": "MSV",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "KW Difficulty",
+              "displayName": "KW Difficulty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competition",
+              "displayName": "Competition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1000,
+        40
+      ],
+      "id": "f3e7ac4e-ef90-447b-8ccf-88e924236452",
+      "name": "Add KWs to Keyword Suggestions Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Main Fields').item.json.fileId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2108933567,
+          "mode": "list",
+          "cachedResultName": "Master All KW Variations",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSR_0tKxhHuNFnXOMTIuB1ls8xH_EO7aQI-NsOOCYsE/edit#gid=2108933567"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Main Keyword": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+            "Type": "={{ $json.Type }}",
+            "Keyword": "={{ $json.Keyword }}",
+            "MSV": "={{ $json.MSV }}",
+            "Search Intent": "={{ $json['Search Intent'] }}",
+            "KW Difficulty": "={{ $json['KW Difficulty'] }}",
+            "Competition": "={{ $json.Competition }}",
+            "CPC": "={{ $json.CPC }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Main Keyword",
+              "displayName": "Main Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MSV",
+              "displayName": "MSV",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "KW Difficulty",
+              "displayName": "KW Difficulty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competition",
+              "displayName": "Competition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Answer",
+              "displayName": "Answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1220,
+        40
+      ],
+      "id": "089eb50a-221c-4ce3-ad78-b7af6abab4b1",
+      "name": "Add KWs to Master All KW Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Get Keyword Ideas from DataForSEO and Save to Google Sheet\n\nHttp request made to DataForSEO to get keyword ideas based on the main keyword. Results save in the Google Sheet created earlier in the workflow.",
+        "height": 320,
+        "width": 860
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        280,
+        260
+      ],
+      "id": "418468bd-1d8a-473f-8bd1-868af358e407",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Main Fields').item.json.fileId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2108933567,
+          "mode": "list",
+          "cachedResultName": "Master All KW Variations",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSR_0tKxhHuNFnXOMTIuB1ls8xH_EO7aQI-NsOOCYsE/edit#gid=2108933567"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Main Keyword": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+            "Type": "={{ $json.Type }}",
+            "Keyword": "={{ $json.Keyword }}",
+            "MSV": "={{ $json.MSV }}",
+            "Search Intent": "={{ $json['Search Intent'] }}",
+            "KW Difficulty": "={{ $json['KW Difficulty'] }}",
+            "Competition": "={{ $json.Competition }}",
+            "CPC": "={{ $json.CPC }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Main Keyword",
+              "displayName": "Main Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MSV",
+              "displayName": "MSV",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "KW Difficulty",
+              "displayName": "KW Difficulty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competition",
+              "displayName": "Competition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Answer",
+              "displayName": "Answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1220,
+        400
+      ],
+      "id": "88cbf29d-0e05-4f18-bfbb-50ef62622837",
+      "name": "Add KWs to Master All KW Sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dataforseo.com/v3/dataforseo_labs/google/keyword_suggestions/live",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[{\n        \"keyword\": \"{{ $json['main keyword'] }}\",\n        \"location_name\": \"{{ $json.location }}\",\n        \"language_name\": \"{{ $json.language }}\",\n        \"include_serp_info\": true,\n        \"include_seed_keyword\": false,\n        \"limit\": {{ $json.limit }},\n        \"ignore_synonyms\": true\n    }]\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        400
+      ],
+      "id": "423d7b15-8e0a-4cd8-9e95-46b9a1acc999",
+      "name": "HTTP Keyword Ideas",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "IQMtyQkhfHlknpoa",
+          "name": "DataforSEO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "tasks[0].result[0].items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        580,
+        40
+      ],
+      "id": "97632590-9bab-4fac-b952-d8599d0f5410",
+      "name": "Split Out KW Suggestions"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c713f1fc-c731-4ae7-ad34-2cbb3b00b876",
+              "name": "main keyword",
+              "value": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a13c9cb1-5337-4325-bab5-e43bb9a116b0",
+              "name": "Type",
+              "value": "Suggestion",
+              "type": "string"
+            },
+            {
+              "id": "157fd666-0abb-4bd9-8bc6-b92ed797d7ed",
+              "name": "msv",
+              "value": "={{ $json.keyword_info.search_volume_trend.monthly }}",
+              "type": "number"
+            },
+            {
+              "id": "33d0209e-14c5-4909-9f8a-d020626b09a9",
+              "name": "search intent",
+              "value": "={{ $json.search_intent_info.main_intent }}",
+              "type": "string"
+            },
+            {
+              "id": "86cf7aeb-4eb2-4b67-9d4b-968e995aa280",
+              "name": "competition",
+              "value": "={{ $json.keyword_info.competition_level }}",
+              "type": "string"
+            },
+            {
+              "id": "93d3f4b9-4678-4315-9c93-848ae961534d",
+              "name": "kw difficulty",
+              "value": "={{ $json.keyword_properties.keyword_difficulty }}",
+              "type": "number"
+            },
+            {
+              "id": "690dfafc-d329-4f29-9ffb-15fcda2a14b9",
+              "name": "keyword",
+              "value": "={{ $json.keyword }}",
+              "type": "string"
+            },
+            {
+              "id": "73259597-5d97-4df0-9c65-29d6d8bdc051",
+              "name": "cpc",
+              "value": "={{ $json.keyword_info.cpc }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        780,
+        40
+      ],
+      "id": "1ecefca5-d898-4d3d-9b6f-517053e6acbe",
+      "name": "Set KW Suggestion Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "tasks[0].result[0].items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        580,
+        400
+      ],
+      "id": "df96a54d-7d48-4ca5-a3a9-29f762cd38e4",
+      "name": "Split Out KW Ideas"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c713f1fc-c731-4ae7-ad34-2cbb3b00b876",
+              "name": "main keyword",
+              "value": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a13c9cb1-5337-4325-bab5-e43bb9a116b0",
+              "name": "Type",
+              "value": "Suggestion",
+              "type": "string"
+            },
+            {
+              "id": "157fd666-0abb-4bd9-8bc6-b92ed797d7ed",
+              "name": "msv",
+              "value": "={{ $json.keyword_info.search_volume_trend.monthly }}",
+              "type": "number"
+            },
+            {
+              "id": "33d0209e-14c5-4909-9f8a-d020626b09a9",
+              "name": "search intent",
+              "value": "={{ $json.search_intent_info.main_intent }}",
+              "type": "string"
+            },
+            {
+              "id": "86cf7aeb-4eb2-4b67-9d4b-968e995aa280",
+              "name": "competition",
+              "value": "={{ $json.keyword_info.competition_level }}",
+              "type": "string"
+            },
+            {
+              "id": "93d3f4b9-4678-4315-9c93-848ae961534d",
+              "name": "kw difficulty",
+              "value": "={{ $json.keyword_properties.keyword_difficulty }}",
+              "type": "number"
+            },
+            {
+              "id": "690dfafc-d329-4f29-9ffb-15fcda2a14b9",
+              "name": "keyword",
+              "value": "={{ $json.keyword }}",
+              "type": "string"
+            },
+            {
+              "id": "73259597-5d97-4df0-9c65-29d6d8bdc051",
+              "name": "cpc",
+              "value": "={{ $json.keyword_info.cpc }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        780,
+        400
+      ],
+      "id": "e741a33e-4de8-4173-b69a-6fe5bda7e871",
+      "name": "Set KW Ideas Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Main Fields').item.json.fileId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1051280433,
+          "mode": "list",
+          "cachedResultName": "Keyword Suggestions",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LSR_0tKxhHuNFnXOMTIuB1ls8xH_EO7aQI-NsOOCYsE/edit#gid=1051280433"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Main Keyword": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+            "Type": "={{ $json.Type }}",
+            "Keyword": "={{ $json.keyword }}",
+            "MSV": "={{ $json.msv }}",
+            "Search Intent": "={{ $json['search intent'] }}",
+            "KW Difficulty": "={{ $json['kw difficulty'] }}",
+            "Competition": "={{ $json.competition }}",
+            "CPC": "={{ $json.cpc }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Main Keyword",
+              "displayName": "Main Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MSV",
+              "displayName": "MSV",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "KW Difficulty",
+              "displayName": "KW Difficulty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competition",
+              "displayName": "Competition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1000,
+        400
+      ],
+      "id": "9756f5db-cc93-45c0-8e97-665c780846e1",
+      "name": "Add KWs to Keyword Ideas Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Add to Master KW Variations Sheet",
+        "height": 300,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        -440
+      ],
+      "id": "35b43675-8c71-4c17-87f2-7dc0ed6ab769",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Add to Master KW Variations Sheet",
+        "height": 320,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        -100
+      ],
+      "id": "e06039c3-34ac-4432-ae3f-b86794a9363f",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Add to Master KW Variations Sheet",
+        "height": 320,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        260
+      ],
+      "id": "7ea0dc0f-1cb6-4fc3-ad39-6867b7d8b3e4",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "tasks[0].result[0].items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        580,
+        740
+      ],
+      "id": "c7120daa-30c6-430d-9bd0-db84c422313a",
+      "name": "Split Out Autocomplete"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c713f1fc-c731-4ae7-ad34-2cbb3b00b876",
+              "name": "main keyword",
+              "value": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a13c9cb1-5337-4325-bab5-e43bb9a116b0",
+              "name": "Type",
+              "value": "Autocomplete",
+              "type": "string"
+            },
+            {
+              "id": "1cd8e00a-f976-43d6-865f-a94656251a49",
+              "name": "keyword",
+              "value": "={{ $json.suggestion }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        780,
+        740
+      ],
+      "id": "a2d332da-1231-42bf-ace5-4d7101c9c179",
+      "name": "Set Autocomplete Fields"
+    },
+    {
+      "parameters": {
+        "content": "## Add To Master KW Variations Shhet\n",
+        "height": 300,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        620
+      ],
+      "id": "6c72ed52-3e9e-4326-a8f5-19b7df5eabd0",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "## Get Autocomplete from DataForSEO and Save to Google Sheet\n\nHttp request made to DataForSEO to get autocomplete based on the main keyword. Results saved in the Google Sheet created earlier in the workflow.",
+        "height": 300,
+        "width": 860
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        280,
+        620
+      ],
+      "id": "9c95f26e-973e-4bff-9cdb-a9dac8179543",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dataforseo.com/v3/serp/google/autocomplete/live/advanced",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[{\n        \"keyword\": \"{{ $json['main keyword'] }}\",\n        \"location_name\": \"{{ $json.location }}\",\n        \"language_name\": \"{{ $json.language }}\",\n        \"client\": \"gws-wiz-serp\"\n    }]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        740
+      ],
+      "id": "3c657593-34c9-4bcd-a115-6ed53dab7ffa",
+      "name": "HTTP Autocomplete",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "IQMtyQkhfHlknpoa",
+          "name": "DataforSEO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Main Fields').item.json.fileId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 381234465,
+          "mode": "list",
+          "cachedResultName": "Autocomplete",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1r7ATn6TDLqodCcGat7e1dMKQZGf9Jh14LVM9hSRVzaM/edit#gid=381234465"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Main Keyword": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+            "Type": "={{ $json.Type }}",
+            "Autocomplete": "={{ $json.keyword }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Main Keyword",
+              "displayName": "Main Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Autocomplete",
+              "displayName": "Autocomplete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MSV",
+              "displayName": "MSV",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "KW Difficulty",
+              "displayName": "KW Difficulty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competition",
+              "displayName": "Competition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PAA Answer",
+              "displayName": "PAA Answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1000,
+        740
+      ],
+      "id": "fa9f4e29-c3dc-411c-ab31-9ec1424c7ba7",
+      "name": "Add Autocomplete to Autocomplete Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "tasks[0].result[0].sub_topics",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        580,
+        1080
+      ],
+      "id": "3888df02-f9bd-4b31-bf08-67b10a1627e4",
+      "name": "Split Out Subtopics"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c713f1fc-c731-4ae7-ad34-2cbb3b00b876",
+              "name": "main keyword",
+              "value": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a13c9cb1-5337-4325-bab5-e43bb9a116b0",
+              "name": "Type",
+              "value": "Subtopics",
+              "type": "string"
+            },
+            {
+              "id": "1cd8e00a-f976-43d6-865f-a94656251a49",
+              "name": "keyword",
+              "value": "={{ $json['tasks[0].result[0].sub_topics'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        780,
+        1080
+      ],
+      "id": "b9fd9bb5-201a-487a-8f1c-7124ec844e91",
+      "name": "Set Subtopics Fields"
+    },
+    {
+      "parameters": {
+        "content": "## Add To Master KW Variations Sheet\n",
+        "height": 300,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        960
+      ],
+      "id": "93d4669d-0216-46c4-a921-e6ce03abfb1f",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "## Get Subtopics from DataForSEO and Save to Google Sheet\n\nHttp request made to DataForSEO to get subtopics based on the main keyword. Results saved in the Google Sheet created earlier in the workflow.",
+        "height": 300,
+        "width": 860
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        280,
+        960
+      ],
+      "id": "e5e02afb-5ec6-482c-a2af-8748479a8a53",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dataforseo.com/v3/content_generation/generate_sub_topics/live",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[{\n        \"topic\": \"{{ $json['main keyword'] }}\"\n    }]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        340,
+        1080
+      ],
+      "id": "64c5bbfe-9bca-49d6-8618-4c60b4b75fab",
+      "name": "HTTP Subtopics",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "IQMtyQkhfHlknpoa",
+          "name": "DataforSEO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Main Fields').item.json.fileId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1927743399,
+          "mode": "list",
+          "cachedResultName": "Subtopics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uH1FF4txA3R0NIaKJJOBXSTHBqOZDgj4boxqSS_O3y0/edit#gid=1927743399"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Main Keyword": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+            "Type": "={{ $json.Type }}",
+            "Subtopics": "={{ $json.keyword }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Main Keyword",
+              "displayName": "Main Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subtopics",
+              "displayName": "Subtopics",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MSV",
+              "displayName": "MSV",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "KW Difficulty",
+              "displayName": "KW Difficulty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competition",
+              "displayName": "Competition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PAA Answer",
+              "displayName": "PAA Answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1000,
+        1080
+      ],
+      "id": "db38a562-c03c-4c6b-b6d6-e1d7465b4030",
+      "name": "Add Subtopics to Subtopics Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Main Fields').item.json.fileId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2108933567,
+          "mode": "list",
+          "cachedResultName": "Master All KW Variations",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TgrtKjsNtgB9Ln_FHyuWXclBm-Rov2S3QEFOnpQo01s/edit#gid=2108933567"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Main Keyword": "={{ $json['Main Keyword'] }}",
+            "Type": "={{ $json.Type }}",
+            "Keyword": "={{ $json.Autocomplete }}",
+            "Answer": "=",
+            "MSV": "=",
+            "Search Intent": "=",
+            "KW Difficulty": "=",
+            "Competition": "=",
+            "CPC": "="
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Main Keyword",
+              "displayName": "Main Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MSV",
+              "displayName": "MSV",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "KW Difficulty",
+              "displayName": "KW Difficulty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competition",
+              "displayName": "Competition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Answer",
+              "displayName": "Answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1220,
+        740
+      ],
+      "id": "5da980e7-27d5-4723-8838-ee1f4f1e5ec0",
+      "name": "Add Subtopics to Master KWs Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fc1bef22-a996-4909-aac4-937b385bfbc0",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "organic",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        780,
+        1400
+      ],
+      "id": "7d6d4472-3dad-448f-a96f-66de34ccc8d3",
+      "name": "Filter SERPs"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fc1bef22-a996-4909-aac4-937b385bfbc0",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "people_also_ask",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        780,
+        1600
+      ],
+      "id": "47e39535-6c45-4ad2-bdc8-9cb3aceeba44",
+      "name": "Filter PAA"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "86c9a642-82bc-43c9-b845-4cd0de4d9b8e",
+              "name": "type",
+              "value": "={{ $json.type }}",
+              "type": "string"
+            },
+            {
+              "id": "1e072fe8-5ed9-4021-9652-edeaa1b7b80b",
+              "name": "Domain",
+              "value": "={{ $json.domain }}",
+              "type": "string"
+            },
+            {
+              "id": "656a0fdc-84e8-45ec-b87d-3486f40b3126",
+              "name": "url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "ab1ee777-870e-403d-8b8f-06e50e7d08a3",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "6a0c089e-60c8-43b7-bcd1-4c74922fed0e",
+              "name": "description",
+              "value": "={{ $json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "777af031-a52f-4bc3-9fc0-8466f21c867c",
+              "name": "main keyword",
+              "value": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        980,
+        1400
+      ],
+      "id": "70c37a31-735a-42df-9292-377d6f376837",
+      "name": "Set SERP Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        980,
+        1600
+      ],
+      "id": "3ee7eca5-01fc-48a5-b6aa-129b8c3fbf94",
+      "name": "Split Out PAA"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "31d3ee5a-1dbf-4388-a471-01be5147d093",
+              "name": "type",
+              "value": "={{ $json.type }}",
+              "type": "string"
+            },
+            {
+              "id": "4d86e00d-3a42-4536-ace2-300885b8c54d",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "452ad24c-5b2c-437f-aa7d-a226b0dd7faf",
+              "name": "description",
+              "value": "={{ $json.expanded_element[0].description }}",
+              "type": "string"
+            },
+            {
+              "id": "4f28e73b-6845-4aa6-a4ff-a6638e54c4e9",
+              "name": "main keyword",
+              "value": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        1600
+      ],
+      "id": "396c714f-1edb-4f25-83b3-8dc05f760a01",
+      "name": "Set PAA Fields"
+    },
+    {
+      "parameters": {
+        "content": "## Get SERP Results and People Also Ask from DataForSEO and Save to Google Sheet\n\nHttp request made to DataForSEO to get the top 10 organic search results and People Also Ask based on the main keyword. Results saved in the Google Sheet created earlier in the workflow.",
+        "height": 480,
+        "width": 1340
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        280,
+        1300
+      ],
+      "id": "72b046d3-624d-4c2a-a600-22301924fd0d",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "## Add To Master KW Variations\n",
+        "height": 280,
+        "width": 320,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        1500
+      ],
+      "id": "4969d0fa-6d0b-42cf-96a4-41079f9c0e1f",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dataforseo.com/v3/serp/google/organic/live/advanced",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n    {\n        \"language_name\": \"{{ $json.language }}\",\n        \"location_name\": \"{{ $json.location }}\",\n        \"keyword\": \"{{ $json['main keyword'] }}\",\n        \"depth\": 20,\n        \"people_also_ask_click_depth\": 1\n    }\n]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        1600
+      ],
+      "id": "794d4f8e-0995-48fa-b372-568cc27997b3",
+      "name": "HTTP SERPs",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "IQMtyQkhfHlknpoa",
+          "name": "DataforSEO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "tasks[0].result[0].items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        580,
+        1600
+      ],
+      "id": "dc4cb0f5-2ad4-4ff9-b069-35869c303788",
+      "name": "Split Out SERPs and PAA"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Main Fields').item.json.fileId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2108933567,
+          "mode": "list",
+          "cachedResultName": "Master All KW Variations",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TgrtKjsNtgB9Ln_FHyuWXclBm-Rov2S3QEFOnpQo01s/edit#gid=2108933567"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Main Keyword": "={{ $json['Main Keyword'] }}",
+            "Type": "={{ $json.Type }}",
+            "Keyword": "={{ $json.Subtopics }}",
+            "Answer": "=",
+            "MSV": "=",
+            "Search Intent": "=",
+            "KW Difficulty": "=",
+            "Competition": "=",
+            "CPC": "="
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Main Keyword",
+              "displayName": "Main Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MSV",
+              "displayName": "MSV",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "KW Difficulty",
+              "displayName": "KW Difficulty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competition",
+              "displayName": "Competition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Answer",
+              "displayName": "Answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        1080
+      ],
+      "id": "c089f061-d742-49c9-8f4e-6e6ab2037b6a",
+      "name": "Add Subtopics to Master KW sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Main Fields').item.json.fileId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "SERP",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Main Keyword": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+            "Type": "={{ $json.type }}",
+            "Domain": "={{ $json.Domain }}",
+            "URL": "={{ $json.url }}",
+            "Title": "={{ $json.title }}",
+            "Description": "={{ $json.description }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Main Keyword",
+              "displayName": "Main Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Domain",
+              "displayName": "Domain",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        1400
+      ],
+      "id": "62d2d0f0-d0d9-411d-8436-29bfb98edf95",
+      "name": "Add SERPs to SERP Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Main Fields').item.json.fileId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1721013289,
+          "mode": "list",
+          "cachedResultName": "People Also Ask",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uH1FF4txA3R0NIaKJJOBXSTHBqOZDgj4boxqSS_O3y0/edit#gid=1721013289"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Main Keyword": "={{ $('Set Main Fields').item.json['main keyword'] }}",
+            "Type": "={{ $json.type }}",
+            "PAA Answer": "={{ $json.description }}",
+            "People Also Ask": "={{ $json.title }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Main Keyword",
+              "displayName": "Main Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "People Also Ask",
+              "displayName": "People Also Ask",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MSV",
+              "displayName": "MSV",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "KW Difficulty",
+              "displayName": "KW Difficulty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competition",
+              "displayName": "Competition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PAA Answer",
+              "displayName": "PAA Answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1420,
+        1600
+      ],
+      "id": "2fa579b2-4a18-4b07-a8bb-8ee9d9aaa8fb",
+      "name": "Add PAA to PAA Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set Main Fields').item.json.fileId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2108933567,
+          "mode": "list",
+          "cachedResultName": "Master All KW Variations",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TgrtKjsNtgB9Ln_FHyuWXclBm-Rov2S3QEFOnpQo01s/edit#gid=2108933567"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Main Keyword": "={{ $json['Main Keyword'] }}",
+            "Type": "={{ $json.Type }}",
+            "Keyword": "={{ $json['People Also Ask'] }}",
+            "Answer": "={{ $json['PAA Answer'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Main Keyword",
+              "displayName": "Main Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MSV",
+              "displayName": "MSV",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "KW Difficulty",
+              "displayName": "KW Difficulty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competition",
+              "displayName": "Competition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPC",
+              "displayName": "CPC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Answer",
+              "displayName": "Answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1720,
+        1600
+      ],
+      "id": "65a15031-33a5-4c32-bc9d-25d922330598",
+      "name": "Add PAA to Master KW Variations Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "0TkG4m4qvNfLJuIb",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets KW Research Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Main Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Related Keywords",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Keyword Suggestions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Keyword Ideas",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Autocomplete",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Subtopics",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP SERPs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Related KWs": {
+      "main": [
+        [
+          {
+            "node": "Set Related KW Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Related KW Fields": {
+      "main": [
+        [
+          {
+            "node": "Add Related KWs to Related KWs Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets KW Research Template": {
+      "main": [
+        [
+          {
+            "node": "Google Drive Create KW Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Create KW Folder": {
+      "main": [
+        [
+          {
+            "node": "Google Drive Copy KW Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Copy KW Template": {
+      "main": [
+        [
+          {
+            "node": "Set Main Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Keyword Suggestions": {
+      "main": [
+        [
+          {
+            "node": "Split Out KW Suggestions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Related Keywords": {
+      "main": [
+        [
+          {
+            "node": "Split Out Related KWs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Related KWs to Related KWs Sheet": {
+      "main": [
+        [
+          {
+            "node": "Add Related KWs to Master all KW Variations Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add KWs to Keyword Suggestions Sheet": {
+      "main": [
+        [
+          {
+            "node": "Add KWs to Master All KW Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Keyword Ideas": {
+      "main": [
+        [
+          {
+            "node": "Split Out KW Ideas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out KW Suggestions": {
+      "main": [
+        [
+          {
+            "node": "Set KW Suggestion Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set KW Suggestion Fields": {
+      "main": [
+        [
+          {
+            "node": "Add KWs to Keyword Suggestions Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out KW Ideas": {
+      "main": [
+        [
+          {
+            "node": "Set KW Ideas Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set KW Ideas Fields": {
+      "main": [
+        [
+          {
+            "node": "Add KWs to Keyword Ideas Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add KWs to Keyword Ideas Sheet": {
+      "main": [
+        [
+          {
+            "node": "Add KWs to Master All KW Sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Autocomplete": {
+      "main": [
+        [
+          {
+            "node": "Set Autocomplete Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Autocomplete Fields": {
+      "main": [
+        [
+          {
+            "node": "Add Autocomplete to Autocomplete Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Autocomplete": {
+      "main": [
+        [
+          {
+            "node": "Split Out Autocomplete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Autocomplete to Autocomplete Sheet": {
+      "main": [
+        [
+          {
+            "node": "Add Subtopics to Master KWs Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Subtopics": {
+      "main": [
+        [
+          {
+            "node": "Set Subtopics Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Subtopics Fields": {
+      "main": [
+        [
+          {
+            "node": "Add Subtopics to Subtopics Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Subtopics": {
+      "main": [
+        [
+          {
+            "node": "Split Out Subtopics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Subtopics to Subtopics Sheet": {
+      "main": [
+        [
+          {
+            "node": "Add Subtopics to Master KW sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter SERPs": {
+      "main": [
+        [
+          {
+            "node": "Set SERP Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter PAA": {
+      "main": [
+        [
+          {
+            "node": "Split Out PAA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set SERP Fields": {
+      "main": [
+        [
+          {
+            "node": "Add SERPs to SERP Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out PAA": {
+      "main": [
+        [
+          {
+            "node": "Set PAA Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set PAA Fields": {
+      "main": [
+        [
+          {
+            "node": "Add PAA to PAA Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP SERPs": {
+      "main": [
+        [
+          {
+            "node": "Split Out SERPs and PAA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out SERPs and PAA": {
+      "main": [
+        [
+          {
+            "node": "Filter SERPs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filter PAA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add PAA to PAA Sheet": {
+      "main": [
+        [
+          {
+            "node": "Add PAA to Master KW Variations Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "65472dff-0034-4953-a258-c23a1b05809a",
+  "meta": {
+    "instanceId": "71dab517465d2a8651416ecb249f8c625dbec8eefd6983c3cc92ac04a871a46a"
+  },
+  "id": "L9mx4MVO0cZQ27V1",
+  "tags": []
+}

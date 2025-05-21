@@ -1,0 +1,559 @@
+{
+  "name": "Ultimate AI Assitant Hub",
+  "nodes": [
+    {
+      "parameters": {
+        "name": "emailAgent",
+        "description": "Call this tool for any email actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "aJknYC4mSMIK4Mo3",
+          "mode": "list",
+          "cachedResultName": "Ultimate AI Assitant \u2014 Email Action Hub"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        300,
+        540
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Email Agent"
+    },
+    {
+      "parameters": {
+        "name": "contactAgent",
+        "description": "Call this tool for any contact (li\u00ean h\u1ec7) related actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "p0SgjMYCFzUJ6NQd",
+          "mode": "list",
+          "cachedResultName": "Ultimate AI Assitant \u2014 Get Contact"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        560,
+        540
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Contact Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        500
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the internet",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"api_key\": \"REDACTED_API_KEY\", \"query\": \"{searchTerm}\", \"search_depth\": \"basic\", \"include_answer\": true, \"topic\": \"news\", \"include_raw_content\": true, \"max_results\": 3}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "searchTerm",
+              "description": "What the user has requested to search the internet for",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        860,
+        500
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Tavily"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        980,
+        480
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "name": "calendarAgent",
+        "description": "Call this tool for any calendar action.",
+        "workflowId": {
+          "__rl": true,
+          "value": "fWghMjWWOLfsNbwg",
+          "mode": "list",
+          "cachedResultName": "Ultimate AI Assitant \u2014 Calendar Agent 1.0"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        420,
+        560
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Calendar Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "REDACTED_API_KEY",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "REDACTED_API_KEY",
+      "name": "Set 'Text'",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        60,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "REDACTED_API_KEY",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "REDACTED_API_KEY",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -200,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "REDACTED_API_KEY",
+      "name": "Response",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        900,
+        120
+      ],
+      "webhookId": "REDACTED_API_KEY",
+      "credentials": {
+        "telegramApi": {
+          "id": "REDACTED_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "id": "REDACTED_API_KEY",
+      "name": "Download File",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        20,
+        0
+      ],
+      "webhookId": "REDACTED_API_KEY",
+      "credentials": {
+        "telegramApi": {
+          "id": "REDACTED_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "REDACTED_API_KEY",
+      "name": "Transcribe",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        180,
+        0
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "REDACTED_ID",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Content_Creator_and_Research",
+        "description": "Call this tool to create social content & research.",
+        "workflowId": {
+          "__rl": true,
+          "value": "ydCpDamqRmLhnSyx",
+          "mode": "list",
+          "cachedResultName": "Ultimate AI Assitant \u2014 Research Automation - Content Creation"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        700,
+        520
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Content_Creator_and_Research"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are the ultimate personal assistant for me. Your job is to send the user's query to the correct tool. If the task you receive is writing content for social, you will use the \"Content_Creator_and_Research\" to perform the job, copy the result from the tool, and paste it into the output. Or else, You should never be writing emails, or creating even summaries, you just need to call the correct tool.\n\nAll the output need to be in Vietnamese.\n\n## Knowledge about me\n\nI'm the CEO & Cofounder of GTV SEO Agency and CAIO (Chief AI Offiecer) & Cofounder of The AI Growht (TAG). My Name is \u0110\u1ed7 Anh Vi\u1ec7t (Vincent Do in English)\n\nMy specialty is in AI, Automation, SEO, Inbound Marketing, Content marketing. I'm from Vietnam. \n\nAs A personal assistant, you should deliver the professional, authority & expert tone for me, but also you need to be friendly. \n\nC\u00e1ch x\u01b0ng h\u00f4: \n - Trong email: Vi\u1ec7t v\u00e0 t\u00ean ng\u01b0\u1eddi g\u1eedi email (v\u00ed d\u1ee5: Ms. Chi, Ms. Th\u00f9y,  Mr.T\u00fa)\n - Trong b\u00e0i social v\u00e0 content: M\u00ecnh v\u00e0 b\u1ea1n.\n\n## Tools\n- emailAgent: Use this tool to take action in email\n- calendarAgent: Use this tool to take action in calendar\n- contactAgent: Use this tool to get, update, or add contacts (contact means li\u00ean h\u1ec7 in vietnamese)\n- Content_Creator_and_Research: Use this tool to create soical content Or you need to do research\n- Tavily: use this tool when you need to do research or search the internet.\n\n## Rules\n- Some actions require you to look up contact information first. For the following actions, you must get contact information and send that to the agent who needs it:\n  - sending emails\n  - drafting emails\n  - creating calendar event with attendee\n\n## Examples\n1) \n- Input: send an email to nate herkelman asking him what time he wants to leave\n  - Action: Use contactAgent to get nate herkelman's email\n  - Action: Use emailAgent to send the email. You will pass the tool a query like \"send nate herkelman an email to ask what time he wants to leave. here is his email: [email address]\n- Output: The email has been sent to Nate Herkelman. Anything else I can help you with?\n\n\n## Final Reminders\nHere is the current date/time: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        400,
+        140
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Tr\u1ee3 L\u00fd c\u00e1 nh\u00e2n T\u1ed1i Th\u01b0\u1ee3ng"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -420,
+        160
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Telegram Trigger",
+      "webhookId": "REDACTED_API_KEY",
+      "credentials": {
+        "telegramApi": {
+          "id": "REDACTED_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "claude-3-5-sonnet-20241022",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        20,
+        460
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "REDACTED_ID",
+          "name": "Anthropic account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Email Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Tr\u1ee3 L\u00fd c\u00e1 nh\u00e2n T\u1ed1i Th\u01b0\u1ee3ng",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Tr\u1ee3 L\u00fd c\u00e1 nh\u00e2n T\u1ed1i Th\u01b0\u1ee3ng",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Tr\u1ee3 L\u00fd c\u00e1 nh\u00e2n T\u1ed1i Th\u01b0\u1ee3ng",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "Tr\u1ee3 L\u00fd c\u00e1 nh\u00e2n T\u1ed1i Th\u01b0\u1ee3ng",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Tr\u1ee3 L\u00fd c\u00e1 nh\u00e2n T\u1ed1i Th\u01b0\u1ee3ng",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Tr\u1ee3 L\u00fd c\u00e1 nh\u00e2n T\u1ed1i Th\u01b0\u1ee3ng",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set 'Text'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set 'Text'": {
+      "main": [
+        [
+          {
+            "node": "Tr\u1ee3 L\u00fd c\u00e1 nh\u00e2n T\u1ed1i Th\u01b0\u1ee3ng",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Transcribe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe": {
+      "main": [
+        [
+          {
+            "node": "Tr\u1ee3 L\u00fd c\u00e1 nh\u00e2n T\u1ed1i Th\u01b0\u1ee3ng",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content_Creator_and_Research": {
+      "ai_tool": [
+        [
+          {
+            "node": "Tr\u1ee3 L\u00fd c\u00e1 nh\u00e2n T\u1ed1i Th\u01b0\u1ee3ng",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tr\u1ee3 L\u00fd c\u00e1 nh\u00e2n T\u1ed1i Th\u01b0\u1ee3ng": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Tr\u1ee3 L\u00fd c\u00e1 nh\u00e2n T\u1ed1i Th\u01b0\u1ee3ng",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "REDACTED_API_KEY",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REDACTED_API_KEY"
+  },
+  "id": "XLQ8l0ASEvQz6Ej6",
+  "tags": []
+}

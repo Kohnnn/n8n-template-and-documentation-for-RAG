@@ -1,0 +1,399 @@
+{
+  "name": "Email Action Hub",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "REDACTED_API_KEY",
+              "name": "response",
+              "value": "Unable to perform task. Please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "REDACTED_API_KEY",
+      "name": "Try Again",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "REDACTED_API_KEY",
+              "name": "=response",
+              "value": "={{$json.output}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "REDACTED_API_KEY",
+      "name": "Success",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an email management assistant for me. All emails must be formatted professionally in HTML and signed off as \"Vincent Do.\" \n\nAll the output need to be in Vietnamese.\n\n**Email Management Tools**   \n   - Use \"Send Email\" to send emails.  \n   - Use \"Create Draft\" if the user asks for a draft.  \n   - Use \"Get Emails\" to retrieve emails when requested.\n   - Use \"Get Labels\" to retrieve labels.\n   - Use \"Mark Unread\" to mark an email as unread. You must use \"Get Emails\" first so you have the message ID of the email to flag.\n   - Use \"Label Email\" to flag an email. You must use \"Get Emails\" first so you have the message ID of the email to flag. Then you must use \"Get Labels\" so you have the label ID.\n   - Use \"Email Reply\" to reply to an email. You must use \"Get Emails\" first so you have the message ID of the email to reply to.\n\n## Knowledge about me\n\nI'm the CEO & Cofunder of GTV SEO Agency and CAIO (Chief AI Offiecer) & Cofounder of The AI Growht (TAG). My Name is \u0110\u1ed7 Anh Vi\u1ec7t (Vincent Do in English)\n\nMy specialty is in AI, Automation, SEO, Inbound Marketing, Content marketing. I'm from Vietnam. \n\nAs A personal assistant, you should deliver the professional, authority & expert tone for me, but also you need to be friendly. \n\n### Requirement when writing email.\nN\u1ed9i dung vi\u1ebft email \u0111\u01b0\u1ee3c x\u01b0ng h\u00f4 ch\u1ee7 y\u1ebfu b\u1eb1ng \u0111\u1ea1i t\u1eeb \"Vi\u1ec7t\" (T\u1ee9c Vincent Do/hay b\u1ea3n th\u00e2n t\u00f4i), v\u00e0 t\u00ean c\u1ee7a ng\u01b0\u1eddi \u0111\u01b0\u1ee3c g\u1eedi (Firstname), x\u01b0ng h\u00f4 b\u1eb1ng Mr / Ms. \n\nGi\u1ecdng v\u0103n vi\u1ebft mail v\u1eeba th\u00e2n thi\u00ean nh\u01b0ng v\u1eeba chuy\u00ean nghi\u1ec7p.\n\nAll the output need to be in Vietnamese.\n## Final Notes\n- Here is the current date/time: {{ $now }}"
+        }
+      },
+      "id": "REDACTED_API_KEY",
+      "name": "Email Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -600,
+        80
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI(\"emailAddress\") }}",
+        "subject": "={{ $fromAI(\"subject\") }}",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -920,
+        440
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Send Email",
+      "webhookId": "REDACTED_API_KEY",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": "={{ $fromAI(\"limit\",\"how many emails the user wants\") }}",
+        "simple": false,
+        "filters": {
+          "sender": "={{ $fromAI(\"sender\",\"who the emails are from\") }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -280,
+        540
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Get Emails",
+      "webhookId": "REDACTED_API_KEY",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $fromAI(\"subject\") }}",
+        "emailType": "html",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {
+          "sendTo": "={{ $fromAI(\"emailAddress\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -440,
+        560
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Create Draft",
+      "webhookId": "REDACTED_API_KEY",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $fromAI(\"ID\",\"the message ID\") }}",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -760,
+        500
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Email Reply",
+      "webhookId": "REDACTED_API_KEY",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        480
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Get Labels",
+      "webhookId": "REDACTED_API_KEY",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $fromAI(\"ID\",\"the ID of the message\") }}",
+        "labelIds": "={{ $fromAI(\"labelID\") }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -600,
+        540
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Label Emails",
+      "webhookId": "REDACTED_API_KEY",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsUnread",
+        "messageId": "={{ $fromAI(\"messageID\") }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -20,
+        420
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Mark Unread",
+      "webhookId": "REDACTED_API_KEY",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -840,
+        80
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "model": "claude-3-5-sonnet-20241022",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        -1080,
+        340
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "REDACTED_ID",
+          "name": "Anthropic account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Email Agent": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try Again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Reply": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Draft": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Labels": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Unread": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "REDACTED_API_KEY",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REDACTED_API_KEY"
+  },
+  "id": "aJknYC4mSMIK4Mo3",
+  "tags": []
+}

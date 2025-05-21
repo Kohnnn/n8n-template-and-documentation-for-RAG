@@ -1,0 +1,834 @@
+{
+  "name": "Sale AI Agent - Human in loop",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "ps5r54t3srtatpu4h2hidouo8o@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "C\u00e1 nh\u00e2n planning"
+        },
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', `Check xem l\u1ecbch c\u00f4ng vi\u1ec7c c\u00f3 trong hai tu\u1ea7n k\u1ebf ti\u1ebfp, t\u00ednh t\u1eeb h\u00f4m nay. \u0110\u1ec3 c\u00f3 th\u1ec3 l\u00ean l\u1ecbch h\u1eb9n m\u00e0 kh\u00f4ng b\u1ecb tr\u00f9ng gi\u1edd. `, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', `Check xem l\u1ecbch c\u00f4ng vi\u1ec7c c\u00f3 trong hai tu\u1ea7n k\u1ebf ti\u1ebfp, t\u00ednh t\u1eeb h\u00f4m nay. \u0110\u1ec3 c\u00f3 th\u1ec3 l\u00ean l\u1ecbch h\u1eb9n m\u00e0 kh\u00f4ng b\u1ecb tr\u00f9ng gi\u1edd. `, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        980
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Check Calendar Availability",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "L\u1ecbch c\u1ee7a Vincent Do"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Incoming Lead\n\nName: {{ $json.Name }}\n\nEmail: {{ $json.Email }}\n\nIntent/Service/Proudct: {{ $json['Service/Product'] }}\n\nBudget: {{ $json.Buget }}\n\nCompany Name: {{ $json.CompanyName }}\n\nProject Description: {{ $json.ProjectDescription }}\n\nTimeline: {{ $json.Timeline }}\n\nNote: Format email ph\u1ea3i th\u00e2n thi\u1ec7n tr\u00ean gmail. ",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert sales person for The AI Growth (TAG) agency that delivers AI & Automation Marketing solutions for businesses. Your job is to respond to incoming leads by addressing their needs in a professional manner and setting up a meeting. You will receive information about the lead's project description and timeline, and your goal is to convince them that TAG is the best AI & Automation Marketing agency in Vietnam.\n\n## Tools\n - Check Calendar Availability - Use this tool to check Vincent's availability on his calendar for the next 14 days. Only suggest meeting times between 8:00 AM and 6:00 PM (Vietnam time) and in Monday to Friday.\n- Case Study - Use this tool to search through previous projects we have done. \n\n## Rules\n- You will receive information about a lead, and you need to craft a professional email IN VIETNAMESE. Keep it concise, short paragrapth, to the point.\n- Your main objective is to convince the lead to book a meeting with Vincent. Your job is to make them believe that TAG can deliver the project they have described and exceed their expectations.\n- Retrieve information about previous projects to share with the lead to prove that our team is capable of handling their project. Find a similar project we have done to share with the lead. Share the result of how we helped the client as a case study.\n- Use the Calendar tool to check Vincent's availability and suggest 2-3 specific time slots when he is available in the next 14 days. Only suggest times between 8:00 AM and 6:00 PM (Vietnam time). These should be exact slots like \"14:00-15:00 ng\u00e0y 15/4/2024\".\n- Highlight TAG's expertise in AI & Automation Marketing solutions for businesses, including both training courses and setup services.\n- S\u1eed d\u1ee5ng \u0111\u1ea1i t\u1eeb x\u01b0ng h\u00f4 l\u00e0 \"B\u00ean em\" ho\u1eb7c \"Em\" khi x\u01b0ng h\u00f4 c\u00e1 nh\u00e2n m\u00ecnh v\u1edbi kh\u00e1ch h\u00e0ng. C\u00f2n khi x\u01b0ng h\u00f4 gi\u1eefa doanh nghi\u1ec7p v\u1edbi doanh nghi\u1ec7p s\u1ebd l\u00e0 \"Ch\u00fang t\u00f4i\" ho\u1eb7c \"TAG\"\n\n## Final Notes\nSign off emails as \"Vincent \u0110\u1ed7, The AI Growth\"\nHere is the current date/time: {{ $now }}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        240,
+        640
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Sales Agent"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"subject\": {\n      \"type\": \"string\",\n      \"description\": \"The subject line of the email in Vietnamese\"\n    },\n    \"email\": {\n      \"type\": \"string\",\n      \"description\": \"The body content of the email in Vietnamese\"\n    },\n    \"suggestedTimes\": {\n      \"type\": \"array\",\n      \"description\": \"Array of suggested meeting times that are available\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    }\n  },\n  \"required\": [\"subject\", \"email\", \"suggestedTimes\"]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        980
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Google Sheets Trigger1').item.json.Email }}",
+        "subject": "={{ $('Sales Agent').item.json.output.subject }}",
+        "emailType": "text",
+        "message": "={{ $('Set Email').item.json.email }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1520,
+        480
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Send Email",
+      "webhookId": "REDACTED_API_KEY",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-lite-preview-02-05",
+        "options": {
+          "temperature": 0.5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        900,
+        980
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "REDACTED_ID",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "REDACTED_API_KEY",
+              "name": "email",
+              "value": "={{ $json.output.email }}",
+              "type": "string"
+            },
+            {
+              "id": "REDACTED_API_KEY",
+              "name": "suggestedTimes",
+              "value": "={{ $json.output.suggestedTimes }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        600,
+        600
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Set Email"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "=doanhviet2408@gmail.com",
+        "subject": "=DUY\u1ec6T EMAIL CHO KH\u00c1CH H\u00c0NG M\u1edaI: {{ $('Google Sheets Trigger1').item.json.Name }}",
+        "message": "= {{ $('Google Sheets Trigger1').item.json.Name }} t\u1eeb c\u00f4ng ty {{ $('Google Sheets Trigger1').item.json.CompanyName }} \u0111ang t\u00ecm ki\u1ebfm d\u1ecbch v\u1ee5/s\u1ea3n ph\u1ea9m {{ $('Google Sheets Trigger1').item.json['Service/Product'] }} . Ng\u00e2n s\u00e1ch c\u1ee7a h\u1ecd l\u00e0 {{ $('Google Sheets Trigger1').item.json.Buget }} v\u1edbi khung th\u1eddi gian {{ $('Google Sheets Trigger1').item.json.Timeline }}\n\nXin vui l\u00f2ng duy\u1ec7t ho\u1eb7c ch\u1ec9nh s\u1eeda email d\u01b0\u1edbi \u0111\u00e2y tr\u01b0\u1edbc khi g\u1eedi \u0111i.\n\nTi\u00eau \u0111\u1ec1: {{ $('Sales Agent').item.json.output.subject }}\n\nN\u1ed9i dung: {{ $json.email }}\n\nKhung gi\u1edd \u0111\u1ec1 xu\u1ea5t: {{ $json.suggestedTimes.join(', ') }}",
+        "responseType": "freeText",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        600
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Get Feedback",
+      "webhookId": "REDACTED_API_KEY",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.data.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Approved",
+              "description": "The email has been reviewed and accepted as-is. The human explicitly or implicitly expresses approval, indicating that no changes are needed. |Example phrases include:\"Okay.\"\"\u0111\u01b0\u1ee3c r\u1ed3i.\"\"\u1ed4n \u0111\u1ea5y.\"\"Duy\u1ec7t.\"\"Ok.\"\"Looks Good\"\"G\u1eedi \u0111i\"\"dc \u0111\u1ea5y\"\"T\u1ed1t\"\"\u0110\u01b0\u1ee3c\""
+            },
+            {
+              "category": "Declined",
+              "description": "The email has been reviewed, but the human requests modifications before it is sent like tweaks, removing parts, rewording, etc. This could include suggested edits, rewording, or major revisions. |Example phrases include:\"Ch\u1ec9nh ch\u1ed7 n\u00e0y ch\u00fat\"\"B\u1ed5 sung\"\"T\u00f4i mu\u1ed1n ch\u1ec9nh\"\"Ch\u01b0a \u1ed5n l\u1eafm\"\"B\u1ea1n ch\u1ec9nh c\u00e1i n\u00e0y \u0111\u01b0\u1ee3c kh\u00f4ng\"\"S\u1eeda l\u1ea1i\"\"Ch\u1ec9nh s\u1eeda\"\"Thay \u0111\u1ed5i\""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        600
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Check Feedback"
+    },
+    {
+      "parameters": {
+        "content": "# Vincent \u0110\u1ed7 | The AI Growth (TAG)",
+        "height": 80,
+        "width": 660,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        360,
+        40
+      ],
+      "typeVersion": 1,
+      "id": "REDACTED_API_KEY",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED_API_KEY",
+          "mode": "list",
+          "cachedResultName": "T\u1ed5ng h\u1ee3p th\u00f4ng tin kh\u00e1ch h\u00e0ng",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "contacted",
+            "Name": "={{ $('Google Sheets Trigger1').item.json.Name }}",
+            "SuggestedTimes": "=- {{ $('Set Email').item.json.suggestedTimes[0] }}\n- {{ $('Set Email').item.json.suggestedTimes[1] }}\n- {{ $('Set Email').item.json.suggestedTimes[2] }}"
+          },
+          "matchingColumns": [
+            "Name"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CompanyName",
+              "displayName": "CompanyName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Service/Product",
+              "displayName": "Service/Product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Buget",
+              "displayName": "Buget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ProjectDescription",
+              "displayName": "ProjectDescription",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timeline",
+              "displayName": "Timeline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LastContact",
+              "displayName": "LastContact",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SuggestedTimes",
+              "displayName": "SuggestedTimes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1740,
+        480
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Update Lead Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Product email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## X\u1eed l\u00fd d\u1eef li\u1ec7u t\u1eeb Google Sheets\nK\u1ebft n\u1ed1i v\u1edbi Google Sheets \u0111\u1ec3 \u0111\u1ecdc th\u00f4ng tin lead m\u1edbi",
+        "height": 240,
+        "width": 380,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -220,
+        540
+      ],
+      "typeVersion": 1,
+      "id": "REDACTED_API_KEY",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Ki\u1ec3m tra l\u1ecbch & Case study\n\u0110\u1ea3m b\u1ea3o ch\u1ec9 \u0111\u1ec1 xu\u1ea5t th\u1eddi gian tr\u1ed1ng trong l\u1ecbch t\u1eeb 8h-18h. C\u0169ng nh\u01b0 check qua porfolio c\u1ee7a m\u00ecnh",
+        "height": 240,
+        "width": 420,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        140,
+        860
+      ],
+      "typeVersion": 1,
+      "id": "REDACTED_API_KEY",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## AI Sales Agent\nS\u1eed d\u1ee5ng AI \u0111\u1ec3 ph\u00e2n t\u00edch th\u00f4ng tin lead v\u00e0 t\u1ea1o email chuy\u00ean nghi\u1ec7p b\u1eb1ng ti\u1ebfng Vi\u1ec7t",
+        "height": 220,
+        "width": 380,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        180,
+        540
+      ],
+      "typeVersion": 1,
+      "id": "REDACTED_API_KEY",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Human-in-the-Loop Check\nG\u1eedi email \u0111\u1ec3 duy\u1ec7t tr\u01b0\u1edbc khi g\u1eedi cho kh\u00e1ch h\u00e0ng",
+        "height": 220,
+        "width": 400,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        580,
+        500
+      ],
+      "typeVersion": 1,
+      "id": "REDACTED_API_KEY",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## X\u1eed l\u00fd ph\u1ea3n h\u1ed3i\nPh\u00e2n lo\u1ea1i ph\u1ea3n h\u1ed3i \u0111\u1ec3 quy\u1ebft \u0111\u1ecbnh g\u1eedi email ho\u1eb7c ch\u1ec9nh s\u1eeda",
+        "height": 200,
+        "width": 400,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1000,
+        520
+      ],
+      "typeVersion": 1,
+      "id": "REDACTED_API_KEY",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## AI Models\nS\u1eed d\u1ee5ng Claude Sonet  v\u00e0 Google Gemini \u0111\u1ec3 ph\u00e2n t\u00edch n\u1ed9i dung v\u00e0 t\u1ea1o ph\u1ea3n h\u1ed3i",
+        "height": 240,
+        "width": 800,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        580,
+        860
+      ],
+      "typeVersion": 1,
+      "id": "REDACTED_API_KEY",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## C\u1eadp nh\u1eadt Lead Status\nC\u1eadp nh\u1eadt tr\u1ea1ng th\u00e1i lead sau khi \u0111\u00e3 li\u00ean h\u1ec7",
+        "height": 240,
+        "width": 540,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1420,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "REDACTED_API_KEY",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        440,
+        980
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "model": "claude-3-5-sonnet-20241022",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        700,
+        980
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "REDACTED_ID",
+          "name": "Vincent Do"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED_API_KEY",
+          "mode": "list",
+          "cachedResultName": "T\u1ed5ng h\u1ee3p th\u00f4ng tin kh\u00e1ch h\u00e0ng",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "event": "rowUpdate",
+        "options": {
+          "columnsToWatch": [
+            "Name"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        640
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Google Sheets Trigger1",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED_API_KEY",
+          "mode": "list",
+          "cachedResultName": "T\u1ed5ng h\u1ee3p th\u00f4ng tin kh\u00e1ch h\u00e0ng",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 567003372,
+          "mode": "list",
+          "cachedResultName": "Case Study",
+          "cachedResultUrl": "REDACTED_API_KEY"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "D\u1ecbch v\u1ee5 / S\u1ea3n ph\u1ea9m Order",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Value', `T\u00ecm ki\u1ebfm d\u1eef li\u1ec7u s\u1ea3n ph\u1ea9m/d\u1ecbch v\u1ee5 \u1edf kh\u00e1ch h\u00e0ng t\u01b0\u01a1ng t\u1ef1 \u0111ang order hi\u1ec7n t\u1ea1i, t\u1eeb \u0111\u00e2y \u0111\u1ec3 l\u1ea5y d\u1eef li\u1ec7u kh\u00e1ch h\u00e0ng c\u0169 \u0111\u00e3 tri\u1ec3n khai - th\u00e0nh c\u00f4ng, k\u1ebft qu\u1ea3 ra sao m\u00e0 thuy\u1ebft ph\u1ee5c kh\u00e1ch h\u00e0ng m\u1edbi.`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        300,
+        980
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Case Study",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED_ID",
+          "name": "Product email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Email: {{ $('Set Email').item.json.email }}\n\nFeedback from human: {{ $json.data.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert email writer for The AI Growth (TAG). Your job is to take an incoming email draft and revise it based on the feedback the human submitted.\n\n## Rules\n- All output must be in Vietnamese.\n- Maintain a professional but friendly tone.\n- Keep the emails concise and to the point.\n- Sign off emails as \"Vincent \u0110\u1ed7, The AI Growth\"\n- Ensure any suggested meeting times remain between 8:00 AM and 6:00 PM Vietnam time.\n- Here is the current date/time: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1480,
+        680
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Review  Agent"
+    },
+    {
+      "parameters": {
+        "content": "# Human In The Loop Sales Team\n## T\u1ef1 \u0111\u1ed9ng ki\u1ec3m tra l\u1ecbch v\u00e0 \u0111\u1ec1 xu\u1ea5t l\u1ecbch h\u1ecdp tr\u01b0\u1edbc khi g\u1eedi email\n\n- Workflow n\u00e0y k\u1ebft n\u1ed1i v\u1edbi Google Sheets \u0111\u1ec3 theo d\u00f5i lead\n- Ki\u1ec3m tra l\u1ecbch Google Calendar \u0111\u1ec3 \u0111\u1ec1 xu\u1ea5t th\u1eddi gian h\u1ecdp th\u00edch h\u1ee3p (8h-18h)\n- Giao ti\u1ebfp b\u1eb1ng ti\u1ebfng Vi\u1ec7t v\u1edbi kh\u00e1ch h\u00e0ng\n- Ki\u1ec3m duy\u1ec7t email tr\u01b0\u1edbc khi g\u1eedi \u0111i",
+        "height": 260,
+        "width": 680,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -300,
+        220
+      ],
+      "typeVersion": 1,
+      "id": "REDACTED_API_KEY",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Vincent Do | AI & Automation | The AI Growth\n",
+        "height": 80,
+        "width": 560,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        560,
+        320
+      ],
+      "id": "REDACTED_API_KEY",
+      "name": "Sticky Note9"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Check Calendar Availability": {
+      "ai_tool": [
+        [
+          {
+            "node": "Sales Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Sales Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          },
+          {
+            "node": "Review  Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sales Agent": {
+      "main": [
+        [
+          {
+            "node": "Set Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Check Feedback",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Email": {
+      "main": [
+        [
+          {
+            "node": "Get Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Feedback": {
+      "main": [
+        [
+          {
+            "node": "Check Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Feedback": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Review  Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "Update Lead Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Sales Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Sales Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Review  Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Sales Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Case Study": {
+      "ai_tool": [
+        [
+          {
+            "node": "Sales Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review  Agent": {
+      "main": [
+        [
+          {
+            "node": "Set Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "REDACTED_API_KEY",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REDACTED_API_KEY"
+  },
+  "id": "XpTXkw0ATqn2FveB",
+  "tags": [
+    {
+      "createdAt": "2025-03-29T01:49:59.429Z",
+      "updatedAt": "2025-03-29T01:49:59.429Z",
+      "id": "9ZuFaoAuQ7IXvD8W",
+      "name": "Calendar"
+    },
+    {
+      "createdAt": "2025-03-29T01:49:59.478Z",
+      "updatedAt": "2025-03-29T01:49:59.478Z",
+      "id": "HZMVcNZUlRxfCCKv",
+      "name": "Vietnamese"
+    },
+    {
+      "createdAt": "2025-03-29T01:49:59.455Z",
+      "updatedAt": "2025-03-29T01:49:59.455Z",
+      "id": "di9zphBNgumr1GxR",
+      "name": "Sales"
+    }
+  ]
+}

@@ -1,0 +1,2426 @@
+{
+  "name": "Smart AI Blog Writing System for Gumroad Download 041225",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Good Opportunity for Human in the loop\nCreate 5 titles and have the human pick one.",
+        "width": 420,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        340
+      ],
+      "id": "ebd65983-b0a5-4d8c-a533-904bf0c8dc6e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "9c054bb1-4446-4502-be98-ffd3c8ca1f2d",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1500,
+        820
+      ],
+      "id": "8b99236c-979e-47ad-a817-87f6d384e30a",
+      "name": "Webhook",
+      "webhookId": "9c054bb1-4446-4502-be98-ffd3c8ca1f2d"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Tavily SERP Results Tool",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "api_key",
+              "valueProvider": "fieldValue",
+              "value": "add your api key"
+            },
+            {
+              "name": "query",
+              "valueProvider": "fieldValue",
+              "value": "={{ $json.Keyword }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -620,
+        1040
+      ],
+      "id": "3dfdc4d1-d253-46a0-aad8-d41376b0089c",
+      "name": "Tavily search results"
+    },
+    {
+      "parameters": {
+        "model": "claude-3-5-sonnet-20241022",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        -840,
+        1040
+      ],
+      "id": "257dc9fc-c709-4a6b-a1e7-2cd5e9900eb5",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "AmVg6wA6iM3CA0gW",
+          "name": "Anthropic account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appuvbLPrnVBj88Eb",
+          "mode": "list",
+          "cachedResultName": "WebXco D4SEO KW Research New 011925",
+          "cachedResultUrl": "https://airtable.com/appuvbLPrnVBj88Eb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVTpv8JG5lZRiF2",
+          "mode": "list",
+          "cachedResultName": "Article Writer",
+          "cachedResultUrl": "https://airtable.com/appuvbLPrnVBj88Eb/tblVTpv8JG5lZRiF2"
+        },
+        "id": "={{ $json.query.recordID }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1280,
+        820
+      ],
+      "id": "313e4aa3-8166-431a-b32c-badb53c2e9b9",
+      "name": "Airtable Get Article Data",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dhIOrpq521jQpgzd",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3cc01dbf-7718-49ae-a463-c0e848a78cc6",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "7dbd7d60-2454-47ee-b02a-3ffddd588009",
+              "name": "Title",
+              "value": "={{ $json.Title }}",
+              "type": "string"
+            },
+            {
+              "id": "bf205dfc-ce10-40fe-b868-0bebd4de3d33",
+              "name": "Description",
+              "value": "={{ $json.Description }}",
+              "type": "string"
+            },
+            {
+              "id": "ccce37af-f230-4d5d-bf74-9e69d965be08",
+              "name": "Keyword",
+              "value": "={{ $json.Keyword }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1060,
+        820
+      ],
+      "id": "0e677926-b650-4333-b4fb-7a4a751472ed",
+      "name": "Set Airtable Fields for Agents"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7e444c83-3d2b-4bd3-a23b-6fb5ca68e670",
+              "name": "writing_style",
+              "value": "={{ $json.output.parseJson().writing_style }}",
+              "type": "string"
+            },
+            {
+              "id": "e16b5d65-587d-49d8-af5d-4ff1930633a8",
+              "name": "writing_tone",
+              "value": "={{ $json.output.parseJson().writing_tone }}",
+              "type": "string"
+            },
+            {
+              "id": "ab756373-0186-454a-8e98-d5a5f96cba87",
+              "name": "search_intent",
+              "value": "={{ $json.output.parseJson().search_intent }}",
+              "type": "string"
+            },
+            {
+              "id": "a14b7657-038a-4b08-911d-314336261a0c",
+              "name": "hidden_insight",
+              "value": "={{ $json.output.parseJson().hidden_insight }}",
+              "type": "string"
+            },
+            {
+              "id": "19ef4221-5a5d-4321-8a07-4e04f5dcaf44",
+              "name": "target_audience",
+              "value": "={{ $json.output.parseJson().target_audience }}",
+              "type": "string"
+            },
+            {
+              "id": "0ab17e84-4a2e-4df3-b0a3-91e9ce26cb72",
+              "name": "article_goal",
+              "value": "={{ $json.output.parseJson().goal_of_article }}",
+              "type": "string"
+            },
+            {
+              "id": "84e7f6a4-48b2-43b2-92cc-7e0337311661",
+              "name": "semantic_analysis",
+              "value": "={{ $json.output.parseJson().semantic_analysis }}",
+              "type": "string"
+            },
+            {
+              "id": "5e943a46-bb03-438d-b6da-2a6ec414f5af",
+              "name": "keywords",
+              "value": "={{ $json.output.parseJson().keywords }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -440,
+        820
+      ],
+      "id": "6ae11d74-0b9d-492d-bb40-2be2d6b806db",
+      "name": "Set KWs and Insights fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Revise the blog post title. Consider:\nPrimary Keyword: {{ $('Set Airtable Fields for Agents').item.json.Keyword }}\nWorking title: {{ $('Set Airtable Fields for Agents').item.json.Title }}\nSearch intent: {{ $('Set KWs and Insights fields').item.json.search_intent }}\nSemantic analysis: {{ $('Set KWs and Insights fields').item.json.semantic_analysis }}\nSecondary keywords: {{ $('Set KWs and Insights fields').item.json.keywords }}\nWriting style: {{ $('Set KWs and Insights fields').item.json.writing_style }}\nWriting tone: {{ $('Set KWs and Insights fields').item.json.writing_tone }}\nArticle goal: {{ $('Set KWs and Insights fields').item.json.article_goal }}\n\n\nOutput only JSON\nIMPORTANT: Do not add extra spaces, extra characters or include any additional text.\n",
+        "options": {
+          "systemMessage": "You are an expert in crafting highly engaging, SEO-optimized article titles that drive clicks and rank well in search engines. \n\nYour goal is to refine the **initial working title** into a **clear, compelling, and search-friendly title** that aligns with:\n- **Primary and Secondary Keywords** → Ensure relevance for search engines.\n- **Search Intent** → Match the intent behind the keyword (informational, transactional, navigational, or commercial).\n- **Common Subtopics & Related Questions** → Reflect what users want to learn.\n- **Writing Style & Tone** → Ensure consistency with the article's voice.\n- **Click-Worthiness** → Make the title engaging and appealing for readers.\n\n### **Your Task:**\n1. **Analyze the given input data**, including the working title, primary keyword, and supporting data.\n2. **Refine the title** to be more **SEO-friendly, engaging, and aligned with search intent**.\n3. **Incorporate relevant keywords naturally**, without keyword stuffing.\n4. **Ensure clarity and readability**—avoid overly complex or vague titles.\n5. **Return only the final refined title as a plain text string.**\n\n---\n### **Title Guidelines:**\n- Keep it **between 50-60 characters** (ideal for SEO).\n- Use **power words** or numbers when appropriate (e.g., \"10 Proven Ways,\" \"Ultimate Guide\").\n- Avoid unnecessary words or fluff.\n- Ensure it **reads naturally** and **appeals to human curiosity**.\n\n---\n### **Example Inputs & Outputs:**\n\n#### **Example 1**\n**Working Title:** \"Understanding AI Automation for Businesses\"  \n**Primary Keyword:** \"AI automation for small businesses\"  \n**Search Intent:** Informational  \n**Refined Title Output:** **AI Automation for Small Businesses: How to Save Time & Boost Revenue**\n\n---\n#### **Example 2**\n**Working Title:** \"The Best Winter Gear for Cyclists\"  \n**Primary Keyword:** \"best winter gear for cyclists\"  \n**Search Intent:** Commercial  \n**Refined Title Output:** **Best Winter Cycling Gear: Stay Warm & Ride Safely in Cold Weather**\n\n---\n### **Output Format:**\nReturn the refined title in standard JSON. Do not include triple ''' or extra line breaks or spaces.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        60,
+        820
+      ],
+      "id": "836f4803-ea29-4974-bcd9-ecc8b4095236",
+      "name": "Refine the Title"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eafbe44d-f811-4660-9f89-0ebe61febdcc",
+              "name": "key_takeaways",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        820
+      ],
+      "id": "2ea7ff3b-a4ac-4e6e-9aef-424e7b948bb0",
+      "name": "Set Key Takeaways"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create Key Takeaways using:\n\n- **Title**: {{ $('Sets New Title Field').item.json.new_title }}\nPrimary Keyword: {{ $('Set Airtable Fields for Agents').item.json.Keyword }}\nTitle: {{ $('Set Airtable Fields for Agents').item.json.Title }}\nHidden Insight: {{ $json.fields['Hidden Insight'] }}\nSearch intent: {{ $('Set KWs and Insights fields').item.json.search_intent }}\nSemantic analysis: {{ $('Set KWs and Insights fields').item.json.semantic_analysis }}\nSecondary keywords: {{ $('Set KWs and Insights fields').item.json.keywords }}\nWriting style: {{ $('Set KWs and Insights fields').item.json.writing_style }}\nWriting tone: {{ $('Set KWs and Insights fields').item.json.writing_tone }}\nArticle goal: {{ $('Set KWs and Insights fields').item.json.article_goal }}\n\n\n\n",
+        "options": {
+          "systemMessage": "You are an expert content strategist specializing in crafting structured, insightful, and engaging **key takeaways** for articles. Your goal is to summarize the most important information while ensuring the takeaways are **concise, impactful, and easy to digest**.\n\n### **Your Task:**\n1. **Generate an introductory paragraph** that sets up the key takeaways and provides context for the reader.\n2. **Extract the most valuable takeaways** from the provided data:\n   - **Key concepts** covered in the article.\n   - **Relevant semantic subtopics** that align with the topic.\n   - **Hidden insights** (if applicable) that add unique value.\n3. **Format each takeaway in Markdown** as:\n[Action-driven bolded heading]: Concise explanation inline.\n- The **bolded heading** should be **engaging and impactful** (not generic).  \n- The **explanation should be concise and inline with the heading**.  \n- **No section headers, extra spaces, or dividers**.  \n4. **Ensure takeaways provide substantial knowledge** but are not overwhelming:\n- If the **hidden insight** adds value, incorporate it as a **dedicated takeaway** or **enhance an existing one**.\n- If the **hidden insight does not fit naturally**, exclude it.\n5. **Write an outro paragraph** that smoothly leads into the main body of the article.\n\n### **Formatting & Style Guidelines**\n✅ **Use Markdown for formatting**  \n✅ **Bullet points with inline bolded headings**  \n✅ **No extra section headers, dividers, or spaces**  \n✅ **Use engaging, action-driven takeaway headers** (e.g., \"Beyond fixed rules: AI adapts in real time\" instead of \"A paradigm shift from traditional automation\")  \n✅ **Ensure takeaways are concise yet informative**  \n\n### **Example Inputs & Outputs**\n---\n#### **Input Example**\n**Article Title:** `\"AI Automation for Small Businesses: How to Save Time & Boost Revenue\"`  \n**Primary Keyword:** `\"AI automation for small businesses\"`  \n**Hidden Insight:** `\"Most AI automation content focuses on efficiency, but a major benefit is reducing decision fatigue.\"`  \n**Common Subtopics:** `[\"What is AI automation?\", \"How small businesses can use AI\", \"Best AI tools for automation\"]`\n\n---\n#### **Output Example**\n```markdown\nAI automation is transforming small businesses by optimizing workflows, improving efficiency, and enhancing decision-making. Below are the key takeaways highlighting its potential.\n\n- **AI enables true autonomy through adaptive learning:** Unlike traditional systems, AI learns and evolves over time, reducing human supervision by refining its decision-making processes independently.  \n- **Beyond fixed rules: AI adapts in real time:** Traditional AI follows static rules, whereas AI-driven automation dynamically adjusts to changing environments, solving complex, unsupervised tasks.  \n- **AI agents optimize complex workflows effortlessly:** These intelligent systems manage intricate processes with greater efficiency, improving operations like customer support, supply chain management, and fraud detection.  \n- **Seamless integration into business operations:** AI integrates with existing systems like CRMs and ERP platforms, allowing businesses to modernize workflows without overhauling infrastructure.  \n- **Scalability without added complexity:** AI systems manage process complexity and expand capabilities, enabling businesses to scale efficiently without requiring proportional increases in resources.  \n- **AI minimizes decision fatigue, maximizing human focus:** By handling routine and complex decisions autonomously, AI reduces cognitive load on human teams, allowing them to focus on high-value tasks.  \n- **AI ensures resilience through continuous optimization:** Through machine learning, AI refines its models over time, ensuring consistent performance even in dynamic and unpredictable environments.  \n- **AI innovation transforming industries:** Sectors like manufacturing, healthcare, and finance leverage AI for predictive maintenance, personalized care, and risk assessment.  \n\nAI-driven automation offers a new frontier for workflow innovation by replacing static rule-based automation with intelligent, adaptive systems. In the sections ahead, we’ll explore its core components, industry applications, and strategies for seamless business integration.\n\nOutput Format:\nReturn the final takeaways in Markdown format, structured as:\n\nIntro paragraph\nBullet points with inline bolded headings and concise explanations\nOutro paragraph\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        860,
+        820
+      ],
+      "id": "561d232e-b25b-46e0-90a8-064dcedd87f7",
+      "name": "Key Takeaways AI Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fe43bcff-a163-4cac-aca8-cf97241b834b",
+              "name": "introduction",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1820,
+        820
+      ],
+      "id": "d36c1311-fdf5-461c-8c09-e32fe16e29a8",
+      "name": "Set Introduction Field"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a detailed outline for a blog post with the following details:\n\n- **Title**: {{ $('Sets New Title Field').item.json.new_title }}\n- **Key Takeaways**: {{ $('Set Key Takeaways').item.json.key_takeaways }}\n- **Introduction**: {{ $json.introduction }}\nPrimary Keyword: {{ $('Set Airtable Fields for Agents').item.json.Keyword }}\nTitle: {{ $('Set Airtable Fields for Agents').item.json.Title }}\nSearch intent: {{ $('Set KWs and Insights fields').item.json.search_intent }}\nSemantic analysis: {{ $('Set KWs and Insights fields').item.json.semantic_analysis }}\nSecondary keywords: {{ $('Set KWs and Insights fields').item.json.keywords }}\nWriting style: {{ $('Set KWs and Insights fields').item.json.writing_style }}\nWriting tone: {{ $('Set KWs and Insights fields').item.json.writing_tone }}\nArticle goal: {{ $('Set KWs and Insights fields').item.json.article_goal }}\n\nFormatting Instructions:\n\nOutput must be in Markdown format and structured correctly.\nDo NOT add any commentary, explanations, or extra text about what the agent did.\nDo NOT include dividers (---), line breaks (\\n), or unnecessary whitespace.\nOnly return the required Markdown content—nothing more.\n",
+        "options": {
+          "systemMessage": "You are an expert content strategist specializing in structuring articles for clarity, engagement, and SEO effectiveness. Your goal is to generate a **detailed, logical outline** that ensures a smooth reading experience and maximizes content relevance.\n\n### **Your Task:**\n1. **Analyze the provided inputs**, including the article title, primary keyword, key takeaways, semantic analysis, secondary keywords, and hidden insights (if applicable).\n2. **Generate an optimized outline** by:\n   - Structuring the article with a **clear hierarchy of sections**.\n   - Aligning with **SEO best practices** and **user intent**.\n   - Ensuring **logical progression** from start to finish.\n   - Incorporating **hidden insights** if they enhance the content.\n   - **Using secondary keywords and semantic elements (common subtopics & related questions) naturally in headings/subheadings** for SEO.\n3. **Ensure the outline includes:**\n   - **Main sections covering key aspects of the topic**\n   - **Logical sub-sections** that break down complex ideas\n4. **The article title, introduction, and conclusion should be used as references but NOT included in the outline.**\n5. **Format the output in Markdown**:\n   - Use `##` for main sections.\n   - Use `###` for subsections.\n   - Avoid unnecessary headings—keep sections focused and purposeful.\n\n### **Formatting & Style Guidelines**\n✅ **Use Markdown formatting.**  \n✅ **Ensure a logical, structured progression from start to finish.**  \n✅ **Incorporate hidden insights if they enhance the outline.**  \n✅ **Use secondary keywords and semantic elements naturally in headings.**  \n✅ **Exclude the article title, introduction, and conclusion from the final outline.**  \n✅ **Use concise but descriptive section explanations.**  \n\n### **Example Inputs & Outputs**\n---\n#### **Input Example**\n**Article Title:** `\"AI Automation for Small Businesses: How to Save Time & Boost Revenue\"`  \n**Primary Keyword:** `\"AI automation for small businesses\"`  \n**Secondary Keywords:** `[\"AI workflow automation\", \"small business AI tools\", \"automating business operations\"]`  \n**Key Takeaways:** `[\"AI automation reduces decision fatigue.\", \"It improves operational efficiency and workflow management.\", \"Small businesses can implement AI affordably.\"]`  \n**Hidden Insight:** `\"Most discussions on AI automation focus on efficiency, but its real impact is on business adaptability—helping companies pivot faster in changing markets.\"`  \n**Semantic Analysis:**  \n- **Common Subtopics:** `[\"What is AI automation?\", \"How small businesses can use AI\", \"Best AI tools for automation\"]`  \n- **Related Questions:** `[\"What are the best AI automation tools for small businesses?\", \"How does AI improve small business efficiency?\"]`  \n\n---\n#### **Output Example** markdown\n## What is AI Automation?  \n### Understanding AI-powered business automation *(Secondary Keyword Applied)*  \n- Definition of AI automation and its key components.  \n- How AI-powered automation differs from traditional workflow automation.  \n\n### Why small businesses need AI workflow automation *(Semantic & SEO Applied)*  \n- How AI helps small businesses optimize time and improve operations.  \n- Examples of industries benefiting from AI-driven efficiency.  \n\n## Key Benefits of AI in Small Business Operations  \n### Reducing decision fatigue in business owners *(Key Takeaway Applied)*  \n- How AI automation minimizes repetitive decision-making.  \n- Freeing up business owners to focus on strategy and innovation.  \n\n### Boosting efficiency with small business AI tools *(Secondary Keyword Applied)*  \n- The role of AI in automating workflows, customer interactions, and task management.  \n- How automation tools improve productivity.  \n\n### Improving business adaptability with AI *(Hidden Insight Applied)*  \n- How AI enables businesses to pivot quickly in response to market changes.  \n- Case studies on AI-driven adaptability.  \n\n## Implementing AI for Small Business Growth  \n### Choosing the best AI automation tools *(Semantic & SEO Applied)*  \n- Factors to consider when selecting AI-powered solutions.  \n- Overview of top AI tools for small businesses.  \n\n### Automating business operations without disrupting workflows *(Secondary Keyword Applied)*  \n- Best practices for integrating AI seamlessly into existing processes.  \n- How to ensure a smooth transition without disrupting operations.  \n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1480,
+        1420
+      ],
+      "id": "cc241cb4-5fb1-4e9a-beae-d5fa3e78b376",
+      "name": "Outline Agent"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-2024-11-20",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        -1520,
+        1600
+      ],
+      "id": "d6dcc0ac-550c-4850-b527-cd768e18f1f6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "N20CD6FcL79RauXg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5b6a40be-b640-4caf-a531-50a45df07be8",
+              "name": "outline",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1120,
+        1420
+      ],
+      "id": "a28cd8c7-db8e-48a1-bdbf-87c12ca8026b",
+      "name": "Set Outline Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "You are an AI writing agent responsible for generating only the main body of an article based on a structured prompt. Your writing must be well-formatted in Markdown, insightful, logically structured, and engaging for the target audience.\n\nGuidelines\n✅ Follow the provided prompt exactly. Ensure adherence to the user-provided outline and structure.\n✅ Format the article in Markdown using:\n\nH2 (##) for main sections\nH3 (###) for subsections\nBullet points (-), numbered lists (1. 2. 3.), and bold formatting (**bold text**) where necessary.\n✅ Ensure smooth transitions between sections.\nEnd sections with a transition sentence that leads into the next topic.\nAvoid abrupt shifts—maintain logical flow.\n✅ Enhance depth with real-world case studies.\nProvide measurable outcomes (e.g., \"A 20% efficiency gain led to $5M in annual savings\").\nDetail implementation challenges, solutions, and business results.\n✅ Balance readability with a mix of paragraphs & lists.\nUse bullet points sparingly—convert them into mini-paragraphs where needed.\nLists should highlight key takeaways, not dominate sections.\n✅ Ensure keyword optimization.\nNaturally integrate primary and secondary keywords within the article.\nAvoid overuse—prioritize readability over keyword stuffing.\n✅ Fact-driven & logically structured.\nAvoid redundant explanations—each section should introduce new insights.\nEnsure distinctions between related topics (e.g., “Managing Complexity” should not repeat “Adaptive Learning”).\n✅ No introduction or conclusion.\nFocus only on the main body sections based on the structured prompt.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -480,
+        1420
+      ],
+      "id": "53b747ef-a4c4-488a-ac98-a25fa8b8c4a0",
+      "name": "Content Writer Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write an engaging introduction for a blog post with the following details:\n\n- **Title**: {{ $('Sets New Title Field').item.json.new_title }}\n- **Key Takeaways**: {{ $json.key_takeaways }} \nPrimary Keyword: {{ $('Set Airtable Fields for Agents').item.json.Keyword }}\nTitle: {{ $('Set Airtable Fields for Agents').item.json.Title }}\nSearch intent: {{ $('Set KWs and Insights fields').item.json.search_intent }}\nSemantic analysis: {{ $('Set KWs and Insights fields').item.json.semantic_analysis }}\nSecondary keywords: {{ $('Set KWs and Insights fields').item.json.keywords }}\nWriting style: {{ $('Set KWs and Insights fields').item.json.writing_style }}\nWriting tone: {{ $('Set KWs and Insights fields').item.json.writing_tone }}\nArticle goal: {{ $('Set KWs and Insights fields').item.json.article_goal }}\n\n\nThe introduction should:\n- Hook the reader with a surprising fact, question, or statement.\n- Explain why the topic matters and how it benefits the reader.\n- Transition naturally into the body of the article.\n- Use keywords naturally but sparingly.\n\nExample Introduction:\nImagine having an extra pair of hands to handle your business's repetitive tasks while you focus on the big picture—growing your company. It might sound like a luxury, but AI agents are making it a reality for small businesses everywhere.\n\nSmall business owners often juggle countless responsibilities, from managing operations to engaging customers. AI agents provide a way to streamline routine tasks, improve productivity, and even elevate customer experiences, all while saving time and resources.\n\nThis article dives into how AI agents can transform your business, helping you scale operations, save time, and stay competitive. Whether you’re seeking efficiency or growth, you’ll discover how this powerful technology can work for you.\n\nFormatting Instructions:\n\nOutput must be in Markdown format and structured correctly.\nDo NOT add any commentary, explanations, or extra text about what the agent did.\nDo NOT include dividers (---), line breaks (\\n), or unnecessary whitespace.\nOnly return the required Markdown content—nothing more.",
+        "options": {
+          "systemMessage": "You are an expert content writer specializing in crafting compelling introductions for articles. Your goal is to **hook the reader, set expectations, and establish relevance** while maintaining clarity and engagement.\n\n### **Your Task:**\n1. **Analyze the provided inputs**, including the article title, primary keyword, key takeaways, and target audience.\n2. **Write a compelling introduction** that:\n   - **Opens with a direct, concise statement** that immediately presents the topic.\n   - **Avoids generic phrases** like *\"In today’s fast-paced world...\"* or *\"Businesses are constantly evolving...\"*.\n   - **Clearly states the article’s purpose** and what the reader will learn.\n   - **Flows naturally into the main body** without being overly long.\n3. **Match the article’s writing style and tone** to ensure consistency.\n4. **Incorporate the primary keyword naturally** for SEO without forcing it.\n5. **Ensure readability and engagement**:\n   - Keep the introduction concise (2-3 short paragraphs).\n   - Avoid fluff—make every sentence valuable.\n   - **Use streamlined transition sentences** (e.g., *\"Let’s explore how...\"* instead of *\"In this article, we will explore...\"*).\n\n### **Formatting & Style Guidelines**\n✅ **Use Markdown formatting.**  \n✅ **Start with a direct, engaging opening sentence.**  \n✅ **Avoid generic phrases or overused business clichés.**  \n✅ **Keep it concise yet informative (2-3 short paragraphs).**  \n✅ **Ensure a smooth transition into the main body.**  \n✅ **Maintain a natural, compelling flow that matches the writing tone & style.**  \n\n### **Example Inputs & Outputs**\n---\n#### **Input Example**\n**Article Title:** `\"AI Automation for Small Businesses: How to Save Time & Boost Revenue\"`  \n**Primary Keyword:** `\"AI automation for small businesses\"`  \n**Key Takeaways:** `[\"AI automation reduces decision fatigue.\", \"It improves operational efficiency and workflow management.\", \"Small businesses can implement AI affordably.\"]`  \n**Writing Style:** `\"Engaging and storytelling\"`  \n**Writing Tone:** `\"Friendly and conversational\"`  \n\n---\n#### **Output Example** markdown\nTraditional automation is falling behind in today’s fast-moving business world. Enter agentic AI automation—a transformative technology that redefines efficiency and decision-making by enabling systems to think, learn, and act autonomously. Unlike static rule-based systems, these intelligent automation solutions continuously adapt and optimize without constant human intervention.  \n\nFor businesses, this means more than just convenience; it’s the promise of streamlined operations, scalable solutions, and reduced cognitive load for teams. From managing intricate workflows to integrating seamlessly with existing tools, agentic AI bridges the gap between innovation and practicality.  \n\nLet’s explore how agentic AI is revolutionizing industries, boosting productivity, and setting a new benchmark for intelligent automation.  \n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1480,
+        820
+      ],
+      "id": "0e637526-8ead-41ff-a174-3600a4c90572",
+      "name": "Introduction Agent"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-2024-11-20",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        100,
+        1600
+      ],
+      "id": "c75c2c4b-1dc7-4059-9231-b753864cd25e",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "N20CD6FcL79RauXg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Assemble the article from the following components into a single cohesive output formatted in Markdown:\n\n- **Key Takeaways**: {{ $('Set Key Takeaways').item.json.key_takeaways }}\n- **Introduction**: {{ $('Introduction Agent').item.json.output }}\n- **Main Content**: {{ $('Edit Fields1').item.json['main body'] }}\n- **Conclusion**: {{ $json.conclusion }}\n\n### Output Format:\n- Use `##` for main section headings like Key Takeaways, Introduction, and Conclusion.\n- Use `##` for primary headings (H2s) in the main content.\n- Use `###` for subheadings (H3s) under those primary headings.\n- Format lists as bulleted lists using `-`.\n- Write paragraphs in plain text, separated by line breaks.\n\nExample Output:\n\n## Key Takeaways\n- AI automation reduces costs and improves efficiency for SMBs.\n- Examples show how AI streamlines workflows and enhances customer service.\n- Step-by-step advice helps SMBs adopt AI effectively.\n\n## Introduction\nAI automation is a transformative tool for small businesses, offering improved efficiency, cost reduction, and scalability.\n\n## How Intelligent Process Automation Works\nIntelligent process automation (IPA) isn’t just about speed—it’s about working smarter.\n\n### Reducing Manual Work and Process Errors with Automation\nAutomating manual tasks like payroll processing slashes error rates by up to 90%.\n\n### Boosting Process Efficiency Across Business Functions\nFrom HR to sales, IPA ensures consistency and efficiency.\n\n## Conclusion\nAI automation is a pathway to transforming how small businesses operate and grow. By streamlining workflows, enhancing customer experiences, and enabling smarter decision-making, AI empowers businesses to achieve more with less effort.\n\n\n",
+        "options": {
+          "systemMessage": "You are an expert content assembler. Your task is to take separate elements of an article—key takeaways, introduction, main content (including subheadings), and conclusion—and assemble them into a single cohesive output. The final output should be formatted in Markdown for a CMS blog post field.\n\nGuidelines:\n\n1. Use `##` for section headings (Key Takeaways, Introduction, and Conclusion).\n2. Use `##` for primary headings (H2s) from the main content.\n3. Use `###` for subheadings (H3s) under those primary headings.\n4. Write paragraphs as plain text, separated by line breaks.\n5. Ensure the output is clean and properly formatted in Markdown without unnecessary placeholders like \"Main Content.\"\n6. Do not include triple backticks (''') or any additional spaces or text outside of the conclusion itself.\nEnsure clean and structured formatting without unnecessary dividers or extra line breaks.\n\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        740,
+        1420
+      ],
+      "id": "804f0afa-d416-4a34-8a25-d75a3607f026",
+      "name": "Article Assembly Agent"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-2024-11-20",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        700,
+        1600
+      ],
+      "id": "7e3eaee2-e719-499f-b3a5-12ae01f779de",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "N20CD6FcL79RauXg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Sets New Title Field').item.json.new_title }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "17umi6Ludb1XqqtxqqZn9bRJxOCkdwz8z",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1540,
+        1880
+      ],
+      "id": "d2c9c441-f64f-44ae-af2a-eed0dabb3c00",
+      "name": "Create Article Folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "xoxZNsYgI8cpsCEF",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.documentId }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "writer",
+            "type": "anyone"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        340,
+        1880
+      ],
+      "id": "73224834-54e0-4130-a23f-95d2f5cde02e",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "xoxZNsYgI8cpsCEF",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b5d2b743-090c-4432-a7e7-c25b2e4bd76f",
+              "name": "url",
+              "value": "=https://docs.google.com/document/d/{{ $('Add Final Article').item.json.documentId }}/edit",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        540,
+        1880
+      ],
+      "id": "899037fd-95ee-418c-926c-e7e4ff204f40",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appuvbLPrnVBj88Eb",
+          "mode": "list",
+          "cachedResultName": "WebXco D4SEO KW Research New 011925",
+          "cachedResultUrl": "https://airtable.com/appuvbLPrnVBj88Eb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVTpv8JG5lZRiF2",
+          "mode": "list",
+          "cachedResultName": "Article Writer",
+          "cachedResultUrl": "https://airtable.com/appuvbLPrnVBj88Eb/tblVTpv8JG5lZRiF2"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Airtable Get Article Data').item.json.id }}",
+            "Google Doc URL": "={{ $json.url }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Create Article",
+              "displayName": "Create Article",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Write Article",
+                  "value": "Write Article"
+                },
+                {
+                  "name": "Keep",
+                  "value": "Keep"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Primary Keyword",
+              "displayName": "Primary Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Google Doc URL",
+              "displayName": "Google Doc URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Writing Style",
+              "displayName": "Writing Style",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Tone",
+              "displayName": "Tone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Target Audience",
+              "displayName": "Target Audience",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Goal of Article",
+              "displayName": "Goal of Article",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Title Options",
+              "displayName": "Title Options",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Original Title",
+                  "value": "Original Title"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        760,
+        1880
+      ],
+      "id": "c1ff5c27-5af3-4180-a47d-ed0293896e12",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dhIOrpq521jQpgzd",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7c282be5-3020-44b9-bf77-61639e3dd763",
+              "name": "main body",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        1420
+      ],
+      "id": "39994a55-8dfd-448a-a80a-cc56ea5fb8fc",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "content": "## Get Working Title, Description, Keywords from Airtable Article Writer\n\nGet's this data for use in the first agent that creates the writing style, tone, target audience/persona and goal.\n\nTriggered by status field in the Article Writer table. Create Article = Write Article",
+        "height": 480,
+        "width": 660
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1540,
+        580
+      ],
+      "id": "7822c3ae-b0cc-48c2-8167-75f199aaf430",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Dynamic Writing Guidelines and Hidden Insights\nBased on real-world search results and competitor analysis, ensuring that your AI-generated articles align with user intent better than static SEO methods.\n\nUses working title, description (both from keyword categorization), and top 5 search results to generate writing style and tone, goal of the article, hidden insights from AI analysis, semantic insights and keywords. All for use throughout the workflow. ",
+        "height": 600,
+        "width": 780
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -860,
+        580
+      ],
+      "id": "e8c41a3a-12c1-49d8-b164-7d3819b47dce",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Use the given:\nTitle: {{ $json.Title }}\nDescription: {{ $json.Description }}\nAnd the Tavily SERP Results tool to perform research for the primary keyword, {{ $('Airtable Get Article Data').item.json.Keyword }}. \n\nFormat your response as a JSON object:\nIMPORTANT: Do not include extra text, introduction messages, line breaks \\n, or any additional characters.\nJSON Output\n{\n  \"search_intent\": \"<string: informational | transactional | navigational | commercial>\",\n  \"writing_style\": \"<string: concise and professional | engaging and storytelling | data-driven and technical | etc.>\",\n  \"writing_tone\": \"<string: friendly and conversational | formal and authoritative | persuasive and compelling | etc.>\",\n  \"hidden_insight\": \"<string: unique insight if found, otherwise 'No significant insights detected beyond existing content trends.'>\",\n  \"target_audience\": \"<string: who this article is for, e.g., small business owners, tech enthusiasts, marketers, etc.>\",\n  \"goal_of_article\": \"<string: main objective of the article based on search results and insights>\",\n  \"semantic_analysis\": {\n    \"common_subtopics\": [\n      \"<string: subtopic 1>\",\n      \"<string: subtopic 2>\",\n      \"<string: subtopic 3>\"\n    ],\n    \"related_questions\": [\n      \"<string: question 1>\",\n      \"<string: question 2>\",\n      \"<string: question 3>\"\n    ]\n  },\n  \"keywords\": {\n    \"primary_keyword\": \"<string: main focus keyword>\",\n    \"secondary_keywords\": [\n      \"<string: related keyword 1>\",\n      \"<string: related keyword 2>\",\n      \"<string: related keyword 3>\"\n    ],\n    \"semantic_keywords\": [\n      \"<string: semantic keyword 1>\",\n      \"<string: semantic keyword 2>\",\n      \"<string: semantic keyword 3>\"\n    ],\n    \"long_tail_keywords\": [\n      \"<string: long-tail keyword 1>\",\n      \"<string: long-tail keyword 2>\",\n      \"<string: long-tail keyword 3>\"\n    ]\n  }\n}\n\n\nExample JSON Output with Hidden Insight\n{\n  \"search_intent\": \"informational\",\n  \"writing_style\": \"engaging and storytelling\",\n  \"writing_tone\": \"friendly and conversational\",\n  \"hidden_insight\": \"Most content focuses on efficiency and cost savings, but small business owners struggle with decision fatigue. AI automation is not just a time-saver—it helps reduce stress by eliminating repetitive decisions.\",\n  \"target_audience\": \"small business owners, solopreneurs, and startup founders\",\n  \"goal_of_article\": \"Educate small business owners on how AI automation reduces decision fatigue while increasing efficiency and revenue.\",\n  \"semantic_analysis\": {\n    \"common_subtopics\": [\n      \"What is AI automation?\",\n      \"How small businesses can use AI\",\n      \"Best AI tools for business automation\",\n      \"Cost vs. benefit analysis of AI automation\"\n    ],\n    \"related_questions\": [\n      \"How does AI reduce decision fatigue?\",\n      \"What’s the easiest way for small businesses to start using AI?\",\n      \"Is AI automation worth the cost for small businesses?\"\n    ]\n  },\n  \"keywords\": {\n    \"primary_keyword\": \"AI automation for small businesses\",\n    \"secondary_keywords\": [\n      \"AI-powered automation tools\",\n      \"best AI software for small businesses\",\n      \"workflow automation for entrepreneurs\"\n    ],\n    \"semantic_keywords\": [\n      \"business process automation\",\n      \"machine learning in small business\",\n      \"how AI helps efficiency\"\n    ],\n    \"long_tail_keywords\": [\n      \"how can AI help small businesses save time?\",\n      \"best AI automation tools for startups\",\n      \"AI vs manual workflow optimization\"\n    ]\n  }\n}\n\n\nExample JSON Output No Hidden Insight\n{\n  \"search_intent\": \"commercial\",\n  \"writing_style\": \"concise and professional\",\n  \"writing_tone\": \"informative and trustworthy\",\n  \"hidden_insight\": \"No significant insights detected beyond existing content trends.\",\n  \"target_audience\": \"cycling enthusiasts, winter sport athletes, and outdoor adventurers\",\n  \"goal_of_article\": \"Provide an in-depth comparison of the best winter cycling gear and help cyclists choose the right products based on weather conditions.\",\n  \"semantic_analysis\": {\n    \"common_subtopics\": [\n      \"What to look for in winter cycling gear\",\n      \"Top-rated winter cycling jackets and gloves\",\n      \"How to layer clothing for winter rides\",\n      \"Cycling safety tips for cold-weather conditions\"\n    ],\n    \"related_questions\": [\n      \"What is the warmest winter cycling jacket?\",\n      \"Are insulated cycling gloves worth it?\",\n      \"How do I stay warm on long winter bike rides?\"\n    ]\n  },\n  \"keywords\": {\n    \"primary_keyword\": \"best winter gear for cyclists\",\n    \"secondary_keywords\": [\n      \"winter cycling jackets\",\n      \"best gloves for cold weather cycling\",\n      \"waterproof cycling gear\"\n    ],\n    \"semantic_keywords\": [\n      \"insulated bike clothing\",\n      \"cold-weather cycling apparel\",\n      \"bike safety in winter\"\n    ],\n    \"long_tail_keywords\": [\n      \"how to choose winter cycling gloves?\",\n      \"best winter cycling gear for long-distance rides\",\n      \"how to keep hands warm while biking in winter\"\n    ]\n  }\n}\n\n",
+        "options": {
+          "systemMessage": "You are an advanced AI content strategist trained to analyze search results and generate precise writing guidelines for an SEO-optimized blog post. Your goal is to ensure that the article aligns with **search intent**, **semantic relevance**, and **audience expectations** while also uncovering **hidden insights** that may provide a unique angle.\n\n### **Your Task:**\nYou will be given:\n- A **working title**\n- An **article description**\n- A **primary keyword**\n- A **set of search results** (retrieved via the Tavily search results tool)\n\nYour job is to analyze the data and generate **optimized writing guidelines** with the following structured JSON output:\n\n### **1️⃣ Search Intent Detection**  \nDetermine whether the primary intent of the keyword is:  \n- **informational** (learning about a topic)  \n- **transactional** (considering a purchase or service)  \n- **navigational** (finding a specific brand/website)  \n- **commercial** (comparing options before making a decision)  \n\n### **2️⃣ Writing Style & Tone**  \n- Identify the best **writing style** based on search results (e.g., “concise and professional,” “engaging and storytelling,” “data-driven and technical,” etc.).  \n- Identify the **appropriate tone** (e.g., “friendly and conversational,” “formal and authoritative,” “persuasive and compelling,” etc.).  \n\n### **3️⃣ Hidden Insight Extraction**  \n- Analyze **patterns in competitor content** to identify **an insight that is not immediately obvious** but could provide a unique angle.  \n- If no meaningful insight is found, return `\"hidden_insight\": \"No significant insights detected beyond existing content trends.\"`  \n- If an insight is found, clearly explain it.  \n- **Do NOT modify writing style or tone based on the insight**—insights should be separate observations, not tone/style adjustments.  \n\n### **4️⃣ Semantic Analysis (Content Structuring)**  \n- Extract the **common subtopics** frequently covered in top-ranking pages.  \n- Identify **related questions** users ask.  \n\n### **5️⃣ Keyword Extraction**  \n- Categorize keywords based on **how they should be used** later in the workflow.  \n- Format them as follows:  \n  - **Primary Keyword** → The main topic focus.  \n  - **Secondary Keywords** → Variations of the primary keyword that should be used naturally in the content.  \n  - **Semantic Keywords** → Contextually related terms that improve topic relevance.  \n  - **Long-Tail Keywords** → Natural search queries and phrases that match user questions.  \n\n### **Format your response strictly in valid JSON.**\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -820,
+        820
+      ],
+      "id": "2c810545-6dcf-415b-ae6b-c602e00f9cfc",
+      "name": "SERPs, Writing, KWs, Insights"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appuvbLPrnVBj88Eb",
+          "mode": "list",
+          "cachedResultName": "WebXco D4SEO KW Research New 011925",
+          "cachedResultUrl": "https://airtable.com/appuvbLPrnVBj88Eb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVTpv8JG5lZRiF2",
+          "mode": "list",
+          "cachedResultName": "Article Writer",
+          "cachedResultUrl": "https://airtable.com/appuvbLPrnVBj88Eb/tblVTpv8JG5lZRiF2"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Writing Style": "={{ $json.writing_style }}",
+            "Tone": "={{ $json.writing_tone }}",
+            "Goal of Article": "={{ $json.article_goal }}",
+            "Target Audience": "={{ $json.target_audience }}",
+            "Search Intent": "={{ $json.search_intent }}",
+            "Hidden Insight": "={{ $json.hidden_insight }}",
+            "Semantic Analysis": "={{ $json.semantic_analysis }}",
+            "Keyword": "={{ $('Set Airtable Fields for Agents').item.json.Keyword }}",
+            "Keywords": "={{ $json.keywords }}"
+          },
+          "matchingColumns": [
+            "Keyword"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Final Title",
+              "displayName": "Final Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Create Article",
+              "displayName": "Create Article",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Write Article",
+                  "value": "Write Article"
+                },
+                {
+                  "name": "Keep",
+                  "value": "Keep"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Primary Keyword",
+              "displayName": "Primary Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Google Doc URL",
+              "displayName": "Google Doc URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Writing Style",
+              "displayName": "Writing Style",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Tone",
+              "displayName": "Tone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Target Audience",
+              "displayName": "Target Audience",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Goal of Article",
+              "displayName": "Goal of Article",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Hidden Insight",
+              "displayName": "Hidden Insight",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Semantic Analysis",
+              "displayName": "Semantic Analysis",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -220,
+        820
+      ],
+      "id": "35e972a3-e5d5-47f3-aaf9-47159e4fc7dc",
+      "name": "Update Article Writer table",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dhIOrpq521jQpgzd",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "438738d8-d610-47e3-9ddf-efcfb97d3701",
+              "name": "new_title",
+              "value": "={{ $json.output.parseJson().refined_title }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        420,
+        820
+      ],
+      "id": "cde4bc21-998a-4ff6-8313-cef0cb629c40",
+      "name": "Sets New Title Field"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appuvbLPrnVBj88Eb",
+          "mode": "list",
+          "cachedResultName": "WebXco D4SEO KW Research New 011925",
+          "cachedResultUrl": "https://airtable.com/appuvbLPrnVBj88Eb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVTpv8JG5lZRiF2",
+          "mode": "list",
+          "cachedResultName": "Article Writer",
+          "cachedResultUrl": "https://airtable.com/appuvbLPrnVBj88Eb/tblVTpv8JG5lZRiF2"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Writing Style": "={{ $json.writing_style }}",
+            "Tone": "={{ $json.writing_tone }}",
+            "Goal of Article": "={{ $json.article_goal }}",
+            "Target Audience": "={{ $json.target_audience }}",
+            "Search Intent": "={{ $json.search_intent }}",
+            "Hidden Insight": "={{ $json.hidden_insight }}",
+            "Semantic Analysis": "={{ $json.semantic_analysis }}",
+            "Keyword": "={{ $('Set Airtable Fields for Agents').item.json.Keyword }}",
+            "Keywords": "={{ $json.keywords }}",
+            "Final Title": "={{ $json.new_title }}"
+          },
+          "matchingColumns": [
+            "Keyword"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Final Title",
+              "displayName": "Final Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Create Article",
+              "displayName": "Create Article",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Write Article",
+                  "value": "Write Article"
+                },
+                {
+                  "name": "Keep",
+                  "value": "Keep"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Primary Keyword",
+              "displayName": "Primary Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Google Doc URL",
+              "displayName": "Google Doc URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Writing Style",
+              "displayName": "Writing Style",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Tone",
+              "displayName": "Tone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Target Audience",
+              "displayName": "Target Audience",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Goal of Article",
+              "displayName": "Goal of Article",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Search Intent",
+              "displayName": "Search Intent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Hidden Insight",
+              "displayName": "Hidden Insight",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Semantic Analysis",
+              "displayName": "Semantic Analysis",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        640,
+        820
+      ],
+      "id": "cbe37f57-cc51-453e-bcb9-6b9378a0375b",
+      "name": "Update Article Title",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dhIOrpq521jQpgzd",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Refine the Working Title - Set New Title in Airtable\nUses all the input and generated info to create an SEO optimized title.\n\nThe airtable record is updated.",
+        "height": 600,
+        "width": 800
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        580
+      ],
+      "id": "2ba42efe-d602-41d8-b84e-25065ab9ad59",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-2024-11-20",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        1020
+      ],
+      "id": "c787069b-a584-4e2f-9313-f3e7de29e251",
+      "name": "Open AI",
+      "credentials": {
+        "openAiApi": {
+          "id": "N20CD6FcL79RauXg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-2024-11-20",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        840,
+        1020
+      ],
+      "id": "5f133b49-0dd3-4878-b019-31825b361f26",
+      "name": "OpenAI Key Takeaways",
+      "credentials": {
+        "openAiApi": {
+          "id": "N20CD6FcL79RauXg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Create Key Takeaways with Intro, bullet points, and Outro\n\nBrings in hidden insights if applicable which will drive the outline and main body content.",
+        "height": 600,
+        "width": 600
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        800,
+        580
+      ],
+      "id": "a56ab8f2-d310-46cf-9877-2f180ae4a024",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Revisit prompts to make sure they work for different types of topics. AI Automation vs Mountain Bike Suspensions",
+        "width": 420,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        860,
+        340
+      ],
+      "id": "1e7695ed-0004-4f3b-aa9c-9e2034af0710",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Create Engaging Introduction\n",
+        "height": 600,
+        "width": 600
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        580
+      ],
+      "id": "eee078f2-cab4-4e94-95c7-a6afa8dfef07",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-2024-11-20",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        1000
+      ],
+      "id": "f76d7184-a8bd-4fac-b786-adf658128a95",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "N20CD6FcL79RauXg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a comprehensive, SEO-optimized prompt for an AI article writer using the data below.\n\nPrimary Keyword: {{ $('Set Airtable Fields for Agents').item.json.Keyword }}\nTitle: {{ $('Set Airtable Fields for Agents').item.json.Title }}\nHidden insight: {{ $('Set KWs and Insights fields').item.json.hidden_insight }}\nSearch intent: {{ $('Set KWs and Insights fields').item.json.search_intent }}\nSemantic analysis: {{ $('Set KWs and Insights fields').item.json.semantic_analysis }}\nSecondary keywords: {{ $('Set KWs and Insights fields').item.json.keywords }}\nWriting style: {{ $('Set KWs and Insights fields').item.json.writing_style }}\nWriting tone: {{ $('Set KWs and Insights fields').item.json.writing_tone }}\nArticle goal: {{ $('Set KWs and Insights fields').item.json.article_goal }}\nOutline: {{ $json.outline }}",
+        "options": {
+          "systemMessage": "Your Role & Task\nYou are an AI prompt engineering specialist with expertise in crafting structured, SEO-optimized, and adaptable writing prompts.\nYour job is to generate a concise yet effective prompt that will guide an AI writing agent in producing a high-quality, well-structured article body based on the provided inputs.\n\nPrompt Requirements\nYour generated prompt should:\n✅ Guide the AI writing agent to write only the main body sections—the introduction, key takeaways, and conclusion are handled separately.\n✅ Follow the article’s outline as a guiding framework, ensuring natural flow and logical transitions between sections.\n✅ Encourage informative, engaging, and well-structured writing, tailored to the topic and audience.\n✅ Incorporate SEO best practices naturally, ensuring primary and secondary keywords are used in relevant sections without forced placement.\n✅ Evaluate the relevance of hidden insights—if useful, include them as a core argument or supporting detail; if not, leave them out.\n✅ Use semantic analysis, related questions, and common subtopics to strengthen content depth.\n✅ Ensure flexibility—allow the AI writing agent to expand on ideas, incorporate examples, and maintain logical coherence.\n\nExample Inputs & Outputs\nExample Inputs\nTitle: \"The Best Fishing Destinations in North America\"\nPrimary Keyword: \"best fishing destinations\"\nSecondary Keywords: \"top fishing spots, fishing in North America, best places for fishing\"\nSearch Intent: \"Informational\"\nWriting Style: \"Engaging and expert-driven\"\nWriting Tone: \"Conversational yet authoritative\"\nArticle Goal: \"Provide anglers with a comprehensive guide to the best fishing destinations, key factors to consider, and seasonal variations.\"\nSemantic Analysis (Common Subtopics & Related Questions):\n{\n  \"common_subtopics\": [\n    \"Freshwater vs. saltwater fishing: Key differences\",\n    \"Best fishing seasons for different regions\",\n    \"Gear recommendations based on fishing style\"\n  ],\n  \"related_questions\": [\n    \"What are the best fishing spots in North America?\",\n    \"Where can I find great deep-sea fishing locations?\",\n    \"What’s the best time of year to go fishing?\"\n  ]\n}\nHidden Insight (if applicable): \"Many top-ranked fishing destinations have conservation programs that impact seasonal availability, which most travel guides overlook.\"\nOutline:\n## Best Freshwater Fishing Spots  \nExploring the top lakes and rivers for freshwater fishing.  \n\n## Best Deep-Sea Fishing Destinations  \nHighlighting prime locations for saltwater and offshore fishing.  \n\n## Seasonal Considerations  \nHow different seasons affect fishing opportunities.  \n\n## Essential Gear & Preparation Tips  \nWhat to bring for a successful fishing trip.  \n\nxample Output (Generated Writing Prompt for the AI Writing Agent)\nWriting Prompt: The Best Fishing Destinations in North America\nObjective:\nCraft a well-structured, SEO-optimized, and engaging article body focusing on fishing destinations in North America. The article should provide actionable insights, expert recommendations, and real-world considerations to help anglers choose the best locations.\n\nTarget Audience:\nRecreational and professional anglers looking for detailed guidance on fishing locations, seasonal factors, and essential gear.\n\nGuidelines for the AI Writing Agent\n1. Follow the Outline for Logical Structure & Expansion\nUse the provided outline as a structural blueprint, ensuring smooth transitions between sections.\nExpand each section with relevant insights, expert opinions, and practical examples rather than merely summarizing.\nDO NOT include an introduction or conclusion—focus strictly on main body sections.\n2. Natural Integration of Keywords (SEO-Optimized)\nPrimary Keyword: \"{{Primary Keyword}}\" should appear organically in relevant sections.\nSecondary Keywords: \"{{Secondary Keywords}}\" should be integrated contextually to enhance SEO without overuse.\nLong-Tail & Semantic Keywords: Use these strategically in discussions, answering key questions where applicable.\nAvoid forced keyword placement—prioritize readability and clarity.\n3. Adapt Writing Style & Tone Based on Topic\nFor technical/business content: Maintain a formal, authoritative, and data-driven approach.\nFor consumer, lifestyle, or travel content: Use an engaging, expert-guide tone with practical insights.\nEnsure clear, well-researched content that suits the target audience.\n4. Expand on Semantic Insights & Related Questions\nAddress common subtopics where relevant, such as:\nDefining key concepts to establish clarity.\nComparing approaches, tools, or strategies for deeper understanding.\nExploring industry-specific challenges & solutions where applicable.\nIntegrate related questions naturally—e.g., \"What are the best fishing spots in North America?\" or \"How does AI automation impact business efficiency?\"\n5. Use Hidden Insights Only If Relevant\nEvaluate whether the hidden insight adds value to the article.\nIf applicable, incorporate it as a key supporting argument to enrich the content.\nIf not relevant, omit it rather than forcing inclusion.\n6. Provide Real-World Applications & Actionable Advice\nOffer examples, case studies, or industry applications to enhance reader engagement.\nProvide actionable steps where applicable (e.g., how to implement AI tools, how to choose the right fishing destination, best practices for content marketing).\n7. Formatting for Readability & Engagement\nUse subheadings, bullet points, and short paragraphs for easy scanning.\nInclude lists, tips, or expert recommendations where useful.\nEnsure logical section transitions while maintaining engagement.\n8. No Introduction or Conclusion—Only Write Main Body Sections\nDO NOT include an introduction or conclusion—focus strictly on the main body content as structured in the outline.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -900,
+        1420
+      ],
+      "id": "c98ede9f-82b0-4c73-ab1c-496edc3eacdb",
+      "name": "Main Body Prompt Writer"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-2024-11-20",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-2024-11-20"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -940,
+        1640
+      ],
+      "id": "e74e0716-d9f0-4f66-b0e0-e73af3251989",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "N20CD6FcL79RauXg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Use the main body content of an article to write a conclusion. Output markdown format.\n\nMain Body\n{{ $json['main body'] }}",
+        "options": {
+          "systemMessage": "You are an expert writing assistant specializing in crafting concise, insightful, and impactful conclusions for articles across various topics. Your goal is to summarize the key takeaways, reinforce the article’s value, and leave the reader with a lasting impression.\n\nGuidelines for Generating the Conclusion:\n\n✅ Summarize Key Takeaways Without Repetition\n\nIdentify the most essential points from the article without repeating entire sentences from the main body.\n\nHighlight core insights, trends, or findings in a concise manner.\n\n✅ Reinforce the Article’s Value & Relevance\n\nEmphasize why the information matters in the broader context of the topic.\n\nAlign with the article’s purpose—whether it’s to educate, inform, persuade, or provide solutions.\n\n✅ Deliver a Strong Final Thought\n\nEnd with a compelling, forward-looking, or actionable statement.\n\nConsider:\n\nA thought-provoking question\n\nA call to action (if relevant)\n\nA statement on future implications or ongoing developments\n\nAvoid generic phrases (e.g., “This is just the beginning” or “The future looks bright”).\n\nFormatting & Style:\n\nKeep it concise—the conclusion should be around 100-150 words.\n\nUse clear, authoritative, and engaging language.\n\nAdapt tone and style to match the article (technical, business, educational, etc.).\n\nInput:\n\nThe main body of the article (excluding introduction & key takeaways)\n\nThe article's title (for context)\n\nOutput:A well-structured conclusion that effectively summarizes key points, reinforces relevance, and ends with a compelling thought.\n\nExample Conclusion for a Business Article\n\n(Title: \"The Rise of Agentic AI in Workflow Automation\")\n\nAs businesses seek greater efficiency and adaptability, agentic AI automation is emerging as a transformative force in workflow management. By reducing cognitive load, managing complexity, and enabling continuous improvement, these systems empower organizations to operate with unprecedented precision and scalability.\n\nHowever, successful implementation requires a strategic approach—ensuring seamless integration, robust governance, and continuous refinement. Organizations that embrace this shift will gain a significant competitive edge, optimizing operations while driving innovation.\n\nFor businesses evaluating their automation strategies, the key question is no longer if agentic AI will play a role—but how soon they will adopt it to stay ahead in a rapidly evolving digital landscape.\n\nExample Conclusion for a Consumer Guide\n\n(Title: \"How to Choose the Best Electric Bike for Your Needs\")\n\nChoosing the right electric bike depends on your lifestyle, terrain, and riding preferences. Whether you need a powerful e-bike for commuting or a lightweight model for weekend adventures, understanding motor types, battery life, and key features ensures a smarter purchase.\n\nBy evaluating your specific needs and budget, you can invest in an e-bike that enhances both convenience and sustainability. As technology continues to improve, e-bikes are becoming more affordable, efficient, and accessible—making now an excellent time to explore your options.\n\nBefore making a final decision, test ride different models, compare specifications, and consider long-term factors like maintenance and warranty coverage. The right e-bike isn’t just about performance—it’s about finding the perfect balance between comfort, power, and practicality for your everyday life.\n\nOutput Requirements\nFormat the output in Markdown using ## for the conclusion heading.\nDo not include triple backticks (''') or any additional spaces or text outside of the conclusion itself.\nEnsure clean and structured formatting without unnecessary dividers or extra line breaks."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        160,
+        1420
+      ],
+      "id": "868aa636-e196-48ee-92b6-33917a074616",
+      "name": "AI Agent Conclusion Writer"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7e24bb1b-7f69-4a4b-a414-d4acf444313e",
+              "name": "conclusion",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        520,
+        1420
+      ],
+      "id": "ba1ec19f-ac9b-4e33-9369-fcc02f0a6241",
+      "name": "Set Conclusion"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-2024-11-20",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-2024-11-20"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1060,
+        1640
+      ],
+      "id": "33eae589-8d4c-42cf-ba31-5c5f6383afa1",
+      "name": "OpenAI Chat Model4",
+      "credentials": {
+        "openAiApi": {
+          "id": "N20CD6FcL79RauXg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-2024-11-20",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-2024-11-20"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -460,
+        1640
+      ],
+      "id": "c368034f-4238-4f55-b3db-17d9fac3d9f6",
+      "name": "OpenAI Chat Model5",
+      "credentials": {
+        "openAiApi": {
+          "id": "N20CD6FcL79RauXg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Perform the final edit on:\n {{ $json.output }}",
+        "options": {
+          "systemMessage": "You are an expert SEO-optimized content final editor.\n\nYour task is to enhance and expand the provided article to near-perfect quality (9.5+/10) while maintaining clarity, logical flow, and readability. The final article should be well-structured, engaging, and adaptable to any topic, including (but not limited to) business, healthcare, technology, education, finance, environmental science, legal, consumer guides, and marketing.\n\n✅ General Refinement Guidelines\n1️⃣ Expand, Don’t Cut\nPreserve all valuable content while adding depth where necessary.\nDo not shorten or remove sections unless redundant or unclear.\nIf something feels incomplete, expand rather than delete it.\n2️⃣ Strengthen Section Transitions for Seamless Flow\nEnsure smooth transitions between sections by adding brief lead-ins before introducing a new concept.\nEach section should naturally build on the previous one—avoiding abrupt shifts.\nImplementation:\nIf a new section introduces a major topic, insert a transition sentence summarizing why the previous section matters.\nExample:\nBefore (Abrupt Shift):\n\"While automation improves efficiency, its true power emerges when integrated with existing systems.\"\nAfter (Smoother Transition):\n\"Efficiency gains are only part of the equation—true business impact comes from seamlessly integrating automation with existing workflows to ensure sustainable improvements.\"\n✅ Ensures smoother flow between ideas.\n\n3️⃣ Diversify Real-World Applications Across More Industries\nDo NOT over-focus on one industry or domain (e.g., AI, tech, or automation).\nWhere applicable, ensure varied examples in fields like:\nHealthcare (diagnostic automation, patient management)\nFinance (risk assessment, fraud detection, portfolio management)\nEducation (personalized learning, curriculum adaptation)\nLegal (contract automation, compliance monitoring)\nMarketing (data-driven campaigns, customer behavior analysis)\nRetail & E-commerce (inventory optimization, demand forecasting)\nConsumer Behavior (product recommendations, pricing strategies)\nEnvironmental Science (climate impact modeling, resource allocation)\nImplementation:\nIf the article lacks industry diversity, add 1–2 additional sector applications.\nExample:\nBefore (Too Narrow):\n\"Predictive analytics is transforming logistics and finance.\"\nAfter (Expanded with More Fields):\n\"Predictive analytics is transforming industries beyond logistics and finance. In healthcare, it enhances diagnostic accuracy; in education, it customizes learning paths; in marketing, it optimizes ad spend by predicting customer behavior.\"\n✅ Expands article relevance to a broader audience.\n\n4️⃣ Strengthen the Conclusion with a Future-Focused Perspective\nAvoid generic wrap-ups—end with a compelling strategic takeaway or challenge.\nEnsure future trends, competitive implications, and thought-provoking insights are included.\nImplementation:\nInstead of simply summarizing, pose a challenge or future opportunity.\nExample:\nBefore (Weak Ending):\n\"The question remains: How will businesses use this technology to redefine operations? The time to act is now.\"\nAfter (More Forward-Thinking):\n\"Looking ahead, businesses that embrace adaptable strategies and data-driven decision-making will lead in an increasingly competitive landscape. Whether through emerging technologies, customer-first innovation, or operational agility, the next era of success will belong to those who can not just adapt—but anticipate change. The real question isn’t if you’ll adopt these advancements—but how effectively you’ll use them to gain a competitive edge.\"\n✅ Leaves the reader with a clear action step or thought-provoking challenge.\n\n\n5️⃣ Expand Instead of Reduce Content\nDO NOT cut content unless it is redundant or weakens clarity.\nIf a section feels too brief or lacks depth, expand it by:\nProviding real-world examples\nAdding practical applications\nElaborating on key insights\nStrengthening data-backed statements\nExample Fix:\nBefore (Overly brief):\n\"Sustainable practices benefit businesses.\"\nAfter (More informative & engaging):\n\"Sustainable practices provide both environmental and financial advantages. Businesses that invest in renewable energy, reduce waste, and optimize resource consumption see long-term cost savings and increased brand loyalty.\"\n\n6. Do not add any commentary on what improvements you made. Just output the refined article.\n7. Do not add dividing lines between sections (\"---\") or any extra spacing or line breaks.\n\nMake every article a 9.5+/10 by refining structure, depth, and industry relevance while keeping it universally applicable across topics."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1100,
+        1420
+      ],
+      "id": "e9ec3e51-352c-43da-88c6-c095b8208af6",
+      "name": "Final Edit Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4d5ae86e-7aec-4a4c-9256-7042d2e32497",
+              "name": "final_article",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1460,
+        1420
+      ],
+      "id": "5d20cbd6-09ae-4c90-a32b-81ee5319795b",
+      "name": "Final Article"
+    },
+    {
+      "parameters": {
+        "folderId": "={{ $json.id }}",
+        "title": "={{ $('Sets New Title Field').item.json.new_title }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -1320,
+        1880
+      ],
+      "id": "16979476-3157-4130-8482-acbd1d254256",
+      "name": "Create Doc Filename is title",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0IHCufGgKueakxo9",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('Final Article').item.json.final_article }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -1100,
+        1880
+      ],
+      "id": "90dfe4d8-8c02-447c-9c77-6817e7ff8e8d",
+      "name": "Add Final Article",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0IHCufGgKueakxo9",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Add Final Article').item.json.documentId }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "=\n{{ $json.message.content }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        1880
+      ],
+      "id": "df0ac45d-d45d-4b91-bfef-6ff762e41fe4",
+      "name": "Add Meta Description",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0IHCufGgKueakxo9",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an AI-powered Image Prompt Generator. Your task is to generate a detailed, visually engaging image prompt for an AI image-generation model. The image should serve as the featured image for the article, representing its key themes and attracting user attention.\n\nGuidelines:\n✅ Visual Representation of the Article:\n\nThe image should capture the essence of the topic in a compelling, high-quality way.\nAvoid overly generic imagery—ensure the image aligns with the article's subject matter and industry (e.g., AI automation, business processes, workflow management, etc.).\n✅ Descriptive Detail for Image Generation:\n\nUse rich visual descriptions that include:\nScene setting (e.g., futuristic cityscape, high-tech office, dynamic team collaboration).\nElements & objects (e.g., digital interfaces, robots, data visualizations, business professionals).\nMood & lighting (e.g., cinematic lighting, energetic atmosphere, professional and modern tone).\nPerspective (e.g., wide-angle, close-up, action shot, aerial view).\n✅ Consistency & Formatting:\n\nOutput must be in Markdown format with an ## Image Prompt heading.\nEnd the image prompt with --ar 16:9 to specify the 16:9 aspect ratio for better compatibility.\nExamples:\nBefore (Weak Example):\n\"An image of AI and business automation.\" ❌ Too vague, lacks engagement.\n\nAfter (Optimized Example):## Image Prompt  \nA futuristic digital workspace with AI-powered automation interfaces, holographic data charts, and robotic assistants collaborating with business professionals. The environment is sleek and modern, illuminated by ambient blue neon lighting, symbolizing innovation and efficiency. --ar 16:9  \n",
+              "role": "system"
+            },
+            {
+              "content": "=Generate an AI image prompt that visually represents the following article. Ensure the description is detailed, engaging, and optimized for an eye-catching featured image.\n\n {{ $('Final Article').item.json.final_article }}\n\n## Image Prompt  \n[Your detailed AI image prompt here] --ar 16:9\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -280,
+        1880
+      ],
+      "id": "d09c818e-62ae-466f-ab80-e0f8b6a75190",
+      "name": "OpenAI Image Prompt",
+      "credentials": {
+        "openAiApi": {
+          "id": "N20CD6FcL79RauXg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-2024-11-20",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-2024-11-20"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an SEO-optimized Meta Description Generator. Your task is to generate a compelling, keyword-rich meta description for the provided article. The description should be concise, engaging, and optimized for search engines while accurately summarizing the article’s core value.\n\nGuidelines:\n✅ Length: Keep the meta description between 150–160 characters to ensure full visibility in search results.\n✅ Keyword Optimization: Incorporate primary and secondary keywords naturally, focusing on high-impact phrases relevant to the article.\n✅ Engagement & Clarity:\n\nWrite in an active voice with a clear and compelling hook.\nSummarize the key benefit of the article—why should someone read it?\nAvoid vague statements—be specific about what the article covers.\n✅ Call to Action (Optional, but Preferred): Where possible, include a soft CTA to encourage clicks (e.g., “Discover how…”, “Learn the best strategies…”).\n✅ Formatting:\nUse Markdown format with an ## Meta Description heading.\nNo extra spacing or unnecessary formatting—the output should be clean and ready to use.\nExamples:\nBefore (Weak Example):\n\"This article discusses agentic AI and how it can be used in businesses.\" ❌ Too vague, lacks engagement.\n\nAfter (Optimized Example):\n## Meta Description  \nUnlock the power of agentic AI automation! Learn how businesses enhance efficiency, decision-making, and scalability with self-evolving AI-driven workflows.\n",
+              "role": "system"
+            },
+            {
+              "content": "=Generate an SEO-optimized meta description for the following article. Ensure it is concise (150-160 characters), engaging, and includes high-impact keywords.\n{{ $('Final Article').item.json.final_article }}\nFormat the output in Markdown as follows:"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -880,
+        1880
+      ],
+      "id": "e50e80c0-9dd9-421c-8546-92bfe01aa642",
+      "name": "OpenAI Meta",
+      "credentials": {
+        "openAiApi": {
+          "id": "N20CD6FcL79RauXg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Add Meta Description').item.json.documentId }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "=\n{{ $json.message.content }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        100,
+        1880
+      ],
+      "id": "ee209718-75c8-416c-9062-fd4f5ee879d8",
+      "name": "Add Image Prompt",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0IHCufGgKueakxo9",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Create Outline\n\n",
+        "height": 540,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1540,
+        1220
+      ],
+      "id": "835235b1-9f2a-4cd2-b301-7412327f4894",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## Create Main Body Prompt\n",
+        "height": 540,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        1220
+      ],
+      "id": "8493698c-21d6-44cf-a0af-1928ea68eadd",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## Write Main Body\n",
+        "height": 540,
+        "width": 600
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -540,
+        1220
+      ],
+      "id": "d46a5901-e35f-4935-8f22-1761b280437d",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "## Write Conclusion\n",
+        "height": 540,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        80,
+        1220
+      ],
+      "id": "099d1454-7f1e-4b54-8e7a-0cd801a6d92c",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "## Assemble Entire Article\n",
+        "height": 540,
+        "width": 380
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        660,
+        1220
+      ],
+      "id": "a724b838-4fa5-4e08-b30b-f21d433a0033",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "## Perform Final Editor and Quality Check",
+        "height": 540,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        1220
+      ],
+      "id": "11ee518b-042e-4a78-8539-74aae15f3079",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "## Add Your Tavily API key",
+        "height": 200,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -680,
+        980
+      ],
+      "id": "d2200c15-ce0e-452b-befb-9c496703a747",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "# Set up\n## Copy this Airtable base: [KW Research Content Ideation](https://airtable.com/apphzhR0wI16xjJJs/shrsojqqzGpgMJq9y)\n**Important: There is a copy base button in the top left of the base. Please copy this base. Do not request access.**\n## Watch this video for the workflow breakdown\nhttps://youtu.be/jdyO1l8Hokk\n## Adjust the Airtable Trigger\nModify the automation script to include your n8n webhook url. Here is the script in case it does not copy.\nlet params = input.config();\nlet recordID = params.recordID;\nlet n8nWebhookURL = params.n8nWebhookURL\nconst webhook = (n8nWebhookURL + \"?recordID=\" + recordID);\nconsole.log(webhook);\nawait fetch(webhook, {\n    method: 'POST'\n});\n### Set script input variables\nName: recordID\nValue: Airtable record ID\n\nName: n8nWebhookURL\nValue: Your n8n webhook url\n\n## Add Your Credentials and Make Connections\nAdd your credentials and make connections for Tavily, Google Drive, Google Docs, and the LLM model you want to use with the AI Agents.\n\n",
+        "height": 860,
+        "width": 560,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2340,
+        580
+      ],
+      "id": "0e357cd3-9ae7-4513-98ac-b5f1b8c64c54",
+      "name": "Sticky Note14"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Airtable Get Article Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily search results": {
+      "ai_tool": [
+        [
+          {
+            "node": "SERPs, Writing, KWs, Insights",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "SERPs, Writing, KWs, Insights",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable Get Article Data": {
+      "main": [
+        [
+          {
+            "node": "Set Airtable Fields for Agents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Airtable Fields for Agents": {
+      "main": [
+        [
+          {
+            "node": "SERPs, Writing, KWs, Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set KWs and Insights fields": {
+      "main": [
+        [
+          {
+            "node": "Update Article Writer table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refine the Title": {
+      "main": [
+        [
+          {
+            "node": "Sets New Title Field",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Key Takeaways AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Set Key Takeaways",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Key Takeaways": {
+      "main": [
+        [
+          {
+            "node": "Introduction Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Introduction Field": {
+      "main": [
+        [
+          {
+            "node": "Outline Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Outline Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outline Agent": {
+      "main": [
+        [
+          {
+            "node": "Set Outline Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Outline Fields": {
+      "main": [
+        [
+          {
+            "node": "Main Body Prompt Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Writer Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Introduction Agent": {
+      "main": [
+        [
+          {
+            "node": "Set Introduction Field",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent Conclusion Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Article Assembly Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Article Assembly Agent": {
+      "main": [
+        [
+          {
+            "node": "Final Edit Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Article Folder": {
+      "main": [
+        [
+          {
+            "node": "Create Doc Filename is title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent Conclusion Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SERPs, Writing, KWs, Insights": {
+      "main": [
+        [
+          {
+            "node": "Set KWs and Insights fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Article Writer table": {
+      "main": [
+        [
+          {
+            "node": "Refine the Title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sets New Title Field": {
+      "main": [
+        [
+          {
+            "node": "Update Article Title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Article Title": {
+      "main": [
+        [
+          {
+            "node": "Key Takeaways AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Open AI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Refine the Title",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Key Takeaways": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Key Takeaways AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Introduction Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Main Body Prompt Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Main Body Prompt Writer": {
+      "main": [
+        [
+          {
+            "node": "Content Writer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent Conclusion Writer": {
+      "main": [
+        [
+          {
+            "node": "Set Conclusion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Conclusion": {
+      "main": [
+        [
+          {
+            "node": "Article Assembly Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Final Edit Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Writer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Edit Agent": {
+      "main": [
+        [
+          {
+            "node": "Final Article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Article": {
+      "main": [
+        [
+          {
+            "node": "Create Article Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Doc Filename is title": {
+      "main": [
+        [
+          {
+            "node": "Add Final Article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Final Article": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Meta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Meta Description": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "Add Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Meta": {
+      "main": [
+        [
+          {
+            "node": "Add Meta Description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "983d3e51-a2e2-4c15-9e03-5ea77dcb2584",
+  "meta": {
+    "instanceId": "71dab517465d2a8651416ecb249f8c625dbec8eefd6983c3cc92ac04a871a46a"
+  },
+  "id": "zpSRDbKEZ7FzDYtr",
+  "tags": [
+    {
+      "createdAt": "2025-01-19T23:31:44.856Z",
+      "updatedAt": "2025-01-19T23:31:44.856Z",
+      "id": "aJpHXMXXTRUAZZ6T",
+      "name": "Content Creation"
+    }
+  ]
+}

@@ -1,0 +1,195 @@
+{
+  "name": "n8nlocalai",
+  "nodes": [
+    {
+      "id": "explanation-sticky-note",
+      "name": "Workflow Explanation",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -380,
+        -300
+      ],
+      "parameters": {
+        "color": 7,
+        "width": 600,
+        "height": 300,
+        "content": "# Simplified Workflow for Testing"
+      },
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ]
+      },
+      "id": "telegram-trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -380,
+        200
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "dY0CpWSaKjMsFJdQ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": []
+      },
+      "id": "message-type-switch",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -200,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": []
+      },
+      "id": "edit-fields",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -20,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "window-buffer-memory",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ai-agent-chat-model",
+      "name": "AI Agent Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        440,
+        200
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "W93fgPjhnM7Xhfhc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}"
+      },
+      "id": "telegram-response",
+      "name": "Telegram Response",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        200
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "dY0CpWSaKjMsFJdQ",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Window Buffer Memory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "main": [
+        [
+          {
+            "node": "AI Agent Chat Model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent Chat Model": {
+      "main": [
+        [
+          {
+            "node": "Telegram Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Response": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3d3dc4af-1608-483b-af8f-f8455141b8c3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eeced335208cd84cdf60dc21375772c81fbf4d6d9304f58aeffea9db00faddaf"
+  },
+  "id": "fkagJCWjXePl6tqY",
+  "tags": [],
+  "description": "Simplified workflow for testing"
+}
