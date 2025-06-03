@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains a comprehensive collection of n8n workflows implementing Retrieval-Augmented Generation (RAG) for creating AI-powered workflow automation. The repository serves as both a reference implementation and ready-to-deploy solution for n8n workflow generation.
+This repository contains a comprehensive collection of n8n workflows implementing Retrieval-Augmented Generation (RAG) for creating AI-powered workflow automation. The repository serves as both a reference implementation and ready-to-deploy solution for n8n workflow generation. Most of these workflows are scraped from the n8n official template, Gumroad paid content, or custom-made.
 
 ## Repository Structure
 
