@@ -10,10 +10,10 @@ This repository contains a comprehensive collection of n8n workflows implementin
 .
 ├── documentation-for-RAG/        # Documentation datasets for RAG systems
 │   └── n8n_documentation_index/  # Indexed n8n documentation
-├── n8n.io-templates (Credit to @enescingoz)/ # Reference workflow templates
+├── n8n.io-templates/ # Reference workflow templates
 ├── n8n-blog-maker/              # Blog generation workflow system
 ├── Real Case Example (Credit to @imgroup)/ # Production-ready workflow implementations
-├── Categorized/                 # Categorized workflow examples
+├── Categorized/                 # Categorized workflow examples from various source
 ├── *.json                       # Individual workflow files
 └── *.pdf, *.py                  # Utility files and guides
 ```
