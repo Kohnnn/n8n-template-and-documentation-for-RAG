@@ -1,0 +1,333 @@
+{
+  "name": "Flowise Doc Store Upsert Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ae36ff1-15be-4e8e-aa22-92c1972465ab",
+              "name": "storeId",
+              "value": "91ae191f-c307-489e-90f4-a3f96cbc1ff0",
+              "type": "string"
+            },
+            {
+              "id": "d58454bc-e6c4-45ff-bb7a-b53c93e33292",
+              "name": "flowiseBaseURL",
+              "value": "https://limitless-ai-solutions.app.flowiseai.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ea9bb3a3-5036-4455-8f9f-b20cec2942f7",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -240,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.flowiseBaseURL }}/api/v1/document-store/store/{{ $json.storeId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "6705f618-3b11-4027-a6ea-2a88324c43a8",
+      "name": "Get Document Store Details",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -20,
+        420
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jx5DPmQuc8h9HVre",
+          "name": "Flowise cloud Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Edit Fields').item.json.flowiseBaseURL }}/api/v1/document-store/vectorstore/insert",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "storeId",
+              "value": "={{ $('Edit Fields').item.json.storeId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9ded9d4a-2e8f-4e01-b767-17730f2d754f",
+      "name": "Upsert Chunks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        360
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jx5DPmQuc8h9HVre",
+          "name": "Flowise cloud Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5d98ad06-dbb0-4e1e-a321-a606020dcfa4",
+              "leftValue": "={{ $json.loaders[0].loaderId }}",
+              "rightValue": "pdfLoader",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c4549d84-c0dc-4fbd-9341-da693aa858e3",
+      "name": "Filter",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        420,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "id": "f1118f09-8fde-4971-add4-0ff5fbcd8d41",
+      "name": "Schedule Trigger1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -460,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d530f37e-fdc5-4b38-9b4c-d2771aeb0b35",
+              "name": "loaders",
+              "value": "={{ $json.loaders }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ff1188fb-fcc0-4712-9602-845a4aa00ec6",
+      "name": "Extract Document Loaders1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        200,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b356084d-8ace-4647-97fb-2c0642a8d9a8",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        660,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Edit Fields').item.json.flowiseBaseURL }}/api/v1/document-store/loader/process",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "storeId",
+              "value": "={{ $('Edit Fields').item.json.storeId }}"
+            },
+            {
+              "name": "id",
+              "value": "={{ $json.loaders[0].id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b93f01bd-ae5c-4226-a492-061d2f646dd8",
+      "name": "Process Chunks1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        520
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jx5DPmQuc8h9HVre",
+          "name": "Flowise cloud Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "60491d82-6440-4ad6-b06a-5e77f310d9ae",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        520
+      ],
+      "webhookId": "01bcbe39-8de2-42e1-964a-241ab79e7ebc"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get Document Store Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Document Store Details": {
+      "main": [
+        [
+          {
+            "node": "Extract Document Loaders1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Document Loaders1": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Upsert Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Process Chunks1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Chunks1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "18c372c9-c651-47a7-8251-e4429ba8327a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb244ef261482551d80b58f818278bce0a747d9aeface5e7890f1c4abc12eab6"
+  },
+  "id": "6bf0fU288fTod413",
+  "tags": []
+}

@@ -1,0 +1,396 @@
+{
+  "name": "Web Scraper-SERP API",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "89ecd32f-ddee-4b47-89e5-f2324fe92d3c",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1DnIo5CTl8iA9VB5UtII1J3Q3v5OM8No0d1-sQ_lEP7c",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1376989698,
+          "mode": "list",
+          "cachedResultName": "Campaigns",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DnIo5CTl8iA9VB5UtII1J3Q3v5OM8No0d1-sQ_lEP7c/edit#gid=1376989698"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "campaign_status",
+              "lookupValue": "Active"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "71333f0d-518e-48f5-9d7c-b3816804fa9b",
+      "name": "Get Active Campaigns",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        20,
+        -200
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1L2lmeqRkdaY3Wya",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst updatedItems = items.map(item => {\n    item.json[\"Start Page\"] = (item.json[\"start_page\"] || 0) + 10;\n    return item;\n});\nreturn updatedItems;\n"
+      },
+      "id": "9dad23e2-e4ea-456c-9653-f57edda71299",
+      "name": "Increment Start Page1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9d83d6a5-5ce5-4930-88ef-1b43efd28797",
+              "name": "Search Field",
+              "value": "={{ $json.search_field }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e5725a98-58e2-4e65-812e-e21b6c866b11",
+      "name": "Set Search Field",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        460,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google_maps"
+            },
+            {
+              "name": "q",
+              "value": "={{ $json['Search Field'] }}"
+            },
+            {
+              "name": "api_key",
+              "value": "8adea042e0f1dda4f2d78f2185a0c220acdcabdec1742762a4c981f46ca2f111"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e91886f1-0a11-45ae-9664-2f2959deebdd",
+      "name": "Google Maps SERP API Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "id": "8c32ace9-6a9c-4eb1-88fe-6dbc8a25b1dd",
+      "name": "Split Out1",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1700,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Access the incoming array of data from the variable local_results\nconst dataArray = $input.item.json.local_results;\n\n// Extract and clean the website and title properties from each object in the array\nconst results = dataArray\n  .map(item => { \n    // Check if the website property exists and is a string\n    const website = item.website && typeof item.website === 'string'\n      ? item.website.split('?')[0] // Remove query parameters\n        .replace(/\\/$/, '') // Remove the trailing slash\n      : null;\n\n    // Check if the title property exists\n    const company = item.title && typeof item.title === 'string' ? item.title : null;\n\n    // Only return the result if the website is valid (not null or empty)\n    if (website) {\n      return { website, company };\n    }\n\n    // Skip entries without a valid website\n    return null;\n  })\n  .filter(result => result !== null); // Remove any null values from the result\n\n// Output the cleaned results as an array of objects\nreturn {\n  results,\n};"
+      },
+      "id": "bf20b398-8585-4caa-9685-3da443f7e949",
+      "name": "Get Website and Company Name",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1220,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8cbc7dfa-62df-4041-923b-de690fc3628c",
+              "name": "local_results",
+              "value": "={{ $json.local_results }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d642f8a6-6f78-477f-b454-3f6831fa4492",
+      "name": "Set Data Source",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1DnIo5CTl8iA9VB5UtII1J3Q3v5OM8No0d1-sQ_lEP7c",
+          "mode": "list",
+          "cachedResultName": "AI SDR",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DnIo5CTl8iA9VB5UtII1J3Q3v5OM8No0d1-sQ_lEP7c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1391578305,
+          "mode": "list",
+          "cachedResultName": "Websites",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DnIo5CTl8iA9VB5UtII1J3Q3v5OM8No0d1-sQ_lEP7c/edit#gid=1391578305"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "company_name": "={{ $json.company }}",
+            "website": "={{ $json.website }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "company_name",
+              "displayName": "company_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ee46a76a-8525-4d73-8302-f64f060f6562",
+      "name": "Record Company and Websites",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        -200
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1L2lmeqRkdaY3Wya",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "company",
+        "options": {}
+      },
+      "id": "e5ae4eec-1512-472e-b120-be7a3c89f98b",
+      "name": "Remove Duplicates",
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        1940,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4d82104d-a761-447f-a193-7b343169f1ef",
+              "name": "results",
+              "value": "={{ $json.results }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f0fe9976-da58-4602-8302-bd248a31067d",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1440,
+        -200
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get Active Campaigns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Active Campaigns": {
+      "main": [
+        [
+          {
+            "node": "Increment Start Page1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Start Page1": {
+      "main": [
+        [
+          {
+            "node": "Set Search Field",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Search Field": {
+      "main": [
+        [
+          {
+            "node": "Google Maps SERP API Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Maps SERP API Request": {
+      "main": [
+        [
+          {
+            "node": "Set Data Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Website and Company Name": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Data Source": {
+      "main": [
+        [
+          {
+            "node": "Get Website and Company Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Record Company and Websites",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "52ec1169-a156-4840-b2a5-6af1ed319ab1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80dda94540258c8a9249877c5128f67d88ca1bcc72725380688b9a5c6a7a5d1f"
+  },
+  "id": "gae6vI4pgGSHS0XK",
+  "tags": []
+}

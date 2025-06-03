@@ -1,0 +1,463 @@
+{
+  "name": "🚀 Invoice Analyzer",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1Vgj0X-_oEZ8-_Asa_r10g-kNEGMiLwSJ",
+          "mode": "list",
+          "cachedResultName": "Invoices",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Vgj0X-_oEZ8-_Asa_r10g-kNEGMiLwSJ"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "2f0436ad-cfa6-431a-9f62-a8ef481eb89d",
+      "name": "Google Drive Trigger",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        440,
+        180
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "79osOU3HrUmKvwFs",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "id": "5a39f466-ce97-42bf-9fa9-21c1facd1b43",
+      "name": "Extract from File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        880,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "045242e9-c2ab-4ebd-a95d-cb70305457e8",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        400
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "28504399-c43a-42c2-a7ba-bf0e447671e3",
+              "name": "output",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4989c64d-fe39-4192-94f1-a70a8c9ade6d",
+      "name": "output invoice details",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1080,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dbcf29cc-a862-42e6-8d79-f8015faf405e",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c9942ed9-a17d-43d2-93ba-145ad174ea64",
+      "name": "output parsed invoice data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1680,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.output }}",
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"invoice_date\": {\n      \"type\": \"string\",\n      \"format\": \"date\"\n    },\n    \"invoice_number\": {\n      \"type\": \"string\"\n    },\n    \"billed_to\": {\n      \"type\": \"string\"\n    },\n    \"total_amount\": {\n      \"type\": \"number\"\n    }\n  },\n  \"required\": [\"invoice_date\", \"invoice_number\", \"billed_to\", \"total_amount\"]\n}\n",
+        "options": {}
+      },
+      "id": "01d0a179-f284-474d-905a-b9e1f94ddb18",
+      "name": "Extract Invoice Info",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "ef8f1a8e-1226-4a6b-a99c-a5ca8e2a9db5",
+      "name": "Download Invoices",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        660,
+        180
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "79osOU3HrUmKvwFs",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1LifYlAuUy2cfVyV9NS58M2ybusfIo6ZEh_6jq0khuV0",
+          "mode": "list",
+          "cachedResultName": "Spending Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LifYlAuUy2cfVyV9NS58M2ybusfIo6ZEh_6jq0khuV0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1463865825,
+          "mode": "list",
+          "cachedResultName": "Invoices",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LifYlAuUy2cfVyV9NS58M2ybusfIo6ZEh_6jq0khuV0/edit#gid=1463865825"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Invoice Date": "={{ $json.response.invoice_date }}",
+            "Invoice Number": "={{ $json.response.invoice_number }}",
+            "Total Amount": "={{ $json.response.total_amount }}",
+            "Billed To": "={{ $json.response.billed_to }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Invoice Date",
+              "displayName": "Invoice Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Invoice Number",
+              "displayName": "Invoice Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total Amount",
+              "displayName": "Total Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Billed To",
+              "displayName": "Billed To",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8b7af5f7-7355-456d-b909-d8620f706105",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1900,
+        180
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1L2lmeqRkdaY3Wya",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Google Drive Trigger": [
+      {
+        "json": {
+          "kind": "drive#file",
+          "fileExtension": "pdf",
+          "copyRequiresWriterPermission": false,
+          "md5Checksum": "64068b2aba27f2445979e6605cb1c7af",
+          "writersCanShare": true,
+          "viewedByMe": true,
+          "mimeType": "application/pdf",
+          "parents": [
+            "1Vgj0X-_oEZ8-_Asa_r10g-kNEGMiLwSJ"
+          ],
+          "thumbnailLink": "https://lh3.googleusercontent.com/drive-storage/AJQWtBNnRBPv3PZy2UrgnD8-TEA0bnH79RtrD9DynwrE1wNWibJH5st5rTUWkoKlLrFdp3uwCCb75sGof4UkmTiG_agJYh5ZXwE7xeQAX_IyTHiT1yw=s220",
+          "iconLink": "https://drive-thirdparty.googleusercontent.com/16/type/application/pdf",
+          "shared": false,
+          "lastModifyingUser": {
+            "displayName": "Jeffrey Custodio",
+            "kind": "drive#user",
+            "me": true,
+            "permissionId": "07714067343369284447",
+            "emailAddress": "jeffrey.custodio@limitlessai.digital",
+            "photoLink": "https://lh3.googleusercontent.com/a-/ALV-UjWQUNzMgNN_N9v2VrY_tCCYCBK29ybdYs8WiGtdOIq6e4Sl-l6gh9ZsmNdIYCjKkS9m_LEAmGyhYh1hUnL0RbBV_-6lXzOKjNTZ8Wx2VtYZnHXr-Uagwrg0cyESmVm-cBQ25SF9AD1VufoV20V1bRqm6Xw9CW4Be_g378w6DeyvWsLb0mLp-A57ysxNskv_LKOjkBHtMHskTE7JtKWaIQ3qIMmxfJzvAf1RWs9ZQQ68KVm-cFPh1yTX-ZhVi00OL2tB-br9RNWMHai72U45pC3luuf6VVua2K5LY8lc6ODjpsNMMLZT1zu14ItCHDJJIPaC1P4WNne20KBbnmqy5qPT-voFotZTv3lkfW_Pc6FIVKjJqAu88aLucNT5Qw5rz8YqcM_fMImRfXv0bXKLm6UOPWiKM4_d4UfXvvFNbcBBWxMMGSy873LyW5eKKuI3iYuetL3STTyyQUSXelXu0m5OjjCYgw9drs676y-BEmzpBy62DQli7DcY8kqoC9vEc0GQXmnrTGarV0Js9IXBs97ksJwi-INxMqycIGA8VcMjRrWFqgTgkuu5cxJMrAhhhXqGTVXQF5IXlQpBBrKv4C1fJh422dG4EsZul0WfXXz4x8OlVGDfZ8pFnznKRzveGpXTQdSouTiqKiLKcswv1Xt1yts1iu0Khwql0KMkc5Sn1lUFXerzgArNOqQwSUqB2djaflX0U1bU7NtzyI8ep0cNH8VO7aK2W4prv092eqEaZWuvW3Mk1WTvagCuiAGzezGQlQyTvqMxSmijivklHnLe3mbtnbX7JPf86Zn-jvfsRNNd3lc6_TLjw7EyLuLtDJCnxkLmQGjctQToOHyo_-e-dtSWD1hMoHnRwi9cbhOtwNCxq618buqSPT38qDkoNVt1oSXcwQvluQKiPF0NqwOK8hITRirsyHokKvO7mhz9jV_qwOL_L5mP_FGgBjI4vyrOS7EBQUOZcsZ73YTh3K82v40=s64"
+          },
+          "owners": [
+            {
+              "displayName": "Jeffrey Custodio",
+              "kind": "drive#user",
+              "me": true,
+              "permissionId": "07714067343369284447",
+              "emailAddress": "jeffrey.custodio@limitlessai.digital",
+              "photoLink": "https://lh3.googleusercontent.com/a-/ALV-UjWQUNzMgNN_N9v2VrY_tCCYCBK29ybdYs8WiGtdOIq6e4Sl-l6gh9ZsmNdIYCjKkS9m_LEAmGyhYh1hUnL0RbBV_-6lXzOKjNTZ8Wx2VtYZnHXr-Uagwrg0cyESmVm-cBQ25SF9AD1VufoV20V1bRqm6Xw9CW4Be_g378w6DeyvWsLb0mLp-A57ysxNskv_LKOjkBHtMHskTE7JtKWaIQ3qIMmxfJzvAf1RWs9ZQQ68KVm-cFPh1yTX-ZhVi00OL2tB-br9RNWMHai72U45pC3luuf6VVua2K5LY8lc6ODjpsNMMLZT1zu14ItCHDJJIPaC1P4WNne20KBbnmqy5qPT-voFotZTv3lkfW_Pc6FIVKjJqAu88aLucNT5Qw5rz8YqcM_fMImRfXv0bXKLm6UOPWiKM4_d4UfXvvFNbcBBWxMMGSy873LyW5eKKuI3iYuetL3STTyyQUSXelXu0m5OjjCYgw9drs676y-BEmzpBy62DQli7DcY8kqoC9vEc0GQXmnrTGarV0Js9IXBs97ksJwi-INxMqycIGA8VcMjRrWFqgTgkuu5cxJMrAhhhXqGTVXQF5IXlQpBBrKv4C1fJh422dG4EsZul0WfXXz4x8OlVGDfZ8pFnznKRzveGpXTQdSouTiqKiLKcswv1Xt1yts1iu0Khwql0KMkc5Sn1lUFXerzgArNOqQwSUqB2djaflX0U1bU7NtzyI8ep0cNH8VO7aK2W4prv092eqEaZWuvW3Mk1WTvagCuiAGzezGQlQyTvqMxSmijivklHnLe3mbtnbX7JPf86Zn-jvfsRNNd3lc6_TLjw7EyLuLtDJCnxkLmQGjctQToOHyo_-e-dtSWD1hMoHnRwi9cbhOtwNCxq618buqSPT38qDkoNVt1oSXcwQvluQKiPF0NqwOK8hITRirsyHokKvO7mhz9jV_qwOL_L5mP_FGgBjI4vyrOS7EBQUOZcsZ73YTh3K82v40=s64"
+            }
+          ],
+          "headRevisionId": "0B4Vvyiz_8kHYSkZFeE5paGM5K1JDV2RJYXFsb3U0T0kwWDJVPQ",
+          "webViewLink": "https://drive.google.com/file/d/1abNSHkiKclu3I6etNcCaASoAycWFw9lI/view?usp=drivesdk",
+          "webContentLink": "https://drive.google.com/uc?id=1abNSHkiKclu3I6etNcCaASoAycWFw9lI&export=download",
+          "size": "56531",
+          "viewersCanCopyContent": true,
+          "permissions": [
+            {
+              "id": "07714067343369284447",
+              "displayName": "Jeffrey Custodio",
+              "type": "user",
+              "kind": "drive#permission",
+              "photoLink": "https://lh3.googleusercontent.com/a-/ALV-UjWQUNzMgNN_N9v2VrY_tCCYCBK29ybdYs8WiGtdOIq6e4Sl-l6gh9ZsmNdIYCjKkS9m_LEAmGyhYh1hUnL0RbBV_-6lXzOKjNTZ8Wx2VtYZnHXr-Uagwrg0cyESmVm-cBQ25SF9AD1VufoV20V1bRqm6Xw9CW4Be_g378w6DeyvWsLb0mLp-A57ysxNskv_LKOjkBHtMHskTE7JtKWaIQ3qIMmxfJzvAf1RWs9ZQQ68KVm-cFPh1yTX-ZhVi00OL2tB-br9RNWMHai72U45pC3luuf6VVua2K5LY8lc6ODjpsNMMLZT1zu14ItCHDJJIPaC1P4WNne20KBbnmqy5qPT-voFotZTv3lkfW_Pc6FIVKjJqAu88aLucNT5Qw5rz8YqcM_fMImRfXv0bXKLm6UOPWiKM4_d4UfXvvFNbcBBWxMMGSy873LyW5eKKuI3iYuetL3STTyyQUSXelXu0m5OjjCYgw9drs676y-BEmzpBy62DQli7DcY8kqoC9vEc0GQXmnrTGarV0Js9IXBs97ksJwi-INxMqycIGA8VcMjRrWFqgTgkuu5cxJMrAhhhXqGTVXQF5IXlQpBBrKv4C1fJh422dG4EsZul0WfXXz4x8OlVGDfZ8pFnznKRzveGpXTQdSouTiqKiLKcswv1Xt1yts1iu0Khwql0KMkc5Sn1lUFXerzgArNOqQwSUqB2djaflX0U1bU7NtzyI8ep0cNH8VO7aK2W4prv092eqEaZWuvW3Mk1WTvagCuiAGzezGQlQyTvqMxSmijivklHnLe3mbtnbX7JPf86Zn-jvfsRNNd3lc6_TLjw7EyLuLtDJCnxkLmQGjctQToOHyo_-e-dtSWD1hMoHnRwi9cbhOtwNCxq618buqSPT38qDkoNVt1oSXcwQvluQKiPF0NqwOK8hITRirsyHokKvO7mhz9jV_qwOL_L5mP_FGgBjI4vyrOS7EBQUOZcsZ73YTh3K82v40=s64",
+              "emailAddress": "jeffrey.custodio@limitlessai.digital",
+              "role": "owner",
+              "deleted": false,
+              "pendingOwner": false
+            }
+          ],
+          "hasThumbnail": true,
+          "spaces": [
+            "drive"
+          ],
+          "id": "1abNSHkiKclu3I6etNcCaASoAycWFw9lI",
+          "name": "Google Invoice.pdf",
+          "starred": false,
+          "trashed": false,
+          "explicitlyTrashed": false,
+          "createdTime": "2024-10-22T04:18:52.215Z",
+          "modifiedTime": "2024-10-22T03:40:57.000Z",
+          "modifiedByMeTime": "2024-10-22T03:40:57.000Z",
+          "viewedByMeTime": "2024-10-22T04:19:36.098Z",
+          "quotaBytesUsed": "56531",
+          "version": "5",
+          "originalFilename": "Google Invoice.pdf",
+          "ownedByMe": true,
+          "fullFileExtension": "pdf",
+          "isAppAuthorized": false,
+          "capabilities": {
+            "canChangeViewersCanCopyContent": true,
+            "canEdit": true,
+            "canCopy": true,
+            "canComment": true,
+            "canAddChildren": false,
+            "canDelete": true,
+            "canDownload": true,
+            "canListChildren": false,
+            "canRemoveChildren": false,
+            "canRename": true,
+            "canTrash": true,
+            "canReadRevisions": true,
+            "canChangeCopyRequiresWriterPermission": true,
+            "canMoveItemIntoTeamDrive": true,
+            "canUntrash": true,
+            "canModifyContent": true,
+            "canMoveItemOutOfDrive": true,
+            "canAddMyDriveParent": false,
+            "canRemoveMyDriveParent": true,
+            "canMoveItemWithinDrive": true,
+            "canShare": true,
+            "canMoveChildrenWithinDrive": false,
+            "canModifyContentRestriction": true,
+            "canChangeSecurityUpdateEnabled": false,
+            "canAcceptOwnership": false,
+            "canReadLabels": false,
+            "canModifyLabels": false,
+            "canModifyEditorContentRestriction": true,
+            "canModifyOwnerContentRestriction": true,
+            "canRemoveContentRestriction": false
+          },
+          "thumbnailVersion": "1",
+          "modifiedByMe": true,
+          "permissionIds": [
+            "07714067343369284447"
+          ],
+          "linkShareMetadata": {
+            "securityUpdateEligible": false,
+            "securityUpdateEnabled": true
+          },
+          "sha1Checksum": "77cfb3adb06cffb722864bd9e33099ff4dab8c52",
+          "sha256Checksum": "28c22090dfab8c1177d83a44ff9aa6c1fec74484831e6d10403d879a79aedb4d"
+        }
+      }
+    ],
+    "output parsed invoice data": [
+      {
+        "json": {
+          "response": {
+            "invoice_date": "2024-08-31",
+            "invoice_number": "5054196284",
+            "billed_to": "Jeffrey Custodio, Limitless AI, 0558 Malaking Parang, Sitio Bato-bato, Dolores, Taytay, 1920, Philippines",
+            "total_amount": 28.65
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "output invoice details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extract Invoice Info",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "output invoice details": {
+      "main": [
+        [
+          {
+            "node": "Extract Invoice Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Invoice Info": {
+      "main": [
+        [
+          {
+            "node": "output parsed invoice data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Invoices": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "output parsed invoice data": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3857ffa7-73de-4012-aba2-44b972b64115",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80dda94540258c8a9249877c5128f67d88ca1bcc72725380688b9a5c6a7a5d1f"
+  },
+  "id": "WEH8rvWyNnvchCS1",
+  "tags": []
+}

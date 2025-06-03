@@ -1,0 +1,220 @@
+{
+  "name": "🛠 update_invoices",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "6aeea577-0cf9-45df-b87d-c48c6d75844d",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -860,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1LifYlAuUy2cfVyV9NS58M2ybusfIo6ZEh_6jq0khuV0",
+          "mode": "list",
+          "cachedResultName": "Spending Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LifYlAuUy2cfVyV9NS58M2ybusfIo6ZEh_6jq0khuV0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1463865825,
+          "mode": "list",
+          "cachedResultName": "Invoices",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LifYlAuUy2cfVyV9NS58M2ybusfIo6ZEh_6jq0khuV0/edit#gid=1463865825"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Invoice Date": "={{ $json.message.content.invoice_date }}",
+            "Invoice Number": "={{ $json.message.content.invoice_number }}",
+            "Total Amount": "={{ $json.message.content.total_amount }}",
+            "Billed To": "={{ $json.message.content.billed_to }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Invoice Date",
+              "displayName": "Invoice Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Invoice Number",
+              "displayName": "Invoice Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total Amount",
+              "displayName": "Total Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Billed To",
+              "displayName": "Billed To",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "id": "fbe87827-b0d1-42c7-adba-d1f679a8b85d",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -300,
+        80
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1L2lmeqRkdaY3Wya",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "066276a2-76f2-4ad4-91ce-d0bbddf6a0ef",
+              "name": "response",
+              "value": "Done",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a2231ba4-a556-4e18-adea-c181f0ba4531",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Parse the data and output the parameters separately.",
+              "role": "system"
+            },
+            {
+              "content": "={{ JSON.stringify($json.query) }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "366e0f1b-8586-4462-ae3d-c662d9bc87db",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        -680,
+        80
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": {
+            "invoice_date": "October 20, 2024",
+            "invoice_number": 3568409,
+            "total_amount": 1500,
+            "billed_to": "Limitless AI Solutions"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4a6d0d34-974a-47f6-bec1-9c7ca92c1101",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80dda94540258c8a9249877c5128f67d88ca1bcc72725380688b9a5c6a7a5d1f"
+  },
+  "id": "ukzxosdBUtZdFPRF",
+  "tags": []
+}

@@ -1,0 +1,1042 @@
+{
+    "name": "Enrich company data with ChatGPT and Google Sheets",
+    "flow": [
+        {
+            "id": 12,
+            "module": "google-sheets:watchRows",
+            "version": 2,
+            "parameters": {
+                "mode": "fromAll",
+                "limit": 10,
+                "tableFirstRow": "A1:Z1",
+                "includesHeaders": true,
+                "valueRenderOption": "FORMATTED_VALUE",
+                "dateTimeRenderOption": "FORMATTED_STRING"
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {},
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection"
+                    },
+                    {
+                        "name": "mode",
+                        "type": "select",
+                        "label": "Search Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "select",
+                                "fromAll",
+                                "map"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "select",
+                        "label": "Table contains headers",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "type": "uinteger",
+                        "label": "Limit",
+                        "required": true
+                    },
+                    {
+                        "name": "valueRenderOption",
+                        "type": "select",
+                        "label": "Value render option",
+                        "validate": {
+                            "enum": [
+                                "FORMATTED_VALUE",
+                                "UNFORMATTED_VALUE",
+                                "FORMULA"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "dateTimeRenderOption",
+                        "type": "select",
+                        "label": "Date and time render option",
+                        "validate": {
+                            "enum": [
+                                "SERIAL_NUMBER",
+                                "FORMATTED_STRING"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "text",
+                        "label": "Spreadsheet ID",
+                        "required": true
+                    },
+                    {
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "tableFirstRow",
+                        "type": "text",
+                        "label": "Row with headers",
+                        "required": true
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "__ROW_NUMBER__",
+                        "type": "number",
+                        "label": "Row number"
+                    },
+                    {
+                        "name": "__SPREADSHEET_ID__",
+                        "type": "text",
+                        "label": "Spreadsheet ID"
+                    },
+                    {
+                        "name": "__SHEET__",
+                        "type": "text",
+                        "label": "Sheet"
+                    },
+                    {
+                        "name": "0",
+                        "type": "text",
+                        "label": "Name (A)"
+                    },
+                    {
+                        "name": "1",
+                        "type": "text",
+                        "label": "Email (B)"
+                    },
+                    {
+                        "name": "2",
+                        "type": "text",
+                        "label": "(C)"
+                    },
+                    {
+                        "name": "3",
+                        "type": "text",
+                        "label": "(D)"
+                    },
+                    {
+                        "name": "4",
+                        "type": "text",
+                        "label": "(E)"
+                    },
+                    {
+                        "name": "5",
+                        "type": "text",
+                        "label": "(F)"
+                    },
+                    {
+                        "name": "6",
+                        "type": "text",
+                        "label": "(G)"
+                    },
+                    {
+                        "name": "7",
+                        "type": "text",
+                        "label": "(H)"
+                    },
+                    {
+                        "name": "8",
+                        "type": "text",
+                        "label": "(I)"
+                    },
+                    {
+                        "name": "9",
+                        "type": "text",
+                        "label": "(J)"
+                    },
+                    {
+                        "name": "10",
+                        "type": "text",
+                        "label": "(K)"
+                    },
+                    {
+                        "name": "11",
+                        "type": "text",
+                        "label": "(L)"
+                    },
+                    {
+                        "name": "12",
+                        "type": "text",
+                        "label": "(M)"
+                    },
+                    {
+                        "name": "13",
+                        "type": "text",
+                        "label": "(N)"
+                    },
+                    {
+                        "name": "14",
+                        "type": "text",
+                        "label": "(O)"
+                    },
+                    {
+                        "name": "15",
+                        "type": "text",
+                        "label": "(P)"
+                    },
+                    {
+                        "name": "16",
+                        "type": "text",
+                        "label": "(Q)"
+                    },
+                    {
+                        "name": "17",
+                        "type": "text",
+                        "label": "(R)"
+                    },
+                    {
+                        "name": "18",
+                        "type": "text",
+                        "label": "(S)"
+                    },
+                    {
+                        "name": "19",
+                        "type": "text",
+                        "label": "(T)"
+                    },
+                    {
+                        "name": "20",
+                        "type": "text",
+                        "label": "(U)"
+                    },
+                    {
+                        "name": "21",
+                        "type": "text",
+                        "label": "(V)"
+                    },
+                    {
+                        "name": "22",
+                        "type": "text",
+                        "label": "(W)"
+                    },
+                    {
+                        "name": "23",
+                        "type": "text",
+                        "label": "(X)"
+                    },
+                    {
+                        "name": "24",
+                        "type": "text",
+                        "label": "(Y)"
+                    },
+                    {
+                        "name": "25",
+                        "type": "text",
+                        "label": "(Z)"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 1,
+            "module": "openai-gpt-3:CreateCompletion",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "model": "gpt-4-0125-preview",
+                "top_p": "1",
+                "select": "chat",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": "You are a market researcher.\n\nPlease enrich the data of this company:\n'''{{12.`0`}}'''\n\nPlease provide the following data of the company:\n1. LinkedIn profile URL\n2. Website\n3. Description\n4. Size\n5. Industry\n6. Employees\n7. Founded\n8. Location\n9. Crunchbase\n10. Estimated Annual Revenue\n\nOutput this as a Json.\nDo not include ```json before the structure."
+                    }
+                ],
+                "max_tokens": "1000",
+                "temperature": "1",
+                "n_completions": "1",
+                "response_format": "text"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "stop": {
+                            "mode": "chose"
+                        },
+                        "model": {
+                            "mode": "chose",
+                            "label": "gpt-4-0125-preview (system)"
+                        },
+                        "select": {
+                            "label": "Create a Chat Completion (GPT Models)"
+                        },
+                        "messages": {
+                            "mode": "chose",
+                            "items": [
+                                {
+                                    "role": {
+                                        "mode": "chose",
+                                        "label": "User"
+                                    }
+                                }
+                            ]
+                        },
+                        "logit_bias": {
+                            "mode": "chose"
+                        },
+                        "response_format": {
+                            "mode": "chose",
+                            "label": "Text"
+                        },
+                        "additionalParameters": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "openai-gpt-3"
+                            },
+                            "label": "Make Ent GPT4"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:openai-gpt-3",
+                        "label": "Connection"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "select",
+                        "type": "select",
+                        "label": "Select Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "chat",
+                                "prompt"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "max_tokens",
+                        "type": "number",
+                        "label": "Max Tokens",
+                        "required": true
+                    },
+                    {
+                        "name": "temperature",
+                        "type": "number",
+                        "label": "Temperature",
+                        "validate": {
+                            "max": 2,
+                            "min": 0
+                        }
+                    },
+                    {
+                        "name": "top_p",
+                        "type": "number",
+                        "label": "Top P",
+                        "validate": {
+                            "max": 1,
+                            "min": 0
+                        }
+                    },
+                    {
+                        "name": "n_completions",
+                        "type": "number",
+                        "label": "Number"
+                    },
+                    {
+                        "name": "frequency_penalty",
+                        "type": "number",
+                        "label": "Frequency Penalty",
+                        "validate": {
+                            "max": 2,
+                            "min": -2
+                        }
+                    },
+                    {
+                        "name": "presence_penalty",
+                        "type": "number",
+                        "label": "Presence Penalty",
+                        "validate": {
+                            "max": 2,
+                            "min": -2
+                        }
+                    },
+                    {
+                        "name": "logit_bias",
+                        "spec": {
+                            "name": "value",
+                            "spec": [
+                                {
+                                    "name": "token",
+                                    "type": "text",
+                                    "label": "Token ID",
+                                    "required": true
+                                },
+                                {
+                                    "name": "probability",
+                                    "type": "number",
+                                    "label": "Probability",
+                                    "required": true,
+                                    "validate": {
+                                        "max": 100,
+                                        "min": -100
+                                    }
+                                }
+                            ],
+                            "type": "collection",
+                            "label": "Token Probability"
+                        },
+                        "type": "array",
+                        "label": "Token Probability"
+                    },
+                    {
+                        "name": "response_format",
+                        "type": "select",
+                        "label": "Response Format",
+                        "validate": {
+                            "enum": [
+                                "text",
+                                "json_object"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "seed",
+                        "type": "integer",
+                        "label": "Seed"
+                    },
+                    {
+                        "name": "stop",
+                        "spec": {
+                            "name": "value",
+                            "type": "text",
+                            "label": "Stop Sequence"
+                        },
+                        "type": "array",
+                        "label": "Stop Sequences",
+                        "validate": {
+                            "maxItems": 4
+                        }
+                    },
+                    {
+                        "name": "additionalParameters",
+                        "spec": {
+                            "name": "value",
+                            "spec": [
+                                {
+                                    "name": "key",
+                                    "type": "text",
+                                    "label": "Parameter Name",
+                                    "required": true
+                                },
+                                {
+                                    "name": "type",
+                                    "type": "select",
+                                    "label": "Input Type",
+                                    "options": [
+                                        {
+                                            "label": "Text",
+                                            "value": "text",
+                                            "nested": [
+                                                {
+                                                    "name": "value",
+                                                    "type": "text",
+                                                    "label": "Parameter Value"
+                                                }
+                                            ],
+                                            "default": true
+                                        },
+                                        {
+                                            "label": "Number",
+                                            "value": "number",
+                                            "nested": [
+                                                {
+                                                    "name": "value",
+                                                    "type": "number",
+                                                    "label": "Parameter Value"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "label": "Boolean",
+                                            "value": "boolean",
+                                            "nested": [
+                                                {
+                                                    "name": "value",
+                                                    "type": "boolean",
+                                                    "label": "Parameter Value"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "label": "Date",
+                                            "value": "date",
+                                            "nested": [
+                                                {
+                                                    "name": "value",
+                                                    "type": "date",
+                                                    "label": "Parameter Value"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "label": "Any",
+                                            "value": "any",
+                                            "nested": [
+                                                {
+                                                    "name": "value",
+                                                    "type": "any",
+                                                    "label": "Parameter Value"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "type": "collection",
+                            "label": "Input Parameter"
+                        },
+                        "type": "array",
+                        "label": "Other Input Parameters"
+                    },
+                    {
+                        "name": "model",
+                        "type": "select",
+                        "label": "Model",
+                        "required": true
+                    },
+                    {
+                        "name": "messages",
+                        "spec": {
+                            "name": "value",
+                            "spec": [
+                                {
+                                    "name": "role",
+                                    "type": "select",
+                                    "label": "Role",
+                                    "options": [
+                                        {
+                                            "label": "System",
+                                            "value": "system"
+                                        },
+                                        {
+                                            "label": "User",
+                                            "value": "user"
+                                        },
+                                        {
+                                            "label": "Assistant",
+                                            "value": "assistant"
+                                        }
+                                    ],
+                                    "required": true
+                                },
+                                {
+                                    "name": "content",
+                                    "type": "text",
+                                    "label": "Message Content"
+                                }
+                            ],
+                            "type": "collection",
+                            "label": "Message"
+                        },
+                        "type": "array",
+                        "label": "Messages",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 10,
+            "module": "json:ParseJSON",
+            "version": 1,
+            "parameters": {
+                "type": ""
+            },
+            "mapper": {
+                "json": "{{1.choices[].message.content}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "type": {
+                            "label": "Choose a data structure"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "type",
+                        "type": "udt",
+                        "label": "Data structure"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "json",
+                        "type": "text",
+                        "label": "JSON string",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 13,
+            "module": "google-sheets:updateRow",
+            "version": 2,
+            "parameters": {},
+            "mapper": {
+                "mode": "fromAll",
+                "values": {
+                    "1": "{{10.`LinkedIn profile URL`}}",
+                    "2": "{{10.Website}}",
+                    "3": "{{10.Description}}",
+                    "4": "{{10.Size}}",
+                    "5": "{{10.Industry}}",
+                    "6": "{{10.Employees}}",
+                    "7": "{{10.Founded}}",
+                    "8": "{{10.Location}}",
+                    "9": "{{10.Crunchbase}}",
+                    "10": "{{10.`Estimated Annual Revenue`}}"
+                },
+                "sheetId": "Sheet1",
+                "rowNumber": "{{12.`__ROW_NUMBER__`}}",
+                "spreadsheetId": "/1FV7c6ABLjQnVwX261IcqAu6uJ9-kRQwc/1XhnAYc6epuuHIAFPVPj4RrnhFwLTWSZsmxmfumTm5i0",
+                "includesHeaders": true,
+                "valueInputOption": "USER_ENTERED"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 900,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "mode": {
+                            "label": "Select from all"
+                        },
+                        "sheetId": {
+                            "mode": "edit"
+                        },
+                        "includesHeaders": {
+                            "label": "Yes",
+                            "nested": [
+                                {
+                                    "name": "values",
+                                    "spec": [
+                                        {
+                                            "name": "0",
+                                            "type": "text",
+                                            "label": "Name (A)"
+                                        },
+                                        {
+                                            "name": "1",
+                                            "type": "text",
+                                            "label": "LinkedIn Profile (B)"
+                                        },
+                                        {
+                                            "name": "2",
+                                            "type": "text",
+                                            "label": "Website (C)"
+                                        },
+                                        {
+                                            "name": "3",
+                                            "type": "text",
+                                            "label": "Description (D)"
+                                        },
+                                        {
+                                            "name": "4",
+                                            "type": "text",
+                                            "label": "Size (E)"
+                                        },
+                                        {
+                                            "name": "5",
+                                            "type": "text",
+                                            "label": "Industry (F)"
+                                        },
+                                        {
+                                            "name": "6",
+                                            "type": "text",
+                                            "label": "Employees (G)"
+                                        },
+                                        {
+                                            "name": "7",
+                                            "type": "text",
+                                            "label": "Founded (H)"
+                                        },
+                                        {
+                                            "name": "8",
+                                            "type": "text",
+                                            "label": "Location (I)"
+                                        },
+                                        {
+                                            "name": "9",
+                                            "type": "text",
+                                            "label": "Crunchbase (J)"
+                                        },
+                                        {
+                                            "name": "10",
+                                            "type": "text",
+                                            "label": "Estimated Annual Revenue (K)"
+                                        },
+                                        {
+                                            "name": "11",
+                                            "type": "text",
+                                            "label": "Alexa Global Rank (L)"
+                                        },
+                                        {
+                                            "name": "12",
+                                            "type": "text",
+                                            "label": "(M)"
+                                        },
+                                        {
+                                            "name": "13",
+                                            "type": "text",
+                                            "label": "(N)"
+                                        },
+                                        {
+                                            "name": "14",
+                                            "type": "text",
+                                            "label": "(O)"
+                                        },
+                                        {
+                                            "name": "15",
+                                            "type": "text",
+                                            "label": "(P)"
+                                        },
+                                        {
+                                            "name": "16",
+                                            "type": "text",
+                                            "label": "(Q)"
+                                        },
+                                        {
+                                            "name": "17",
+                                            "type": "text",
+                                            "label": "(R)"
+                                        },
+                                        {
+                                            "name": "18",
+                                            "type": "text",
+                                            "label": "(S)"
+                                        },
+                                        {
+                                            "name": "19",
+                                            "type": "text",
+                                            "label": "(T)"
+                                        },
+                                        {
+                                            "name": "20",
+                                            "type": "text",
+                                            "label": "(U)"
+                                        },
+                                        {
+                                            "name": "21",
+                                            "type": "text",
+                                            "label": "(V)"
+                                        },
+                                        {
+                                            "name": "22",
+                                            "type": "text",
+                                            "label": "(W)"
+                                        },
+                                        {
+                                            "name": "23",
+                                            "type": "text",
+                                            "label": "(X)"
+                                        },
+                                        {
+                                            "name": "24",
+                                            "type": "text",
+                                            "label": "(Y)"
+                                        },
+                                        {
+                                            "name": "25",
+                                            "type": "text",
+                                            "label": "(Z)"
+                                        }
+                                    ],
+                                    "type": "collection",
+                                    "label": "Values"
+                                }
+                            ]
+                        },
+                        "valueInputOption": {
+                            "mode": "chose",
+                            "label": "User entered"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            },
+                            "label": "My Google connection (l.govender@make.com)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "mode",
+                        "type": "select",
+                        "label": "Choose a Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "select",
+                                "fromAll",
+                                "map"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "valueInputOption",
+                        "type": "select",
+                        "label": "Value input option",
+                        "validate": {
+                            "enum": [
+                                "USER_ENTERED",
+                                "RAW"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "text",
+                        "label": "Spreadsheet ID",
+                        "required": true
+                    },
+                    {
+                        "mode": "edit",
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "rowNumber",
+                        "type": "uinteger",
+                        "label": "Row number",
+                        "required": true
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "select",
+                        "label": "Table contains headers",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "values",
+                        "spec": [
+                            {
+                                "name": "0",
+                                "type": "text",
+                                "label": "Name (A)"
+                            },
+                            {
+                                "name": "1",
+                                "type": "text",
+                                "label": "LinkedIn Profile (B)"
+                            },
+                            {
+                                "name": "2",
+                                "type": "text",
+                                "label": "Website (C)"
+                            },
+                            {
+                                "name": "3",
+                                "type": "text",
+                                "label": "Description (D)"
+                            },
+                            {
+                                "name": "4",
+                                "type": "text",
+                                "label": "Size (E)"
+                            },
+                            {
+                                "name": "5",
+                                "type": "text",
+                                "label": "Industry (F)"
+                            },
+                            {
+                                "name": "6",
+                                "type": "text",
+                                "label": "Employees (G)"
+                            },
+                            {
+                                "name": "7",
+                                "type": "text",
+                                "label": "Founded (H)"
+                            },
+                            {
+                                "name": "8",
+                                "type": "text",
+                                "label": "Location (I)"
+                            },
+                            {
+                                "name": "9",
+                                "type": "text",
+                                "label": "Crunchbase (J)"
+                            },
+                            {
+                                "name": "10",
+                                "type": "text",
+                                "label": "Estimated Annual Revenue (K)"
+                            },
+                            {
+                                "name": "11",
+                                "type": "text",
+                                "label": "Alexa Global Rank (L)"
+                            },
+                            {
+                                "name": "12",
+                                "type": "text",
+                                "label": "(M)"
+                            },
+                            {
+                                "name": "13",
+                                "type": "text",
+                                "label": "(N)"
+                            },
+                            {
+                                "name": "14",
+                                "type": "text",
+                                "label": "(O)"
+                            },
+                            {
+                                "name": "15",
+                                "type": "text",
+                                "label": "(P)"
+                            },
+                            {
+                                "name": "16",
+                                "type": "text",
+                                "label": "(Q)"
+                            },
+                            {
+                                "name": "17",
+                                "type": "text",
+                                "label": "(R)"
+                            },
+                            {
+                                "name": "18",
+                                "type": "text",
+                                "label": "(S)"
+                            },
+                            {
+                                "name": "19",
+                                "type": "text",
+                                "label": "(T)"
+                            },
+                            {
+                                "name": "20",
+                                "type": "text",
+                                "label": "(U)"
+                            },
+                            {
+                                "name": "21",
+                                "type": "text",
+                                "label": "(V)"
+                            },
+                            {
+                                "name": "22",
+                                "type": "text",
+                                "label": "(W)"
+                            },
+                            {
+                                "name": "23",
+                                "type": "text",
+                                "label": "(X)"
+                            },
+                            {
+                                "name": "24",
+                                "type": "text",
+                                "label": "(Y)"
+                            },
+                            {
+                                "name": "25",
+                                "type": "text",
+                                "label": "(Z)"
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Values"
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "us2.make.com",
+        "notes": [
+            {
+                "moduleIds": [
+                    1
+                ],
+                "content": "<p>Prompts:</p><p></p><p></p><p></p>Suggests the apps I need to create a scenario using Make that creates an Ad spend summary.<p></p><p></p><p></p><p></p>Determine if the solution 'Website traffic report generation' is a business critical operation by analyzing marketing sentiment, popularity, frequency and time spent. Furthermore, determine if there is a need to integrate multiple apps to automate this process with an app like Make or Zapier.<p></p>",
+                "isFilterNote": false,
+                "metadata": {
+                    "color": "#9138FE"
+                }
+            }
+        ]
+    }
+}

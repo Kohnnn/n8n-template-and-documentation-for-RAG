@@ -1,0 +1,872 @@
+{
+  "name": "Kawa Google Sheets Voice Agent Expanded",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -500,
+        -40
+      ],
+      "id": "9059ccbe-d828-4905-80d5-a81a98628774",
+      "name": "Telegram Trigger",
+      "webhookId": "85b99a18-e34e-462d-b14a-2da1d99bf179",
+      "credentials": {
+        "telegramApi": {
+          "id": "0ylovERnRkrZbtIl",
+          "name": "Kris Testy Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "7c91a664-3634-41e0-a1c8-2e195b9b509e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b6f5f508-c214-4f1a-925b-16dca2a94a74",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "=Voice"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -280,
+        -40
+      ],
+      "id": "72d75577-0a47-4e27-bc75-02914724d2b0",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -60,
+        -40
+      ],
+      "id": "3e8f3265-1c45-4727-a538-6b08ea7163db",
+      "name": "Telegram",
+      "webhookId": "f4f37d38-2d3d-4b9a-a970-dcccc6593776",
+      "credentials": {
+        "telegramApi": {
+          "id": "0ylovERnRkrZbtIl",
+          "name": "Kris Testy Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        160,
+        -40
+      ],
+      "id": "d5631008-5104-422f-8836-23334148ca64",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "qYl5BQ3ptjgdCVR2",
+          "name": "Test for others"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "98e880bb-22ee-4c13-9841-084efcc2aeae",
+              "name": "text",
+              "value": "={{ $('Telegram Trigger').item.json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        -240
+      ],
+      "id": "8ddce32d-d317-4079-ad85-18114e555f22",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Akceptuję tylko tekst lub głos",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -60,
+        160
+      ],
+      "id": "1c272180-bf20-42fe-b65a-d48f1913b091",
+      "name": "Komunikat - wejście nieobsługiwane",
+      "webhookId": "e55dbd29-c1a7-41be-a288-9f6c040fe093",
+      "credentials": {
+        "telegramApi": {
+          "id": "0ylovERnRkrZbtIl",
+          "name": "Kris Testy Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 🟢 1. Start – wiadomość od użytkownika\n\nRozpoznanie typu wiadomości (tekst lub głos)",
+        "height": 700,
+        "width": 460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -600,
+        -380
+      ],
+      "typeVersion": 1,
+      "id": "d49fafd6-5517-4806-9fe4-d6efa371172f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## 🎙️  2. Rozpoznanie wiadomości\n\n📌 Jeśli to nagranie, transkrybujemy je do tekstu. Jeśli tekst – zapisujemy go od razu. W obu przypadkach uzyskujemy czysty tekst.",
+        "height": 700,
+        "width": 480,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -140,
+        -380
+      ],
+      "typeVersion": 1,
+      "id": "6ee6ca5a-d3c4-4bc1-a20b-262821b29579",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=User Query: {{ $json.text }}",
+        "options": {
+          "systemMessage": "=You are an assistant to manage two tables for **coffee bean inventory**: one for available items (\"Available\") and one for used items (\"Used\"). You receive user messages via voice or text (already transcribed and structured), and your job is to understand what the user wants and act accordingly using the tools described below.\n\nYou will have six tools:\n\n1. Get Available – returns a specific row (or rows) from the Available table based on Roast Batch.\n2. Update Available – allows you to add, update, or delete rows in the Available table. Roast Batch is the unique identifier.\n3. Get Used – returns a specific row (or rows) from the Used table based on Roast Batch.\n4. Update Used – allows you to add or update rows in the Used table. Roast Batch is the unique identifier.\n5. Get ALL Available – returns the entire table of available coffee batches. Use this tool to analyze all inventory data, check expiry dates, or summarize current stock.\n6. Get ALL Used – returns the entire table of used coffee batches. Use this tool to generate daily/weekly usage reports, compare usage trends, or check what’s been used most recently.\n\nEach row in both tables contains the following columns:\n\n* Bean Code: a short alphanumeric identifier of the coffee type or supplier (e.g. BRZ101, ETH202)\n* Roast Batch: a unique batch identifier that includes the roasting date or shipment reference (e.g. RB2404, ETH202-APR25)\n* Expiry Date: best-before date in format YYYY-MM-DD\n* Quantity: number of kilograms currently available or used\n* Date Added: date when the batch was added or used (optional – can be auto-generated)\n\nWhat you do:\n\nWhen the user wants to add new coffee:\n\n1. Normalize the Bean Code and Roast Batch (see normalization rules below).\n2. Use Get Available to check if this Roast Batch already exists.\n3. If it exists:\n\n   * Increase the existing quantity using Update Available.\n4. If it does not exist:\n\n   * Create a new row using Update Available with the Bean Code, Roast Batch, expiry date, and quantity.\n5. Always check the expiry date:\n\n   * If the expiry date is in the past, do not add the product. Inform the user.\n   * Expiry date is required. If it's missing, reject the input and ask the user to provide it.\n\nWhen the user wants to use a batch:\n\n1. Normalize the Bean Code and Roast Batch.\n2. Use Get Available to find the Roast Batch.\n3. If it is not found, inform the user and stop.\n4. If the requested quantity is greater than available, inform the user and stop.\n5. If the quantity used reduces the available quantity to zero:\n\n   * Remove the row using Update Available.\n   * Inform the user that the last part of the batch was used.\n6. If some quantity remains:\n\n   * Subtract the used quantity and update the Roast Batch using Update Available.\n7. Then update the Used table:\n\n   * Use Get Used to check if the Roast Batch already exists there.\n   * If it does, increase the quantity using Update Used.\n   * If not, create a new row using Update Used with the same Bean Code, Roast Batch, expiry, and quantity.\n\nWhen the user asks a question about the overall inventory:\n\n1. Use **Get ALL Available** to answer questions like:\n\n   * Which coffees are missing expiry dates?\n   * What’s the total stock of each Bean Code?\n   * Which batch will expire first?\n   * Show me all batches that will expire in the next 14 days.\n   * Are there any duplicate Roast Batches or anomalies?\n\n2. Use **Get ALL Used** to answer questions like:\n\n   * How much coffee did we use this week?\n   * List all batches used today or yesterday.\n   * Which Bean Code is used the most?\n   * Show total monthly usage per Bean Code.\n   * What was the most recently used batch?\n\nNormalization of Bean Code and Roast Batch:\n\n* Remove all spaces, hyphens, and special characters.\n* Convert all letters to uppercase.\n* Example: `\" eth-202 /rb2404 \"` becomes `\"ETH202RB2404\"`\n\nThree example user queries and how to handle them:\n\nExample 1: \"Dodaj 2 kg ETH202, partia RB2404, ważność 2026-12-15\"\nStep 1: Normalize Bean Code to ETH202 and Roast Batch to RB2404\nStep 2: Use Get Available to check if RB2404 exists\nStep 3: If yes, add 2 to the existing quantity using Update Available\nStep 4: If not, create a new row with ETH202, RB2404, expiry 2026-12-15, and quantity 2 using Update Available\n\nExample 2: \"Zużyj 1 kg BRZ101 z partii brz101-kwie25\"\nStep 1: Normalize Bean Code to BRZ101 and Roast Batch to BRZ101KWIE25\nStep 2: Use Get Available to check if BRZ101KWIE25 exists\nStep 3: If not found, inform the user and stop\nStep 4: If quantity is at least 1:\n\n* Subtract 1 kg using Update Available\n* If this was the last kg, remove the row\n  Step 5: Use Get Used to check if BRZ101KWIE25 exists\n* If yes, increase by 1 kg using Update Used\n* If not, create a new row with BRZ101, BRZ101KWIE25, expiry (from original row), and quantity 1\n\nExample 3: \"Dodaj ETH202, partia ETH202-MAJ01, 3 kg, ważna do 2025-11-01\"\nStep 1: Normalize Bean Code to ETH202 and Roast Batch to ETH202MAJ01\nStep 2: Parse expiry date to 2025-11-01\nStep 3: Reject the addition if the date is before today\nStep 4: Use Get Available to check if ETH202MAJ01 exists\n\n* If yes, increase quantity by 3\n* If not, create a new row with ETH202, ETH202MAJ01, expiry 2025-11-01, and quantity 3\n\nImportant:\n\n* Expiry date is required. Do not allow \"brak\".\n* If quantity is missing, default to 1.\n* Always respond in Polish.\n* For relative dates I want you to know that today is {{ $today.format('yyyy-MM-dd') }}.",
+          "maxIterations": 15
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        560,
+        -140
+      ],
+      "id": "8170f38f-6185-47ac-8a23-4ca3a0e09607",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-20250514",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        380,
+        80
+      ],
+      "id": "0ffc7050-cea7-4d7f-9603-bc4b56a3d910",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "ttO3hfGGN3Oi3Kmb",
+          "name": "Workout Tracker"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        620,
+        80
+      ],
+      "id": "668ddc2d-6fc0-4e64-88d3-4be718b95697",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8",
+          "mode": "list",
+          "cachedResultName": "Baza Kawy",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Dostepne",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KQD_zcJxPYjeCpfaAJbKI-OGbjYwVX-AyU_uwK1UVlA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Partia Palenia",
+              "lookupValue": "={{ $fromAI('values0_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        740,
+        80
+      ],
+      "id": "80e500c1-9302-4768-bb17-ece60ad7e51d",
+      "name": "Get Available",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NY9b4Sh5xjFvmADp",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8",
+          "mode": "list",
+          "cachedResultName": "Baza Kawy",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1602907708,
+          "mode": "list",
+          "cachedResultName": "Wykorzystane",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KQD_zcJxPYjeCpfaAJbKI-OGbjYwVX-AyU_uwK1UVlA/edit#gid=1602907708"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Partia Palenia",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        860,
+        80
+      ],
+      "id": "4c84cac6-3224-4224-b93d-dfec6b95ebb4",
+      "name": "Get Used",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NY9b4Sh5xjFvmADp",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8",
+          "mode": "list",
+          "cachedResultName": "Baza Kawy",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1602907708,
+          "mode": "list",
+          "cachedResultName": "Wykorzystane",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KQD_zcJxPYjeCpfaAJbKI-OGbjYwVX-AyU_uwK1UVlA/edit#gid=1602907708"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Kod Produktu": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Kod_Produktu', ``, 'string') }}",
+            "Data Ważności": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Data_Wa_no_ci', ``, 'string') }}",
+            "Liczba Produktów": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Liczba_Produkt_w', ``, 'string') }}",
+            "Partia Palenia": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Partia_Palenia', ``, 'string') }}",
+            "Data Wykorzystania": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Data_Wykorzystania', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Partia Palenia"
+          ],
+          "schema": [
+            {
+              "id": "Kod Produktu",
+              "displayName": "Kod Produktu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Partia Palenia",
+              "displayName": "Partia Palenia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Data Ważności",
+              "displayName": "Data Ważności",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Liczba Produktów",
+              "displayName": "Liczba Produktów",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data Wykorzystania",
+              "displayName": "Data Wykorzystania",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        980,
+        80
+      ],
+      "id": "69d7d1c1-d69b-4c3a-a6db-945bb357fee6",
+      "name": "Update Used",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NY9b4Sh5xjFvmADp",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8",
+          "mode": "list",
+          "cachedResultName": "Baza Kawy",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Dostepne",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KQD_zcJxPYjeCpfaAJbKI-OGbjYwVX-AyU_uwK1UVlA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Kod Produktu": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Kod_Produktu', ``, 'string') }}",
+            "Data Ważności": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Data_Wa_no_ci', ``, 'string') }}",
+            "Liczba Produktów": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Liczba_Produkt_w', ``, 'string') }}",
+            "Data Dodania": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Data_Dodania', ``, 'string') }}",
+            "Partia Palenia": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Partia_Palenia', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Partia Palenia"
+          ],
+          "schema": [
+            {
+              "id": "Kod Produktu",
+              "displayName": "Kod Produktu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Partia Palenia",
+              "displayName": "Partia Palenia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Data Ważności",
+              "displayName": "Data Ważności",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Liczba Produktów",
+              "displayName": "Liczba Produktów",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data Dodania",
+              "displayName": "Data Dodania",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        1100,
+        80
+      ],
+      "id": "45998e03-89b1-4efa-a3d5-16bfb0a15ad9",
+      "name": "Update Available",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NY9b4Sh5xjFvmADp",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1100,
+        -140
+      ],
+      "id": "a37757a6-2795-4d75-83b5-bdb9d00382ec",
+      "name": "Telegram1",
+      "webhookId": "3ad3cf48-c9a4-4727-ab54-80ead2b4c35f",
+      "credentials": {
+        "telegramApi": {
+          "id": "0ylovERnRkrZbtIl",
+          "name": "Kris Testy Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        500,
+        80
+      ],
+      "id": "212d739a-7f94-4624-b3e0-e2d556afbffe",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8",
+          "mode": "list",
+          "cachedResultName": "Baza Kawy",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1602907708,
+          "mode": "list",
+          "cachedResultName": "Wykorzystane",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8/edit#gid=1602907708"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        1340,
+        80
+      ],
+      "id": "b349dca4-d173-4328-b320-9d69b598ee65",
+      "name": "Get ALL Used",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NY9b4Sh5xjFvmADp",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8",
+          "mode": "list",
+          "cachedResultName": "Baza Kawy",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Dostepne",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ijzAJGYQFbuwYUiO6KbFGgW-XSPMUN0pMUhIZpPOLY8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        1220,
+        80
+      ],
+      "id": "6cd199af-c5ce-415a-9b5a-60b6b3542b03",
+      "name": "Get ALL Available",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NY9b4Sh5xjFvmADp",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Komunikat - wejście nieobsługiwane",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Available": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Used": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Used": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Available": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ALL Available": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ALL Used": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Warsaw",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "f71089bb-2a9b-4561-a677-98f5509a5afe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "863eabfba3df30edad431c3c0e0ef7a1f3cfe252b9fca6378bae09af6dfe7900"
+  },
+  "id": "lnzifdK2RfAC8i4E",
+  "tags": [
+    {
+      "createdAt": "2025-03-13T05:27:29.840Z",
+      "updatedAt": "2025-03-13T05:27:29.840Z",
+      "id": "tuOHy4fCdBPxrogN",
+      "name": "telegram"
+    },
+    {
+      "createdAt": "2025-03-13T08:07:33.313Z",
+      "updatedAt": "2025-03-13T08:07:33.313Z",
+      "id": "O11CfzqvAHbHY5BM",
+      "name": "google sheets"
+    },
+    {
+      "createdAt": "2025-03-23T11:54:59.305Z",
+      "updatedAt": "2025-03-23T11:54:59.305Z",
+      "id": "RuD2npBpYXEzpClM",
+      "name": "OpenAI"
+    },
+    {
+      "createdAt": "2025-04-01T10:42:39.852Z",
+      "updatedAt": "2025-04-01T10:42:39.852Z",
+      "id": "2ZgPlmJ9ZMcIQNHS",
+      "name": "speech-to-text"
+    }
+  ]
+}

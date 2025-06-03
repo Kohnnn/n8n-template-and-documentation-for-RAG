@@ -1,0 +1,374 @@
+{
+  "name": "🛠 summarize_finances",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1e34bfcb-a147-46e9-9d17-71f008681bf0",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        140,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1LifYlAuUy2cfVyV9NS58M2ybusfIo6ZEh_6jq0khuV0",
+          "mode": "list",
+          "cachedResultName": "Spending Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LifYlAuUy2cfVyV9NS58M2ybusfIo6ZEh_6jq0khuV0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Bank Transactions",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LifYlAuUy2cfVyV9NS58M2ybusfIo6ZEh_6jq0khuV0/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Month",
+              "lookupValue": "={{ $json.monthName }}"
+            },
+            {
+              "lookupColumn": "Category",
+              "lookupValue": "={{ $('Edit Fields1').item.json.category }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "60452b6a-2a59-43b1-8ad0-76781736f670",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1160,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1L2lmeqRkdaY3Wya",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1927732-bfef-4337-86da-3c9aac5ecaf3",
+              "name": "date",
+              "value": "={{ $json.message.content.transaction_date }}",
+              "type": "string"
+            },
+            {
+              "id": "a0349354-f30c-441f-bd81-1036f3bd087b",
+              "name": "category",
+              "value": "={{ $json.message.content.category }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c6fb9022-7f42-4706-94ac-3b748923b6f2",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Input: Date string value\nconst inputDate = $input.first().json.date; // Assuming the input date is passed as \"date\" in the JSON object\n\n// Convert the date string to a Month Name\nconst options = { month: 'long' };\nconst monthName = new Date(inputDate).toLocaleString('en-US', options);\n\n// Output the result\nreturn {\n    monthName: monthName\n};\n"
+      },
+      "id": "a1b7f0f0-0918-491a-83db-ce63aa76ab19",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "a834815b-0634-40b8-a75c-73b0b4070f46",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1380,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bfa82842-fee4-4b47-bd94-7de53e938b2a",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "063491a8-a135-4c69-b683-0286be5ca947",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1600,
+        300
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "22603532-04a7-44da-b7e4-813e79f8e22d",
+      "name": "Calculator",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1820,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Your role is to analyze financial transactions using the provided data. Give short but informative summary about the data you are given with to be reported to the user.\n\nIMPORTANT:\nUse the calculator tool to compute the correct amount.",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.data }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a07e9c42-6f6d-4557-911a-7a425a6b8e51",
+      "name": "OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        1820,
+        300
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "81416485-6e75-43e6-ab2f-6d2d9130f12c",
+              "name": "response",
+              "value": "={{ $json.message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bbb6fe47-33a5-4ea9-9e90-5aea22087e24",
+      "name": "Edit Fields2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Parse the data and output the parameters separately.",
+              "role": "system"
+            },
+            {
+              "content": "={{ JSON.stringify($json.query) }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "b9b1f191-1051-44be-aea3-49d0726bb168",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        360,
+        300
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": {
+            "transaction_date": "October 2024",
+            "transactions": "Non-Essential Expenses",
+            "category": "Non-Essential Expenses",
+            "credit": 0,
+            "debit": 0
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8e88f93a-490e-42df-897a-0e6286a21b59",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80dda94540258c8a9249877c5128f67d88ca1bcc72725380688b9a5c6a7a5d1f"
+  },
+  "id": "vrQdY5YrR67IciWS",
+  "tags": []
+}

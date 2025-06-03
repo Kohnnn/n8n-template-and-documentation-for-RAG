@@ -1,0 +1,1017 @@
+{
+  "name": "ai-image-studio",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1560,
+        260
+      ],
+      "id": "65d47f0d-b430-4e22-8c24-96b6d06edef6",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "formTitle": "Generate Image",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What would you like",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Create a LinkedIn Post"
+                  },
+                  {
+                    "option": "Create a Youtube Script"
+                  },
+                  {
+                    "option": "Modify my Product Image"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What would you like done?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Upload file",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -140,
+        120
+      ],
+      "id": "f97744fc-cd44-4f9d-ab07-e0aa3cae0eb8",
+      "name": "On form submission",
+      "webhookId": "__REDACTED_WEBHOOK_ID__"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json[\"What would you like\"] }}",
+                    "rightValue": "Modify my Product Image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    },
+                    "id": "cb114fbd-6f15-40ff-bb70-1916ef420fb5"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Generate New Image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2a0da1ff-efa1-40ed-82b3-22551e0d961f",
+                    "leftValue": "={{ $json[\"What would you like\"] }}",
+                    "rightValue": "Modify my Product Image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Edit Existing Image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        20,
+        120
+      ],
+      "id": "4a64de05-6f87-460f-9f30-f8c112422d19",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "content": "## Team 1 - Generate New Image",
+        "height": 420,
+        "width": 1720,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        220,
+        -260
+      ],
+      "id": "01aec6d3-8487-48fb-9b01-5c4aac55892e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Team 2 - Edit Existing Image",
+        "height": 420,
+        "width": 1720,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        220,
+        180
+      ],
+      "id": "bc534cdb-c35b-415e-ae95-8069f5972add",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json[\"What would you like\"] }}",
+                    "rightValue": "Create a LinkedIn Post",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "80e51c68-6b2f-4e09-9303-229e0e213ef8"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "LinkedIn"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7c174ad9-bbb7-44ab-81ee-63a91cd9f4da",
+                    "leftValue": "={{ $json[\"What would you like\"] }}",
+                    "rightValue": "Create a Youtube Script",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Youtube"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        300,
+        -120
+      ],
+      "id": "2adf2a5b-2851-4460-ac60-24a133912def",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        460,
+        460
+      ],
+      "id": "3c929c0d-02a6-4855-b2f7-79fcbcf03814",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "__REDACTED__",
+          "name": "__REDACTED__"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1560,
+        -140
+      ],
+      "id": "534e1503-0c3a-4f6c-81d5-91464b4fb0a5",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        760,
+        40
+      ],
+      "id": "0fdb94c0-0d25-4214-ad81-7eab20181939",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "__REDACTED__",
+          "name": "__REDACTED__"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let raw = $input.first().json.output;\n\n// Step 1: Try to detect and fix outer wrapping\n// Remove any markdown-style wrapping (triple backticks or extra quotes)\nraw = raw.trim();\nif (raw.startsWith('```json') || raw.startsWith('```')) {\n  raw = raw.replace(/```json\\\\n?|```/gi, '').trim();\n}\n\n// Step 2: Parse as JSON\nlet parsed;\ntry {\n  parsed = JSON.parse(raw);\n} catch (e) {\n  throw new Error('\u274c JSON parse failed: ' + e.message + '\\\\n\\\\nContent:\\\\n' + raw);\n}\n\n// Step 3: Return result\nreturn [\n  {\n    json: {\n      copy: parsed.copy || '',\n      prompt: parsed.prompt || ''\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1180,
+        -140
+      ],
+      "id": "deecda93-6cb1-4774-b068-81db14cd74af",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the web",
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"model\": \"gpt-4o\",\n    \"tools\": [{ \"type\": \"web_search_preview\" }],\n    \"input\": \"{web_search_question}\"\n  }",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "{web_search_question}",
+              "description": "The question to search"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1080,
+        20
+      ],
+      "id": "ce83ae32-d012-4d1a-9778-92fdb037f906",
+      "name": "web_search",
+      "credentials": {
+        "openAiApi": {
+          "id": "__REDACTED__",
+          "name": "__REDACTED__"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "__REDACTED_EMAIL__",
+        "subject": "Your Image Is Ready",
+        "emailType": "text",
+        "message": "={{ $('Code').item.json.copy }}",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1740,
+        -140
+      ],
+      "id": "3f154ed9-24c5-4a58-983e-49e5e1d3f12b",
+      "name": "Gmail",
+      "webhookId": "__REDACTED_WEBHOOK_ID__",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "__REDACTED__",
+          "name": "__REDACTED__"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "905099a2-860e-47df-84e0-fa37a71d5736",
+              "name": "prompt",
+              "value": "You are a **YouTube Video Generator Agent**.\n\nYour responsibilities:\n\n1. **Research the provided topic** using the `web_search` tool. Use credible sources and include direct links to those sources in your output.\n2. **Generate a high-engagement YouTube video script** that hooks viewers early, delivers real value, and includes relevant facts, stats, or storytelling. It should be concise, clear, and optimized for retention.\n3. **Craft a thumbnail prompt** to describe a compelling visual that supports the video topic. Focus on emotion, intrigue, and visual clarity. Do **not** include image size or formatting syntax.\n\n### Output Format:\nRespond with a JSON object in the following format:\n\n{\n  \"copy\": \"Full YouTube video script. Include a hook, intro, valuable content, and a call to action.\",\n  \"prompt\": \"A visual description for a YouTube thumbnail that captures attention and reflects the video's core idea.\"\n}\n\nEnsure all links referenced in the script are embedded as spoken content (e.g. \u201cAccording to a report from...\u201d) and listed in the video description if needed. Avoid fluff\u2014deliver real value in both visuals and narrative.\n\nNote: The thumbnail prompt must include a catchy phrase text overlay, not just an image.\n",
+              "type": "string"
+            },
+            {
+              "id": "703e0a3d-d8b5-4eda-b30a-34cb4e287aa9",
+              "name": "size",
+              "value": "1536x1024",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        -40
+      ],
+      "id": "128f77db-b680-4e4b-92b2-67ff6c8faef4",
+      "name": "Set Youtube Agent",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f2718e87-def3-4966-b45f-278393b54fb3",
+              "name": "prompt",
+              "value": "You are a **LinkedIn Post Generator Agent**.\n\nYour responsibilities:\n\n1. **Research the provided topic** using the `web_search` tool. Use credible sources and include direct links to those sources in your output.\n2. **Generate a professional, engaging LinkedIn post** that shares insights, data, or commentary on the topic. The post should be suitable for an audience of professionals, business leaders, or industry peers.\n3. **Craft a detailed image prompt** to describe a visual that would pair well with the post. Focus on illustrating concepts, trends, or statistics mentioned in the post. Do not include any image size or resolution parameters in the prompt.\n\n### Output Format:\nRespond with a JSON object in the following format:\n\n{\n  \"copy\": \"Full LinkedIn post copy with inline links like [Joby Aviation](https://apnews.com/article/97a051ba488c31dd3d5042b2daeff722). Make it value-rich, professional, and formatted for LinkedIn.\",\n  \"prompt\": \"A visual description prompt to generate a relevant image. Should describe the key concepts in the post without including formatting, image size, or tool-specific syntax.\"\n}\n\n\nEnsure all links are current, relevant, and trustworthy. Avoid fluff\u2014deliver real value.",
+              "type": "string"
+            },
+            {
+              "id": "cff58b30-e0da-409e-99c6-e864ba56f469",
+              "name": "size",
+              "value": "1024x1024",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        -220
+      ],
+      "id": "61601330-5d10-4c88-814a-c2da840ed185",
+      "name": "Set LinkedIn Agent",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the web",
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"model\": \"gpt-4o\",\n    \"tools\": [{ \"type\": \"web_search_preview\" }],\n    \"input\": \"{web_search_question}\"\n  }",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "{web_search_question}",
+              "description": "The question to search"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        700,
+        460
+      ],
+      "id": "b6e1089e-8144-48ee-a9b3-5051cd910015",
+      "name": "web_search1",
+      "credentials": {
+        "openAiApi": {
+          "id": "__REDACTED__",
+          "name": "__REDACTED__"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.output;\n\n// Step 1: Clean markdown formatting if it's present\nlet cleaned = raw.replace(/```json\\\\n?|```/gi, '').trim();\n\n// Step 2: Parse JSON\nlet parsed;\ntry {\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  throw new Error('\u274c Failed to parse image edit prompt JSON: ' + e.message + '\\\\n\\\\nRaw content:\\\\n' + cleaned);\n}\n\n// Step 3: Return only the prompt\nreturn [\n  {\n    json: {\n      prompt: parsed.prompt || ''\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        280
+      ],
+      "id": "87437bdb-043d-4d43-afd1-5342e5d76c01",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "inputType": "base64",
+        "binaryPropertyName": "Upload_file",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        300,
+        280
+      ],
+      "id": "9f8fb773-23f1-4387-9884-f54cf3ce404d",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "__REDACTED__",
+          "name": "__REDACTED__"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Description of image that was supplied: <description>{{ $json.content }}</description>\nThe User's request of what to modify: <modify>{{ $('Switch1').item.json['What would you like done?'] }}</modify>",
+        "options": {
+          "systemMessage": "You are an **Image Modification Agent**.\n\nYour task is to receive a short instruction from the user about how they want an image changed or enhanced. You also receive a short description of the image they want to edit. You can use the `web_search1` tool to gather context or examples if needed.\n\nYour job is to translate the user's request into a clear, detailed **image modification prompt**. This should describe exactly what the edit should do, how it should look, or what should be added/removed/adjusted.\n\n### Output Format:\nRespond with a JSON object containing a single key:\n\n\n{\n  \"prompt\": \"A descriptive instruction that can be used to modify or edit an image accurately.\"\n}\n\n\nAvoid unnecessary words. Be descriptive, specific, and accurate.\nNote: Where possible, make the text on thumbnails prominent like a title."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        480,
+        280
+      ],
+      "id": "0ef9f123-c885-499d-9b19-f8542b44235f",
+      "name": "Image Editor Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('On form submission').item.json[\"What would you like done?\"] }}",
+        "options": {
+          "systemMessage": "={{ $json.prompt }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        840,
+        -140
+      ],
+      "id": "5568a7ab-c467-48ce-ae27-3ff9efa92f60",
+      "name": "AI Content Agent"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        980,
+        220
+      ],
+      "id": "de774666-2b41-4c39-8472-a946a850697e",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const mergedItems = $input.all(); // Get both items\n\n// Flatten both JSON objects into one\nlet finalJson = {};\nlet finalBinary = {};\n\n// Loop through and merge their JSON + Binary data\nfor (const item of mergedItems) {\n  Object.assign(finalJson, item.json);\n  if (item.binary) {\n    Object.assign(finalBinary, item.binary);\n  }\n}\n\nreturn [\n  {\n    json: finalJson,\n    binary: finalBinary\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1180,
+        260
+      ],
+      "id": "27b79191-0cb2-4909-97c2-16a049b2db0d",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "sendTo": "__REDACTED_EMAIL__",
+        "subject": "Your Image Is Ready",
+        "emailType": "text",
+        "message": "=Enjoy!",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1740,
+        260
+      ],
+      "id": "6e5af0b4-6b0d-410a-8d43-3916e775b2e6",
+      "name": "Gmail1",
+      "webhookId": "__REDACTED_WEBHOOK_ID__",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "__REDACTED__",
+          "name": "__REDACTED__"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Request Form",
+        "height": 860,
+        "width": 380
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        -260
+      ],
+      "id": "d980fe5d-5664-4045-afd2-57e8f3279b63",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.prompt }}"
+            },
+            {
+              "name": "size",
+              "value": "={{ $('Merge1').item.json.size }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        -140
+      ],
+      "id": "25e19ebf-e522-4f7a-84b5-b2374eafd8b2",
+      "name": "Generate Image",
+      "credentials": {
+        "openAiApi": {
+          "id": "__REDACTED__",
+          "name": "__REDACTED__"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.prompt }}"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "image[]",
+              "inputDataFieldName": "=Upload_file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        260
+      ],
+      "id": "f893867d-51e3-4206-9d3a-0d21e287bff9",
+      "name": "Edit Image",
+      "credentials": {
+        "openAiApi": {
+          "id": "__REDACTED__",
+          "name": "__REDACTED__"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        680,
+        -140
+      ],
+      "id": "bbb90537-0496-4546-9aba-637093fd5220",
+      "name": "Merge1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Image Editor Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Set LinkedIn Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Youtube Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Content Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Generate Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "web_search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Content Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Youtube Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Set LinkedIn Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "web_search1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Image Editor Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Image Editor Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Editor Agent": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Content Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Edit Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "AI Content Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "81a9bdbf-2a76-4087-96ed-c3f5692675bb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bec443f32f282145c50b8dcfc610fa7d9dd1cd11f81d464c6dad140e893c49a0"
+  },
+  "id": "f4EOIex2qZWldwCS",
+  "tags": [
+    {
+      "createdAt": "2025-03-27T09:59:28.159Z",
+      "updatedAt": "2025-03-27T09:59:28.159Z",
+      "id": "1a5nO4hc89n0BKRU",
+      "name": "youtube"
+    }
+  ]
+}

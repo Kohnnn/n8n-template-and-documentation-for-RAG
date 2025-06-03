@@ -1,0 +1,9 @@
+{
+  "name": "n8n_respond_webhook",
+  "description": "This AI-powered tool is designed to respond to webhook triggers from an n8n automation workflow to scrape stock market data from the Google Finance website using SERP API endpoints. The tool is activated when the user requests new stock market data and facilitates the scraping process by passing a search query as input to the workflow. It will trigger the scraper automation via an HTTP request function, sending the input schema named query, which serves as the search parameter for scraping the required financial data.",
+  "color": "linear-gradient(rgb(119,209,197), rgb(173,205,171))",
+  "iconSrc": "",
+  "schema": "[{\"id\":0,\"property\":\"query\",\"description\":\"The search term to be used as input for executing data scraping.\",\"type\":\"string\",\"required\":true}]",
+  "func": "const fetch = require('node-fetch');\nconst url = 'https://youtube-demo.app.n8n.cloud/webhook/youtube-demo';\nconst options = {\n    method: 'POST',\n    headers: {\n        'Content-Type': 'application/json'\n    },\n  body: JSON.stringify({\"query\": $query})\n};\ntry {\n    const response = await fetch(url, options);\n    const text = await response.text();\n    return text;\n} catch (error) {\n    console.error(error);\n    return '';\n}",
+  "workspaceId": null
+}

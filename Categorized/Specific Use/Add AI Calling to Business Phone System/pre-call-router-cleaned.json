@@ -1,0 +1,433 @@
+{
+  "name": "pre-call-router",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "4dc5af6a-245d-4026-adc8-1b1167f458b9",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        -40
+      ],
+      "id": "5bd7e9fd-bd49-4490-8d3c-9ac84377a053",
+      "name": "Webhook",
+      "webhookId": "4dc5af6a-245d-4026-adc8-1b1167f458b9"
+    },
+    {
+      "parameters": {
+        "content": "## Business Hours\nCheck if we are:\n1. Monday - Friday\n2. 9am - 5pm",
+        "height": 140,
+        "width": 220
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        120
+      ],
+      "id": "7d0bd5bf-d9c0-4a83-9b76-0a124be4a30d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Define business hours\nconst BUSINESS_START_HOUR = 9; // 9 AM\nconst BUSINESS_END_HOUR = 17;  // 5 PM\n\n// Loop over input items\nfor (const item of $input.all()) {\n  const now = new Date(); // Get current date and time\n  const hour = now.getHours();\n  const day = now.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6\n\n  // Check if within business hours\n  const isBusinessHours = day >= 1 && day <= 5 && hour >= BUSINESS_START_HOUR && hour < BUSINESS_END_HOUR;\n\n  // Add the result to the JSON\n  item.json.isBusinessHours = isBusinessHours;\n}\n\nreturn $input.all();\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        -40
+      ],
+      "id": "d971d245-b553-45e5-bb4e-99c7dfe0034b",
+      "name": "Business Hours Check"
+    },
+    {
+      "parameters": {
+        "content": "## VIP Customer \nCheck if the caller is a VIP customer, as we may want to route them directly to a human and not an AI",
+        "height": 140,
+        "width": 220
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -220
+      ],
+      "id": "a140b4f6-387f-4d0a-a35c-2573155a6fff",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "pre-call-router",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "vip-customer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "number",
+              "lookupValue": "={{ $('Webhook').item.json.body.Caller }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        220,
+        -40
+      ],
+      "id": "eda8d6b0-dbae-4d23-a8b8-77b45c3930ce",
+      "name": "VIP Customer Check",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('VIP Customer Check').first().json.status }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "8c079fcc-1a41-4977-81b5-400a7adca9c8"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VIP Customer"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "37fdd4b5-5af5-49ce-8a72-518b66879f3c",
+                    "leftValue": "={{ $('Business Hours Check').first().json.isBusinessHours }}",
+                    "rightValue": "true",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Non-VIP & Business Hours"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b56e5c8f-1668-4a5e-bffb-cb513566682b",
+                    "leftValue": "={{ $('Business Hours Check').first().json.isBusinessHours }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Non-VIP & Non-Business Hours"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        860,
+        -40
+      ],
+      "id": "2de79d22-0308-4b41-b6e8-8226a7e10e23",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "content": "## Escalation Roster \nCheck who is available to escalate to",
+        "height": 140,
+        "width": 220
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        380,
+        120
+      ],
+      "id": "88990276-1d89-4cc7-b9b5-58fb899b296b",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "pre-call-router",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 274432454,
+          "mode": "list",
+          "cachedResultName": "escalation-roster",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=274432454"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        440,
+        -40
+      ],
+      "id": "5399d491-3611-4bb1-bf16-2f0b340066ee",
+      "name": "Get Escalation Roster",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Response>\n    <Say>Forwarding your call now.</Say>\n    <Dial>BUSINESS_HOURS_PHONE_NUMBER</Dial>\n</Response>\n",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/xml"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1240,
+        -40
+      ],
+      "id": "d73664ad-e252-48ae-a462-6501c17b7516",
+      "name": "Regular Support"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Response>\n    <Say>Forwarding your call now.</Say>\n    <Dial>AFTER_HOURS_PHONE_NUMBER</Dial>\n</Response>\n",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/xml"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1240,
+        140
+      ],
+      "id": "48db16c2-a537-4711-93c4-1b94ee4cd6a2",
+      "name": "After Hours AI Agent"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Response>\n    <Say>Forwarding your call to our VIP line.</Say>\n    <Dial>{{ $json.phoneNumber }}</Dial>\n</Response>",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/xml"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1240,
+        -220
+      ],
+      "id": "7c018e33-8b57-4963-9b2c-4a7728026b9b",
+      "name": "Forward To VIP Support"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get input data dynamically from previous node\nconst inputData = $input.all(); // Fetches all rows from the previous node\n\n// Get today's day name dynamically\nconst daysOfWeek = [\"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"];\nconst today = daysOfWeek[new Date().getDay()];\n// const today = \"Sunday\"; // Example: \"Sunday\"\n\n\n// Find the person assigned for today\nconst escalatedPerson = inputData.find(person => person.json[today] === \"x\");\n\n// Return the phone number (or null if no one is assigned)\nreturn escalatedPerson ? [{ json: { phoneNumber: escalatedPerson.json.number } }] : [{ json: { phoneNumber: null } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        -40
+      ],
+      "id": "d396ca60-f886-4880-a648-e3f4ac13569b",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Business Hours Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Business Hours Check": {
+      "main": [
+        [
+          {
+            "node": "VIP Customer Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VIP Customer Check": {
+      "main": [
+        [
+          {
+            "node": "Get Escalation Roster",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Escalation Roster": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Forward To VIP Support",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Regular Support",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "After Hours AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7e6f57fb-50f0-4b3d-b5ef-65555766aeb0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "INSTANCE_ID_PLACEHOLDER"
+  },
+  "id": "lUDogQ4JoVhD5F2K",
+  "tags": [
+    {
+      "createdAt": "2025-03-08T09:03:42.515Z",
+      "updatedAt": "2025-03-08T09:03:42.515Z",
+      "id": "aivmgOWAAiWi9vqa",
+      "name": "demo-caller"
+    }
+  ]
+}

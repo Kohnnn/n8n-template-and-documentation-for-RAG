@@ -1,0 +1,593 @@
+{
+  "name": "Virtual Assistant (Altiera)",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "5a2b1e9a-285c-4d32-b2fb-d7a54a3708fa",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -140,
+        320
+      ],
+      "webhookId": "1cb44edb-8a7b-4979-b55b-1a533f15319b",
+      "credentials": {
+        "telegramApi": {
+          "id": "hKRKRgno00tgRXiJ",
+          "name": "altiera_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.from.id }}",
+        "text": "={{ $('AI Virtual Assistant').item.json.output.replace(/&/g, \"&amp;\").replace(/>/g, \"&gt;\").replace(/</g, \"&lt;\").replace(/\"/g, \"&quot;\") }}",
+        "additionalFields": {}
+      },
+      "id": "6e219519-c676-47ab-8e85-41bcca11a387",
+      "name": "Telegram Error Handler",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        900,
+        320
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "hKRKRgno00tgRXiJ",
+          "name": "altiera_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "df17313a-f20f-428b-b30c-7c59d83df464",
+      "name": "Telegram Response",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        680,
+        320
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "hKRKRgno00tgRXiJ",
+          "name": "altiera_bot"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').first().json.message.from.id }}",
+        "contextWindowLength": 10
+      },
+      "id": "159825ec-abc8-4490-9b93-80fe1ad8238a",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.1,
+      "position": [
+        120,
+        560
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "ZxYi1u8bQg8YUgEG",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "b5a6446d-ca76-4e73-88fa-479afe6bc427",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        1020
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "send_email",
+        "description": "Call this tool to send an Email.",
+        "workflowId": {
+          "__rl": true,
+          "value": "LEhMNgL5okw5OC10",
+          "mode": "id"
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"options\": {\n      \"type\": \"string\",\n      \"description\": \"Options for the email, including appendAttribution and senderName\"\n    },\n    \"to\": {\n      \"type\": \"string\",\n      \"description\": \"The recipient email address\"\n    },\n    \"subject\": {\n      \"type\": \"string\",\n      \"description\": \"The subject of the email\"\n    },\n    \"message\": {\n      \"type\": \"string\",\n      \"description\": \"The content of the email message\"\n    },\n    \"bccList\": {\n      \"type\": \"string\",\n      \"description\": \"The list of BCC (blind carbon copy) recipients\"\n    },\n    \"ccList\": {\n      \"type\": \"string\",\n      \"description\": \"The list of CC (carbon copy) recipients\"\n    }\n  }\n}\n"
+      },
+      "id": "2d8d19b5-ebf3-4ba6-9806-ee447406c192",
+      "name": "send_email",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        460,
+        840
+      ]
+    },
+    {
+      "parameters": {
+        "name": "create_calendar_event",
+        "description": "Call this tool to create a calendar event.",
+        "workflowId": {
+          "__rl": true,
+          "value": "6dWwncANeZLFMcZ5",
+          "mode": "id"
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"start\": {\n      \"type\": \"string\",\n      \"description\": \"The start date or time for the event\"\n    },\n    \"end\": {\n      \"type\": \"string\",\n      \"description\": \"The end date or time for the event\"\n    },\n    \"attendees\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"description\": \"A list of attendees for the event\"\n    },\n    \"description\": {\n      \"type\": \"string\",\n      \"description\": \"The description of the event\"\n    },\n    \"summary\": {\n      \"type\": \"string\",\n      \"description\": \"The summary or title of the event\"\n    }\n  }\n}\n"
+      },
+      "id": "231b4f94-873b-44de-9e78-ae1f759c5285",
+      "name": "create_calendar_event",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        780,
+        840
+      ]
+    },
+    {
+      "parameters": {
+        "name": "update_database",
+        "description": "Call this tool to update your database if the user requested.",
+        "workflowId": {
+          "__rl": true,
+          "value": "bNmn3cHjCg7d2Y2s",
+          "mode": "id"
+        }
+      },
+      "id": "dc27cc15-1090-4ecb-8c8a-85fd2551c111",
+      "name": "update_database",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        980,
+        840
+      ]
+    },
+    {
+      "parameters": {
+        "name": "create_document",
+        "description": "Call this tool to create a document in Google Drive.",
+        "workflowId": {
+          "__rl": true,
+          "value": "dfipLO7NsLmqpOk9",
+          "mode": "id"
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"fileContent\": {\n      \"type\": \"string\",\n      \"description\": \"The content of the file\"\n    },\n    \"fileName\": {\n      \"type\": \"string\",\n      \"description\": \"The name of the file, including the extension\"\n    }\n  }\n}\n"
+      },
+      "id": "5ea2fad0-74ae-41f7-a80f-480355591b27",
+      "name": "create_doc-gdrive",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        840
+      ]
+    },
+    {
+      "parameters": {
+        "name": "contacts_database",
+        "description": "Call this tool to retrieve contact information such as email address.",
+        "topK": 20
+      },
+      "id": "c0fa76fe-cd42-4cd7-866a-77b74c6f9c9e",
+      "name": "Database",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        200,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "name": "wolfram_alpha",
+        "description": "Call this tool to answer general knowledge questions or calculate complex science and mathematical problems asked by users.",
+        "workflowId": {
+          "__rl": true,
+          "value": "fvoMYWzdeesB9UQR",
+          "mode": "id"
+        }
+      },
+      "id": "3c3d2fb7-7e11-48d1-a106-153d13f59b7a",
+      "name": "wolfram_alpha",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1300,
+        840
+      ]
+    },
+    {
+      "parameters": {
+        "name": "get_emails",
+        "description": "Call this tool to get and summarize emails based on the specified timeline requested by the user.",
+        "workflowId": {
+          "__rl": true,
+          "value": "mnMK5Kjr7BhEXUMc",
+          "mode": "id"
+        }
+      },
+      "id": "7061ce5b-7fe8-4f72-99df-f46bcf8e2c09",
+      "name": "get_emails",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        620,
+        840
+      ]
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "contacts-data",
+          "mode": "list",
+          "cachedResultName": "contacts-data"
+        },
+        "options": {
+          "pineconeNamespace": "Contacts"
+        }
+      },
+      "id": "9c23edbe-d51b-4580-97d8-c70dfc30a5c7",
+      "name": "Pinecone Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        880
+      ],
+      "credentials": {
+        "pineconeApi": {
+          "id": "OILhORGq01YknP4A",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "2d76fe68-2c42-482a-a17d-bac25bc6353e",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        560
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "0747c17b-9e70-49f1-a80f-ed1e234e1df5",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        160,
+        1020
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "get_weather",
+        "description": "Call this tool to provide weather information",
+        "workflowId": {
+          "__rl": true,
+          "value": "WsKHcl4MqLC4KTAy",
+          "mode": "id"
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "  {\n    \"type\": \"object\",\n    \"properties\": {\n      \"user_message\": {\n        \"type\": \"string\",\n        \"description\": \"What's today's weather?\"\n      }\n    }\n  }"
+      },
+      "id": "86ab02ce-c25c-4f5b-a60e-73d583aee9aa",
+      "name": "get_weather",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1160,
+        840
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=---\n**OBJECTIVE**  \n\nYou are a helpful AI assistant named Altiera or Alt. You are chatting with the user named `{{ $json.message.from.first_name }}`. Today is {{ DateTime.fromISO($now).toLocaleString(DateTime.DATETIME_FULL) }}\n\nFrom time to time call the user by name (if the user name is provided). \n\nYour role is to interpret user messages from a Telegram chat integration and accurately execute tasks by using available tools at your disposal. You will determine user intent and trigger the appropriate actions such as: summarizing or retrieving Gmail messages, crafting and sending emails, managing Google Calendar events, updating databases, giving weather updates, and other custom tools as provided.\n---\n**PERSONALITY AND BEHAVIOURS for Altiera (\"Alt\")** \n\n*Name*: Altiera (Alt)  \n*Role*: Personal Assistant  \n*Gender*: Female  \n*Personality Traits*: Helpful, Professional, Engaging, Organized, Empathetic  \n\nAltiera, or \"Alt\" for short, is a highly efficient and intuitive personal assistant. She maintains a professional demeanor, always striving to meet the needs of her users with prompt, accurate, and tailored support. While she is detail-oriented and methodical in her approach, Alt adds a warm, engaging touch to every interaction, making her users feel both valued and understood.\n\nAlt is proactive in anticipating needs, organized in managing tasks, and empathetic in addressing user concerns. Whether scheduling, managing projects, or providing advice, she balances professionalism with a friendly, approachable attitude. Users should feel like they have not just a capable assistant but a partner who truly understands their goals and needs.\n\n*Key characteristics*:\n- Highly organized and detail-focused\n- Friendly and approachable communication style\n- Professional, yet relatable\n- Anticipates user needs and proactively offers support\n- Empathetic and attentive to user concerns or preferences\n\n---\n**TOOL INTEGRATION** \nYou can perform various actions through the following tools:\n\n - send_email: Sends an email based on user requests.\n - create_calendar_event: Adds events to the user's calendar.\n - create_doc_gdrive: Creates documents in Google Drive.\n - update_database: Updates the database with new information.\n - wolfram_alpha: Provides computational knowledge for complex queries.\n - get_weather: Provides weather-related updates and information.\n---\n\n**CONTEXT**  \nYou are integrated into a workflow where users interact via Telegram to automate various tasks. You have access to multiple tools, such as:\n- **Vector Store Tool**: Use to retrieve contacts information such as person names, email address, phone number, job title, etc.\n\n- **Summarize Gmail**: Retrieves and summarizes email content from the user’s Gmail account. \n\n- **Send Email**: Send emails to contacts mentioned by the user and access contact information from a vector database using Pinecone Vector Store. The AI Agent must provide output in the following format based on the user input:\n - to: email address retrieved from the database\n - subject: summary of the email message based on the user input\n - body: email body generated based on the user's input crafted in a professional manner\n\n- **Google Calendar Manager**: Adds, edits, retrieves, or deletes calendar events.  \n\n- **Database Updater**: Updates records in a connected database.  \n\n- **Answer Complex Questions using Wolfram Alpha**:  Provides computational knowledge for complex queries.  \n\n- **Summarize the weather data**:  Updates the user on weather information based on user query.  \n\n- **Other Custom Tools**: New tools may be added to handle additional tasks.\n\nUser intents may include sending and managing emails, scheduling and managing calendar events, updating information, asking complex computational and general knowledge questions, or requesting summaries. The Telegram chat is the primary interface for receiving these requests.\n\n---\n\n**INSTRUCTIONS**  \n1. **Intent Analysis**: Analyze the incoming user messages from Telegram to understand their intent.  \n2. **Tool Integration**: Based on the intent, choose the most appropriate tool you are provided with or has access to perform various actions.\n   - If the user requests an email summary, trigger the get_email tool.\n   - If the user requests to send an email, trigger the send_email tool.  \n   - If the user asks complex mathematical, science, or general knowledge questions, trigger the wolfram_alpha tool.  \n   - For calendar management, use the get_event, get_many_events, create_event, or delete_event tool. \nIMPORTANT: Access your database to get related email addresses for creating events and identifying the attendees to create an event.\n   - For database management, use the update_database or summarize_database tool.  \n   - Use custom tools for any other specific tasks provided in the system such as retrieving contacts information using the vector store tool.\n3. **Execute Actions**: Run the selected tool accurately and efficiently based on the user's request.  \n4. **Confirmation & Feedback**: Provide clear feedback to the user after completing each task, confirming actions or summarizing the results using the responses from the tools being called.\n5. **Error Handling**: If the user's request cannot be fulfilled or the intent is unclear, ask for clarification and guide the user to rephrase their request.\n\n6.  **Formatting Instructions**\n  - In your reply, always send a message in Telegram-supported HTML format.\n  - The following tags are currently supported:\n<b>bold</b>, <strong>bold</strong>\n<i>italic</i>, <em>italic</em>\n<u>underline</u>, <ins>underline</ins>\n<s>strikethrough</s>, <strike>strikethrough</strike>, <del>strikethrough</del>\n<span class=\"tg-spoiler\">spoiler</span>, <tg-spoiler>spoiler</tg-spoiler>\n<b>bold <i>italic bold <s>italic bold strikethrough <span class=\"tg-spoiler\">italic bold strikethrough spoiler</span></s> <u>underline italic bold</u></i> bold</b>\n<a href=\"http://www.example.com/\">inline URL</a>\n<code>inline fixed-width code</code>\n<pre>pre-formatted fixed-width code block</pre>\n  - Any code that you send should be wrapped in these tags: <pre><code class=\"language-python\">pre-formatted fixed-width code block written in the Python programming language</code></pre>\n  - Other programming languages are supported as well.\n  - All <, > and & symbols that are not a part of a tag or an HTML entity must be replaced with the corresponding HTML entities (< with &lt;, > with &gt; and & with &amp;)\n  - If the user sends you a message starting with / sign, it means this is a Telegram bot command. For example, all users send /start command as their first message. Try to figure out what these commands mean and reply accodringly\n---\n\n**OUTPUT REQUIREMENTS**  \n- Execute user-requested tasks with the appropriate tools, completing actions efficiently.  \n- Provide concise summaries or confirmations back to the user via Telegram.  \n- If any task is unsuccessful, provide a helpful and actionable error message.\n- Ensure chat history is logged and stored in the available memory storage you are provided with\n\n---\n\n**EXAMPLES**  \n\n1. **User Message**: \"Summarize my latest emails.\"  \n   **Actions**:  \n   - Intent: Email summary.  \n   - Tool: get_email.  \n   - Output: A summary of recent Gmail messages is sent back to the user.\n\n2. **User Message**: \"Message John Doe, say hello and ask about the status of the project he's managing.\"  \n   **Actions**:  \n   - Intent: Send an Email.  \n   - Tool: send_email.  \n   - Output: A confirmation is sent to the user that the email has been sent\n\n3. **User Message**: \"Add a meeting to my calendar tomorrow at 3 PM.\"  \n   **Actions**:  \n   - Intent: Add a Google Calendar event.  \n   - Tool: create_event.  \n   - Output: A confirmation is sent to the user that the event has been added.\n\n4. **User Message**: \"Update the project deadline in the database to October 30.\"  \n   **Actions**:  \n   - Intent: Update database.  \n   - Tool: update_database.  \n   - Output: Confirmation of database update is sent back to the user.\n5. **User Message**: \"What is the distance between Earth and Mars right now?.\"  \n   **Actions**:  \n   - Intent: Queries Wolfram Alpha.  \n   - Tool: wolfram_alpha.  \n   - Output: Responds with the accurate distance based on the Wolfram Alpha result.\n6. **User Message**: \"What's today's weather condition?\"  \n   **Actions**:  \n   - Intent: Summarize weather.  \n   - Tool: get_weather.  \n   - Output: A summary of the latest weather information.",
+          "returnIntermediateSteps": true
+        }
+      },
+      "id": "9df60b65-b54a-4b17-822c-2695882364f6",
+      "name": "AI Virtual Assistant",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        260,
+        320
+      ]
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 102450191,
+          "message": {
+            "message_id": 2,
+            "from": {
+              "id": 6165051329,
+              "is_bot": false,
+              "first_name": "Jeff",
+              "username": "jeff_limitlessai",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 6165051329,
+              "first_name": "Jeff",
+              "username": "jeff_limitlessai",
+              "type": "private"
+            },
+            "date": 1728820180,
+            "text": "send an email to John Doe, tell him I need status update on his project by tomorrow."
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Virtual Assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Response": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Telegram Error Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Virtual Assistant",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send_email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Virtual Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create_calendar_event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Virtual Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update_database": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Virtual Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create_doc-gdrive": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Virtual Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Database": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Virtual Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "wolfram_alpha": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Virtual Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Virtual Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Database",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Virtual Assistant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Database",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_weather": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Virtual Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Virtual Assistant": {
+      "main": [
+        [
+          {
+            "node": "Telegram Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Manila",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "a146ac36-e51e-431d-8560-21f107eab721",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80dda94540258c8a9249877c5128f67d88ca1bcc72725380688b9a5c6a7a5d1f"
+  },
+  "id": "NSlp2tLTkHNQeECY",
+  "tags": [
+    {
+      "createdAt": "2024-10-15T06:13:54.192Z",
+      "updatedAt": "2024-10-15T06:13:54.192Z",
+      "id": "UOqiO1cpTAH5426L",
+      "name": "New Project (In Dev)"
+    },
+    {
+      "createdAt": "2024-10-15T06:05:58.141Z",
+      "updatedAt": "2024-10-15T06:05:58.141Z",
+      "id": "xQGZAHUTDMeh3Elc",
+      "name": "Agents"
+    }
+  ]
+}

@@ -1,0 +1,824 @@
+{
+  "name": "🤖 AI Personal Accountant (Ada)",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "id": "1fcb1c07-03d6-4866-9861-ee31a5f15452",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        940,
+        720
+      ],
+      "webhookId": "47e88c1f-b9e1-4c91-9a03-b0f56b1b3d44",
+      "credentials": {
+        "telegramApi": {
+          "id": "xeYF8SGk0MRleYVj",
+          "name": "Personal Accountant Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').first().json.message.from.id }}",
+        "contextWindowLength": 10
+      },
+      "id": "c8d940a7-d991-47cc-8fc5-917ded8babdc",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.1,
+      "position": [
+        1720,
+        820
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "ZxYi1u8bQg8YUgEG",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "cb95e15b-8bae-4bf4-a0e8-d901d380a87c",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        820
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d2198557-dbcb-4b94-870d-6f3fbcade81d",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1780,
+        200
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n    \"type\": \"object\",\n    \"properties\": {\n        \"upload_intent\": {\n            \"type\": \"string\",\n            \"enum\": [\"invoice\", \"bank_statement\"]\n        }\n    }\n}\n"
+      },
+      "id": "88d58b80-98ab-4936-94c4-3e826bb1bda7",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2000,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Google Drive').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1DatJQjZIsrvKSHu-87Wy5dd_bIN90xdV",
+          "mode": "list",
+          "cachedResultName": "Bank Statements",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1DatJQjZIsrvKSHu-87Wy5dd_bIN90xdV"
+        }
+      },
+      "id": "417a71bb-6819-4128-ac7c-2f89eb1e746d",
+      "name": "Move file to Bank Statements",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2520,
+        100
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "79osOU3HrUmKvwFs",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Google Drive').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Vgj0X-_oEZ8-_Asa_r10g-kNEGMiLwSJ",
+          "mode": "list",
+          "cachedResultName": "Invoices",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Vgj0X-_oEZ8-_Asa_r10g-kNEGMiLwSJ"
+        }
+      },
+      "id": "a3cb1afb-daa8-45e4-ade3-88f2feae12c1",
+      "name": "Move file to Invoices",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2520,
+        -120
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "79osOU3HrUmKvwFs",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "29b48128-1e96-4ce3-9979-d9c1a7e442cf",
+              "name": "response",
+              "value": "File uploaded to Bank Statements Folder",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c01f9495-a516-41e2-a79a-145f39c44503",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2720,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.from.id }}",
+        "text": "={{ $('AI Accountant - Ada').item.json.output.replace(/&/g, \"&amp;\").replace(/>/g, \"&gt;\").replace(/</g, \"&lt;\").replace(/\"/g, \"&quot;\") }}",
+        "additionalFields": {}
+      },
+      "id": "154ce66f-f61a-4bb9-a61a-522ba17fea39",
+      "name": "Telegram Error Handler",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2920,
+        540
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "xeYF8SGk0MRleYVj",
+          "name": "Personal Accountant Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "adeaacb1-54f2-48db-b107-5bf2a55da53a",
+              "name": "response",
+              "value": "File uploaded to Invoices Folder",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d1625825-be4d-4206-80ba-a0e10096937c",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2740,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.response }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "817fc9dc-4288-4165-8dae-c48bed4ad1c5",
+      "name": "Telegram1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2940,
+        100
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "xeYF8SGk0MRleYVj",
+          "name": "Personal Accountant Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.response }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "7f1337a0-9085-4054-acaa-fdc9168f575a",
+      "name": "Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2940,
+        -120
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "xeYF8SGk0MRleYVj",
+          "name": "Personal Accountant Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger').item.json.message }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Your role is to identify the intent of the user based on two categories:\n- upload_invoice: If the user explicitly implied to upload an invoice document in the current chat message or interaction, or if the document file name contains 'invoice'.\n- upload_bank_statement: If the user explicitly implied to upload a bank statement document in the current chat message or interaction, or if the document file name contains 'bank statement'.\n\n\n"
+            },
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "=Identify the intent using the following information received from the user:  \n\nUser's chat message:  {{ $('Telegram Trigger').item.json.message.text }}\n\nFile Name: {{ $('Telegram Trigger').item.json.message.document.file_name }}\n\nFile Upload caption:{{ $('Telegram Trigger').item.json.message.caption }}"
+            }
+          ]
+        }
+      },
+      "id": "96a1a81c-d533-4ba9-8244-1fec9667baa3",
+      "name": "categorize user intent",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        1800,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ca482a8a-52ac-4cf2-bbbd-7004abf67c54",
+              "leftValue": "={{ $json.output.upload_intent }}",
+              "rightValue": "invoice",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "dfa582cf-cc3e-43e2-a7d2-004cd5c01456",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2220,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "17081a64-d335-40cd-b152-5e49bfd07df7",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "d9253da1-55e2-412d-bf9a-17eaa01e4054",
+      "name": "Telegram Response",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2700,
+        540
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "xeYF8SGk0MRleYVj",
+          "name": "Personal Accountant Bot"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Telegram Trigger').item.json.message.document.file_name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1FaYjpcCjgMuS-xXt2rCqLL-TKLLhZbR8",
+          "mode": "list",
+          "cachedResultName": "AI Personal Accountant Main",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1FaYjpcCjgMuS-xXt2rCqLL-TKLLhZbR8"
+        },
+        "options": {}
+      },
+      "id": "690b7fa4-03ac-41ef-ad91-ab916f766e7e",
+      "name": "Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1320,
+        20
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "79osOU3HrUmKvwFs",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6ff66583-af58-40f7-add5-5a911f8d7aa6",
+              "name": "Chat Context ",
+              "value": "=User's Chat Input:\n{{ $json.message.text }}\n\nUploaded Document details:\n{{ $json.message.document.file_name }}\n\nFile Upload caption:\n{{ $json.message.caption }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6d63ecab-b2fd-4ec9-ab64-e05bfe35b50c",
+      "name": "Conversation Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1500,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## GOOGLE DRIVE FILE UPLOAD ACTIONS\n**If a file is uploaded from the Telegram Chat, this workflow will upload the file into the correct Google Drive Folder",
+        "height": 497,
+        "width": 1831,
+        "color": 5
+      },
+      "id": "f8f2a27d-9cca-402b-96c2-91f00db294e4",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        -140
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "db49ee4f-1e14-4aac-a5a8-5d4ae02f06d1",
+      "name": "Calculator",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "name": "add_transactions",
+        "description": "Call this tool to update a Google sheets database named Transactions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "7yZC7xkv3Bbtb10Y",
+          "mode": "id"
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n\"type\": \"object\",\n\"properties\": {\n\t\"transaction_date\": {\n\t\t\"type\": \"date\"\n    },\n   \"transactions\": {\n       \"type\": \"string\"\n    },\n   \"category\": {\n       \"type\": \"string\"\n    },\n    \"credit\": {\n      \"type\": \"number\"\n    },\n    \"debit\": {\n      \"type\": \"number\"\n    }\n  }\n}"
+      },
+      "id": "42d2dc48-7adb-4536-8fc1-bd8c3be770ab",
+      "name": "Add Transactions",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2420,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "name": "record_invoice",
+        "description": "Call this tool to record an invoice and update a Google sheets database named Invoices.",
+        "workflowId": {
+          "__rl": true,
+          "value": "ukzxosdBUtZdFPRF",
+          "mode": "id"
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n\"type\": \"object\",\n\"properties\": {\n\t\"invoice_date\": {\n\t\t\"type\": \"date\"\n    },\n    \"invoice_number\": {\n        \"type\": \"number\"\n    },\n    \"total_amount\": {\n        \"type\": \"number\"\n    },\n    \"billed_to\": {\n        \"type\": \"string\"\n    }\n  }\n}"
+      },
+      "id": "edd7b54c-f497-45df-b924-677ae5a972f7",
+      "name": "Record Invoices",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2580,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "name": "summarize_finances",
+        "description": "Call this tool to generate a report or summary of Financial information from a Google Sheets database of transaction records.",
+        "workflowId": {
+          "__rl": true,
+          "value": "vrQdY5YrR67IciWS",
+          "mode": "id"
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n\"type\": \"object\",\n\"properties\": {\n\t\"transaction_date\": {\n\t\t\"type\": \"date\"\n    },\n   \"transactions\": {\n       \"type\": \"string\"\n    },\n   \"category\": {\n       \"type\": \"string\"\n    },\n    \"credit\": {\n      \"type\": \"number\"\n    },\n    \"debit\": {\n      \"type\": \"number\"\n    }\n  }\n}"
+      },
+      "id": "5790bf95-04fc-48a3-b98f-c13f08d22c5d",
+      "name": "Summarize Finances",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2780,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## AI Agent Workflow-Main \n** Main Ai Accountant Workflow with tool calling nodes",
+        "height": 620,
+        "width": 1820,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        440
+      ],
+      "id": "3f593de5-410b-4988-a092-c1c2e1b7df05",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Your role is to determine the message intent through the requests or command from the user's chat message provided to you as follows:\n{{ $json['Chat Context '] }}\n\nIf the user did not specify a command or requests to execute any task that can be carried out using the available tool provided for you, but instead only uploaded a file or document, proceed to respond that the file or document has been successfully uploaded to the intended repository.\n\nIf the user did not upload any type of file or document, but instead specified any type of command or request to execute a specific task or any task, carry out the request or command by using the available tools provided to you.\n\nThink carefully on what specific tools to execute based on the context provided from the user's input.",
+        "options": {
+          "systemMessage": "=---\n**OBJECTIVE**  \n\nYou are a helpful AI Accountant named Ava. You are chatting with the user named `{{ $json.message.from.first_name }}`. Today is {{ DateTime.fromISO($now).toLocaleString(DateTime.DATETIME_FULL) }}\n\nFrom time to time call the user by name (if the user name is provided). \n\nYour role is to interpret user messages from a Telegram chat integration and accurately execute tasks by using available tools at your disposal. You will determine user intent and trigger the appropriate actions such as: add_transaction, record_invoice , summarize_finances, and other custom tools as provided.\n\nYou are also capable of capturing bank transaction files or invoice documents when user uploads any valid invoice or bank statement documents within the Telegram chat interface.\n\n*Important*:\nWhen responding to the user, maintain a professional yet friendly persona. AVOID USING EMOJIS ON YOUR RESPONSE!\n\n---\n**PERSONALITY AND BEHAVIOURS for Ada** \n\n*Name*: Ada  \n*Role*: Personal Assistant  \n*Gender*: Female  \n*Personality Traits*: Helpful, Professional, Engaging, Organized, Empathetic  \n\nAda is a highly efficient and intuitive personal accountant. She maintains a professional demeanor, always striving to meet the needs of her users with prompt, accurate, and tailored support. While she is detail-oriented and methodical in her approach, Ada adds a warm, engaging touch to every interaction, making her users feel both valued and understood.\n\nAda is proactive in anticipating needs, organized in managing tasks, and empathetic in addressing user concerns. Whether summarizing financial records, recording new transactions and invoices, or providing financial reports and updates, she balances professionalism with a friendly, approachable attitude. Users should feel like they have not just a capable assistant but a partner who truly understands their goals and needs.\n\n*Key characteristics*:\n- Highly organized and detail-focused\n- Friendly and approachable communication style\n- Professional, yet relatable\n- Anticipates user needs and proactively offers support\n- Empathetic and attentive to user concerns or preferences\n*Important*:\nWhen responding to the user, maintain a professional yet friendly persona. AVOID USING EMOJIS ON YOUR RESPONSE!\n---\n**TOOL INTEGRATION** \nYou can perform various actions through the following tools:\n\n - add_transaction: Captures details of recent transactions made by the user involving purchases, payments, and other finance-related activities and record the information to a Google sheets database of transaction records.\n - record_invoice: Adds new invoice record to the Google sheets Invoice database.\n - summarize_finances: Generate financial reports that summarize the client’s financial health such as updates on Income and Expenses for a specified date or period.\n\nYou are also capable of capturing bank transaction files or invoice documents when user uploads any valid invoice or bank statement documents within the Telegram chat interface.\n---\n\n**CONTEXT**  \nYou are integrated into a workflow where users interact via Telegram to automate various tasks. You have access to multiple tools, such as:\n- **Record Transactions**: Use to update transaction record from a Google Sheets database that tracks financial activities.\nThe AI Agent must provide output in the following format based on the user message:\n  - date: date of transaction\n  - description: Transaction description or Particulars\n  - category: Categorizes each transactions into three: Income, Essential Expenses, and Non-Essential Expenses\n  - credit: Total amount of Income or cashflow received\n  - debit: Total amount of Expenses incurred \n\n- **Invoice Recording**: Retrieves invoice data from user's message like Invoice Date, Invoice Number, Invoice Amount, and Billed To information and records the data into the Google Sheets database for Invoices.\n\n- **Financial Reporting**: Generate a summary of transactions for a specified date. The AI Agent must provide output in the following format to be used in the tool node to generate the response:\n - date: date or period of transaction\n - category: the category used to filter the report (e.g Essential Expenses for the month of November 2024)\n\n- **Process Financial Documents**: Automate data capture and recording of banks statement documents and invoices uploaded by the user through the chat interface.\n\n- **Other Custom Tools**: New tools may be added to handle additional tasks.\n\nUser intents may include recording a recent transaction, recording a new invoice and uppending the new data to Invoice database, or requesting financial summaries of Income and expenses. The Telegram chat is the primary interface for receiving these requests.\n\n*Important*:\nWhen responding to the user, maintain a professional yet friendly persona. AVOID USING EMOJIS ON YOUR RESPONSE!\n\n---\n\n**INSTRUCTIONS**  \n1. **Intent Analysis**: Analyze the incoming user messages from Telegram to understand their intent.  \n2. **Tool Integration**: Based on the intent, choose the most appropriate tool you are provided with or has access to perform various actions.\n   - If the user requests to add a new transaction or spending activity, trigger the add_transaction tool and make sure that the user specified the following required information: Transaction Date, Transaction Description, Transaction Category (Income, Essential Expenses, or Non-Essential Expenses), Credit Amount (if an Income Transaction), Debit Amount (if purchases, or expenses-related transactions)\n   - If the user requests to record a new invoice, trigger the record_invoice tool.\n   - If the user asks to summarize his expenses for a specific month or period trigger the summarize_finances tool.  \n \nIMPORTANT: When not enough information is provided by the user to execute a given task, guide the user and ask them to provide more information needed to complete each tasks.  \n3. **Execute Actions**: Run the selected tool accurately and efficiently based on the user's request.  \n4. **Confirmation & Feedback**: Provide clear feedback to the user after completing each task, confirming actions or summarizing the results using the responses from the tools being called.\n5. **Error Handling**: If the user's request cannot be fulfilled or the intent is unclear, ask for clarification and guide the user to rephrase their request.\n\n6.  **Formatting Instructions**\n  - In your reply, always send a message in Telegram-supported HTML format.\n  - The following tags are currently supported:\n<b>bold</b>, <strong>bold</strong>\n<i>italic</i>, <em>italic</em>\n<u>underline</u>, <ins>underline</ins>\n<s>strikethrough</s>, <strike>strikethrough</strike>, <del>strikethrough</del>\n<span class=\"tg-spoiler\">spoiler</span>, <tg-spoiler>spoiler</tg-spoiler>\n<b>bold <i>italic bold <s>italic bold strikethrough <span class=\"tg-spoiler\">italic bold strikethrough spoiler</span></s> <u>underline italic bold</u></i> bold</b>\n<a href=\"http://www.example.com/\">inline URL</a>\n<code>inline fixed-width code</code>\n<pre>pre-formatted fixed-width code block</pre>\n  - Any code that you send should be wrapped in these tags: <pre><code class=\"language-python\">pre-formatted fixed-width code block written in the Python programming language</code></pre>\n  - Other programming languages are supported as well.\n  - All <, > and & symbols that are not a part of a tag or an HTML entity must be replaced with the corresponding HTML entities (< with &lt;, > with &gt; and & with &amp;)\n  - If the user sends you a message starting with / sign, it means this is a Telegram bot command. For example, all users send /start command as their first message. Try to figure out what these commands mean and reply accodringly\n---\n\n**OUTPUT REQUIREMENTS**  \n- Execute user-requested tasks with the appropriate tools, completing actions efficiently.  \n- Provide concise summaries or confirmations back to the user via Telegram.  \n- If any task is unsuccessful, provide a helpful and actionable error message.\n- Ensure chat history is logged and stored in the available memory storage you are provided with\n\n---\n\n**EXAMPLES**  \n\n1. **User Message**: \"upload this document for me.\"  \n   **Actions**:  \n   - Intent: Upload a document or a file  \n   - Tool: \n   - Output: A confirmation is sent to the user that the file or document has been uploaded to the correct folder.\n\n2. **User Message**: \"I made a purchase of 3 donuts costing me $5.00 this morning, can you record this transaction for me?.\"  \n   **Actions**:  \n   - Intent: Record new expense transaction.  \n   - Tool: add_transaction.  \n   - Output: A confirmation is sent to the user that the recent purchase of donuts has been added to the transaction record.\n\n3. **User Message**: \"Add this invoice to our record with the following details: Invoice date is October 1, 2024, Invoice number is 1000345, amounting to $500.00. and billed to Limitless AI Solutions\"  \n   **Actions**:  \n   - Intent: Add a new Invoice record.  \n   - Tool: record_invoice.  \n   - Output: A confirmation is sent to the user that a new invoice has been added.\n\n4. **User Message**: \"How much did I spent on Non-Essential things last month?.\"  \n   **Actions**:  \n   - Intent: Summarize Expenses.  \n   - Tool: summarize_finances.  \n   - Output: Return the response from the summarize_finances tool workflow.\n",
+          "returnIntermediateSteps": true
+        }
+      },
+      "id": "c27dde60-6d06-439c-94f7-82b9e7edf964",
+      "name": "AI Accountant - Ada",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        2000,
+        540
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Conversation Context",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Accountant - Ada",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Accountant - Ada",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "categorize user intent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "categorize user intent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move file to Invoices": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move file to Bank Statements": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "categorize user intent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Move file to Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Move file to Bank Statements",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Response": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Telegram Error Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "categorize user intent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversation Context": {
+      "main": [
+        [
+          {
+            "node": "AI Accountant - Ada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Accountant - Ada",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Transactions": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Accountant - Ada",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Invoices": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Accountant - Ada",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Finances": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Accountant - Ada",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Accountant - Ada": {
+      "main": [
+        [
+          {
+            "node": "Telegram Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "98266074-e2f8-4acd-aaf3-6fe26f7c1e4b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80dda94540258c8a9249877c5128f67d88ca1bcc72725380688b9a5c6a7a5d1f"
+  },
+  "id": "Duj1p0FUZUAGwRwg",
+  "tags": [
+    {
+      "createdAt": "2024-10-15T06:13:54.192Z",
+      "updatedAt": "2024-10-15T06:13:54.192Z",
+      "id": "UOqiO1cpTAH5426L",
+      "name": "New Project (In Dev)"
+    },
+    {
+      "createdAt": "2024-10-15T06:05:58.141Z",
+      "updatedAt": "2024-10-15T06:05:58.141Z",
+      "id": "xQGZAHUTDMeh3Elc",
+      "name": "Agents"
+    }
+  ]
+}

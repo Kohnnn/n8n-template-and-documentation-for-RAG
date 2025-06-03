@@ -1,0 +1,1213 @@
+{
+    "name": "Sync Facebook Ads data to Google Sheets",
+    "flow": [
+        {
+            "id": 1,
+            "module": "facebook-ads-cm:listCampaigns",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "limit": "10",
+                "businessId": "2054453964808501",
+                "adAccountId": "act_224151955461224"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "businessId": {
+                            "mode": "chose",
+                            "label": "Doggys and Products"
+                        },
+                        "adAccountId": {
+                            "mode": "chose",
+                            "label": "Integromat"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "facebook"
+                            },
+                            "label": "My Facebook connection (Wayne Govender)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:facebook",
+                        "label": "Connection"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "businessId",
+                        "type": "select",
+                        "label": "Business ID",
+                        "required": true
+                    },
+                    {
+                        "name": "limit",
+                        "type": "uinteger",
+                        "label": "Limit"
+                    },
+                    {
+                        "name": "adAccountId",
+                        "type": "select",
+                        "label": "Ad Account ID",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "module": "facebook-ads-cm:listAdSets",
+            "version": 1,
+            "parameters": {},
+            "filter": {
+                "name": "Active Campaigns",
+                "conditions": [
+                    [
+                        {
+                            "a": "{{1.status}}",
+                            "b": "ACTIVE",
+                            "o": "text:equal:ci"
+                        }
+                    ]
+                ]
+            },
+            "mapper": {
+                "limit": "10",
+                "businessId": "2054453964808501",
+                "campaignId": "{{1.id}}",
+                "adAccountId": "{{1.account_id}}",
+                "effective_status": [
+                    "ACTIVE"
+                ]
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "businessId": {
+                            "mode": "chose",
+                            "label": "Doggys and Products"
+                        },
+                        "campaignId": {
+                            "mode": "edit"
+                        },
+                        "adAccountId": {
+                            "mode": "edit"
+                        },
+                        "is_completed": {
+                            "mode": "chose"
+                        },
+                        "effective_status": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "facebook"
+                            },
+                            "label": "My Facebook connection (Wayne Govender)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:facebook",
+                        "label": "Connection"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "businessId",
+                        "type": "select",
+                        "label": "Business ID",
+                        "required": true
+                    },
+                    {
+                        "name": "effective_status",
+                        "type": "select",
+                        "label": "Effective Status",
+                        "multiple": true,
+                        "validate": {
+                            "enum": [
+                                "ACTIVE",
+                                "PAUSED",
+                                "CAMPAIGN_PAUSED",
+                                "ARCHIVED",
+                                "IN_PROCESS",
+                                "WITH_ISSUES"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "is_completed",
+                        "type": "boolean",
+                        "label": "Is Completed"
+                    },
+                    {
+                        "name": "limit",
+                        "type": "uinteger",
+                        "label": "Limit"
+                    },
+                    {
+                        "name": "adAccountId",
+                        "type": "select",
+                        "label": "Ad Account ID",
+                        "required": true
+                    },
+                    {
+                        "name": "campaignId",
+                        "type": "select",
+                        "label": "Campaign ID"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 14,
+            "module": "facebook-insights:GetAdAccountInsights",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "type": "adSet",
+                "adSet": "{{3.id}}",
+                "limit": "10000",
+                "fields": [
+                    "account_name",
+                    "action_values",
+                    "ad_name",
+                    "adset_name",
+                    "campaign_name",
+                    "clicks",
+                    "conversion_rate_ranking",
+                    "conversions",
+                    "cost_per_conversion",
+                    "cost_per_unique_click",
+                    "cpc",
+                    "cpm",
+                    "ctr",
+                    "date_start",
+                    "date_stop",
+                    "frequency",
+                    "impressions",
+                    "reach",
+                    "spend",
+                    "unique_clicks"
+                ],
+                "business": "2054453964808501",
+                "adAccount": "act_224151955461224",
+                "date_preset": "yesterday",
+                "specify_date": "date_preset"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "sort": {
+                            "mode": "chose"
+                        },
+                        "type": {
+                            "mode": "chose",
+                            "label": "Ad Set"
+                        },
+                        "adSet": {
+                            "mode": "edit"
+                        },
+                        "level": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "fields": {
+                            "mode": "chose",
+                            "label": [
+                                "Account Name",
+                                "Action Values",
+                                "Ad Name",
+                                "Adset Name",
+                                "Campaign Name",
+                                "Clicks",
+                                "Conversion Rate Ranking",
+                                "Conversions",
+                                "Cost Per Conversion",
+                                "Cost Per Unique Click",
+                                "CPC",
+                                "CPM",
+                                "CTR",
+                                "Date Start",
+                                "Date Stop",
+                                "Frequency",
+                                "Impressions",
+                                "Reach",
+                                "Spend",
+                                "Unique Clicks"
+                            ]
+                        },
+                        "business": {
+                            "mode": "chose",
+                            "label": "Doggys and Products"
+                        },
+                        "adAccount": {
+                            "mode": "chose",
+                            "label": "Integromat"
+                        },
+                        "filtering": {
+                            "mode": "chose"
+                        },
+                        "breakdowns": {
+                            "mode": "chose"
+                        },
+                        "date_preset": {
+                            "mode": "chose",
+                            "label": "Yesterday"
+                        },
+                        "specify_date": {
+                            "label": "Date Preset"
+                        },
+                        "action_breakdowns": {
+                            "mode": "chose"
+                        },
+                        "action_report_time": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "action_attribution_windows": {
+                            "mode": "chose"
+                        },
+                        "use_account_attribution_setting": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "facebook"
+                            },
+                            "label": "My Facebook connection (Wayne Govender)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:facebook",
+                        "label": "Connection"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "type",
+                        "type": "select",
+                        "label": "Get Insights for",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "campaign",
+                                "adAccount",
+                                "adSet",
+                                "ad"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "specify_date",
+                        "type": "select",
+                        "label": "Specify Date by",
+                        "validate": {
+                            "enum": [
+                                "date_preset",
+                                "time_range",
+                                "time_ranges"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "fields",
+                        "type": "select",
+                        "label": "Fields",
+                        "multiple": true,
+                        "required": true
+                    },
+                    {
+                        "name": "breakdowns",
+                        "type": "select",
+                        "label": "Breakdowns",
+                        "multiple": true
+                    },
+                    {
+                        "name": "limit",
+                        "type": "uinteger",
+                        "label": "Limit",
+                        "required": true
+                    },
+                    {
+                        "name": "level",
+                        "type": "select",
+                        "label": "Level",
+                        "validate": {
+                            "enum": [
+                                "ad",
+                                "adset",
+                                "account",
+                                "campaign"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "product_id_limit",
+                        "type": "text",
+                        "label": "Product ID Limit"
+                    },
+                    {
+                        "name": "use_account_attribution_setting",
+                        "type": "boolean",
+                        "label": "Use Account Attribution Setting"
+                    },
+                    {
+                        "name": "action_attribution_windows",
+                        "type": "select",
+                        "label": "Action Attribution Windows",
+                        "multiple": true,
+                        "validate": {
+                            "enum": [
+                                "1d_view",
+                                "7d_view",
+                                "28d_view",
+                                "1d_click",
+                                "7d_click",
+                                "28d_click",
+                                "default"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "action_breakdowns",
+                        "type": "select",
+                        "label": "Action Breakdowns",
+                        "multiple": true,
+                        "validate": {
+                            "enum": [
+                                "action_device",
+                                "action_canvas_component_name",
+                                "action_carousel_card_id",
+                                "action_carousel_card_name",
+                                "action_destination",
+                                "action_reaction",
+                                "action_target_id",
+                                "action_type",
+                                "action_video_sound",
+                                "action_video_type"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "action_report_time",
+                        "type": "select",
+                        "label": "Action Report Time",
+                        "validate": {
+                            "enum": [
+                                "impression",
+                                "conversion"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "filtering",
+                        "spec": [
+                            {
+                                "name": "field",
+                                "type": "select",
+                                "label": "Field",
+                                "dynamic": true,
+                                "options": [],
+                                "required": true
+                            },
+                            {
+                                "name": "operator",
+                                "type": "select",
+                                "label": "Operator",
+                                "grouped": true,
+                                "options": [
+                                    {
+                                        "label": "String",
+                                        "options": [
+                                            {
+                                                "label": "Equal",
+                                                "value": "EQUAL"
+                                            },
+                                            {
+                                                "label": "Not equal",
+                                                "value": "NOT_EQUAL"
+                                            },
+                                            {
+                                                "label": "Contain",
+                                                "value": "CONTAIN"
+                                            },
+                                            {
+                                                "label": "Not contain",
+                                                "value": "NOT_CONTAIN"
+                                            },
+                                            {
+                                                "label": "Starts with",
+                                                "value": "STARTS_WITH"
+                                            },
+                                            {
+                                                "label": "None",
+                                                "value": "NONE"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "label": "Number",
+                                        "options": [
+                                            {
+                                                "label": "Equal",
+                                                "value": "EQUAL"
+                                            },
+                                            {
+                                                "label": "Not equal",
+                                                "value": "NOT_EQUAL"
+                                            },
+                                            {
+                                                "label": "Greater than",
+                                                "value": "GREATER_THAN"
+                                            },
+                                            {
+                                                "label": "Greater than or equal",
+                                                "value": "GREATER_THAN_OR_EQUAL"
+                                            },
+                                            {
+                                                "label": "Less than",
+                                                "value": "LESS_THAN"
+                                            },
+                                            {
+                                                "label": "Less than or than",
+                                                "value": "LESS_THAN_OR_EQUAL"
+                                            },
+                                            {
+                                                "label": "None",
+                                                "value": "NONE"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "label": "Array",
+                                        "options": [
+                                            {
+                                                "label": "In",
+                                                "value": "IN"
+                                            },
+                                            {
+                                                "label": "Not in",
+                                                "value": "NOT_IN"
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "any",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Filter"
+                    },
+                    {
+                        "name": "sort",
+                        "spec": [
+                            {
+                                "name": "field",
+                                "type": "select",
+                                "label": "Field",
+                                "dynamic": true,
+                                "options": [],
+                                "required": true
+                            },
+                            {
+                                "name": "direction",
+                                "type": "select",
+                                "label": "Direction",
+                                "options": [
+                                    {
+                                        "label": "Ascending",
+                                        "value": "ascending",
+                                        "default": true
+                                    },
+                                    {
+                                        "label": "Descending",
+                                        "value": "descending"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Sort",
+                        "validate": {
+                            "maxItems": 1
+                        }
+                    },
+                    {
+                        "name": "business",
+                        "type": "select",
+                        "label": "Business Manager",
+                        "required": true
+                    },
+                    {
+                        "name": "adAccount",
+                        "type": "select",
+                        "label": "Ad Account",
+                        "required": true
+                    },
+                    {
+                        "name": "adSet",
+                        "type": "select",
+                        "label": "Ad Set",
+                        "required": true
+                    },
+                    {
+                        "name": "date_preset",
+                        "type": "select",
+                        "label": "Date Preset",
+                        "validate": {
+                            "enum": [
+                                "today",
+                                "yesterday",
+                                "this_week_sun_today",
+                                "this_week_mon_today",
+                                "last_week_sun_sat",
+                                "last_week_mon_sun",
+                                "this_month",
+                                "last_month",
+                                "this_quarter",
+                                "last_3d",
+                                "last_7d",
+                                "last_14d",
+                                "last_28d",
+                                "last_30d",
+                                "last_90d",
+                                "this_year",
+                                "last_year",
+                                "lifetime"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "time_increment",
+                        "type": "text",
+                        "label": "Time Increment"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "__IMTLENGTH__",
+                        "type": "uinteger",
+                        "label": "Total number of bundles"
+                    },
+                    {
+                        "name": "__IMTINDEX__",
+                        "type": "uinteger",
+                        "label": "Bundle order position"
+                    },
+                    {
+                        "name": "date_start",
+                        "type": "text",
+                        "label": "Date Start"
+                    },
+                    {
+                        "name": "date_stop",
+                        "type": "text",
+                        "label": "Date Stop"
+                    },
+                    []
+                ]
+            }
+        },
+        {
+            "id": 11,
+            "module": "builtin:BasicFeeder",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "array": "{{14.conversions}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 900,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "array": {
+                            "mode": "edit"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "mode": "edit",
+                        "name": "array",
+                        "spec": [],
+                        "type": "array",
+                        "label": "Array"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 12,
+            "module": "util:TextAggregator",
+            "version": 1,
+            "parameters": {
+                "feeder": 11,
+                "rowSeparator": "other",
+                "otherRowSeparator": ","
+            },
+            "mapper": {
+                "value": "{{11.value}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1200,
+                    "y": 0
+                },
+                "restore": {
+                    "extra": {
+                        "feeder": {
+                            "label": "Iterator [11]"
+                        }
+                    },
+                    "parameters": {
+                        "rowSeparator": {
+                            "label": "Other"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "rowSeparator",
+                        "type": "select",
+                        "label": "Row separator",
+                        "validate": {
+                            "enum": [
+                                "\n",
+                                "\t",
+                                "other"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "otherRowSeparator",
+                        "type": "text",
+                        "label": "Separator"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Text"
+                    }
+                ],
+                "advanced": true
+            }
+        },
+        {
+            "id": 7,
+            "module": "google-sheets:addRow",
+            "version": 2,
+            "parameters": {},
+            "mapper": {
+                "mode": "fromAll",
+                "values": {
+                    "0": "{{formatDate(now; \"YYYY-MM-DD\")}}",
+                    "1": "{{1.id}}",
+                    "2": "{{1.start_time}}",
+                    "3": "{{1.name}}",
+                    "4": "{{1.budget_remaining}}",
+                    "5": "{{1.daily_budget}}",
+                    "6": "{{1.lifetime_budget}}",
+                    "7": "{{1.effective_status}}",
+                    "8": "{{1.status}}",
+                    "9": "{{3.id}}",
+                    "10": "{{3.name}}",
+                    "11": "{{3.budget_remaining}}",
+                    "12": "{{3.billing_event}}",
+                    "13": "{{14.clicks}}",
+                    "14": "{{12.text}}",
+                    "15": "{{14.cost_per_conversion}}",
+                    "16": "{{14.cost_per_unique_click}}"
+                },
+                "sheetId": "Sheet1",
+                "spreadsheetId": "/1FV7c6ABLjQnVwX261IcqAu6uJ9-kRQwc/1O5RtQmicj_KBsmvOPwIBkAxyl9ZnhkWd6K6k5gU83Ro",
+                "includesHeaders": true,
+                "insertDataOption": "INSERT_ROWS",
+                "valueInputOption": "USER_ENTERED",
+                "insertUnformatted": false
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1500,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "mode": {
+                            "label": "Select from all"
+                        },
+                        "sheetId": {
+                            "mode": "chose",
+                            "label": "Sheet1"
+                        },
+                        "includesHeaders": {
+                            "label": "Yes",
+                            "nested": [
+                                {
+                                    "name": "values",
+                                    "spec": [
+                                        {
+                                            "name": "0",
+                                            "type": "text",
+                                            "label": "Date  (A)"
+                                        },
+                                        {
+                                            "name": "1",
+                                            "type": "text",
+                                            "label": "Campaign ID (B)"
+                                        },
+                                        {
+                                            "name": "2",
+                                            "type": "text",
+                                            "label": "Start Time (C)"
+                                        },
+                                        {
+                                            "name": "3",
+                                            "type": "text",
+                                            "label": "Campaign Name (D)"
+                                        },
+                                        {
+                                            "name": "4",
+                                            "type": "text",
+                                            "label": "Budget Remaining (E)"
+                                        },
+                                        {
+                                            "name": "5",
+                                            "type": "text",
+                                            "label": "Daily Budget (F)"
+                                        },
+                                        {
+                                            "name": "6",
+                                            "type": "text",
+                                            "label": "Lifetime Budget (G)"
+                                        },
+                                        {
+                                            "name": "7",
+                                            "type": "text",
+                                            "label": "Effective Status (H)"
+                                        },
+                                        {
+                                            "name": "8",
+                                            "type": "text",
+                                            "label": "Status (I)"
+                                        },
+                                        {
+                                            "name": "9",
+                                            "type": "text",
+                                            "label": "Ad Set ID (J)"
+                                        },
+                                        {
+                                            "name": "10",
+                                            "type": "text",
+                                            "label": "Ad Set Name (K)"
+                                        },
+                                        {
+                                            "name": "11",
+                                            "type": "text",
+                                            "label": "Budget Remaining (L)"
+                                        },
+                                        {
+                                            "name": "12",
+                                            "type": "text",
+                                            "label": "Billing Event (M)"
+                                        },
+                                        {
+                                            "name": "13",
+                                            "type": "text",
+                                            "label": "(N)"
+                                        },
+                                        {
+                                            "name": "14",
+                                            "type": "text",
+                                            "label": "(O)"
+                                        },
+                                        {
+                                            "name": "15",
+                                            "type": "text",
+                                            "label": "(P)"
+                                        },
+                                        {
+                                            "name": "16",
+                                            "type": "text",
+                                            "label": "(Q)"
+                                        },
+                                        {
+                                            "name": "17",
+                                            "type": "text",
+                                            "label": "(R)"
+                                        },
+                                        {
+                                            "name": "18",
+                                            "type": "text",
+                                            "label": "(S)"
+                                        },
+                                        {
+                                            "name": "19",
+                                            "type": "text",
+                                            "label": "(T)"
+                                        },
+                                        {
+                                            "name": "20",
+                                            "type": "text",
+                                            "label": "(U)"
+                                        },
+                                        {
+                                            "name": "21",
+                                            "type": "text",
+                                            "label": "(V)"
+                                        },
+                                        {
+                                            "name": "22",
+                                            "type": "text",
+                                            "label": "(W)"
+                                        },
+                                        {
+                                            "name": "23",
+                                            "type": "text",
+                                            "label": "(X)"
+                                        },
+                                        {
+                                            "name": "24",
+                                            "type": "text",
+                                            "label": "(Y)"
+                                        },
+                                        {
+                                            "name": "25",
+                                            "type": "text",
+                                            "label": "(Z)"
+                                        },
+                                        {
+                                            "name": "26",
+                                            "type": "text",
+                                            "label": "(AA)"
+                                        },
+                                        {
+                                            "name": "27",
+                                            "type": "text",
+                                            "label": "(AB)"
+                                        },
+                                        {
+                                            "name": "28",
+                                            "type": "text",
+                                            "label": "(AC)"
+                                        }
+                                    ],
+                                    "type": "collection",
+                                    "label": "Values"
+                                }
+                            ]
+                        },
+                        "insertDataOption": {
+                            "mode": "chose",
+                            "label": "Insert rows"
+                        },
+                        "valueInputOption": {
+                            "mode": "chose",
+                            "label": "User entered"
+                        },
+                        "insertUnformatted": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            },
+                            "label": "My Google connection (l.govender@make.com)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "mode",
+                        "type": "select",
+                        "label": "Choose a Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "select",
+                                "fromAll",
+                                "map"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "insertUnformatted",
+                        "type": "boolean",
+                        "label": "Unformatted",
+                        "required": true
+                    },
+                    {
+                        "name": "valueInputOption",
+                        "type": "select",
+                        "label": "Value input option",
+                        "validate": {
+                            "enum": [
+                                "USER_ENTERED",
+                                "RAW"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "insertDataOption",
+                        "type": "select",
+                        "label": "Insert data option",
+                        "validate": {
+                            "enum": [
+                                "INSERT_ROWS",
+                                "OVERWRITE"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "text",
+                        "label": "Spreadsheet ID",
+                        "required": true
+                    },
+                    {
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "select",
+                        "label": "Table contains headers",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "values",
+                        "spec": [
+                            {
+                                "name": "0",
+                                "type": "text",
+                                "label": "Date  (A)"
+                            },
+                            {
+                                "name": "1",
+                                "type": "text",
+                                "label": "Campaign ID (B)"
+                            },
+                            {
+                                "name": "2",
+                                "type": "text",
+                                "label": "Start Time (C)"
+                            },
+                            {
+                                "name": "3",
+                                "type": "text",
+                                "label": "Campaign Name (D)"
+                            },
+                            {
+                                "name": "4",
+                                "type": "text",
+                                "label": "Budget Remaining (E)"
+                            },
+                            {
+                                "name": "5",
+                                "type": "text",
+                                "label": "Daily Budget (F)"
+                            },
+                            {
+                                "name": "6",
+                                "type": "text",
+                                "label": "Lifetime Budget (G)"
+                            },
+                            {
+                                "name": "7",
+                                "type": "text",
+                                "label": "Effective Status (H)"
+                            },
+                            {
+                                "name": "8",
+                                "type": "text",
+                                "label": "Status (I)"
+                            },
+                            {
+                                "name": "9",
+                                "type": "text",
+                                "label": "Ad Set ID (J)"
+                            },
+                            {
+                                "name": "10",
+                                "type": "text",
+                                "label": "Ad Set Name (K)"
+                            },
+                            {
+                                "name": "11",
+                                "type": "text",
+                                "label": "Budget Remaining (L)"
+                            },
+                            {
+                                "name": "12",
+                                "type": "text",
+                                "label": "Billing Event (M)"
+                            },
+                            {
+                                "name": "13",
+                                "type": "text",
+                                "label": "(N)"
+                            },
+                            {
+                                "name": "14",
+                                "type": "text",
+                                "label": "(O)"
+                            },
+                            {
+                                "name": "15",
+                                "type": "text",
+                                "label": "(P)"
+                            },
+                            {
+                                "name": "16",
+                                "type": "text",
+                                "label": "(Q)"
+                            },
+                            {
+                                "name": "17",
+                                "type": "text",
+                                "label": "(R)"
+                            },
+                            {
+                                "name": "18",
+                                "type": "text",
+                                "label": "(S)"
+                            },
+                            {
+                                "name": "19",
+                                "type": "text",
+                                "label": "(T)"
+                            },
+                            {
+                                "name": "20",
+                                "type": "text",
+                                "label": "(U)"
+                            },
+                            {
+                                "name": "21",
+                                "type": "text",
+                                "label": "(V)"
+                            },
+                            {
+                                "name": "22",
+                                "type": "text",
+                                "label": "(W)"
+                            },
+                            {
+                                "name": "23",
+                                "type": "text",
+                                "label": "(X)"
+                            },
+                            {
+                                "name": "24",
+                                "type": "text",
+                                "label": "(Y)"
+                            },
+                            {
+                                "name": "25",
+                                "type": "text",
+                                "label": "(Z)"
+                            },
+                            {
+                                "name": "26",
+                                "type": "text",
+                                "label": "(AA)"
+                            },
+                            {
+                                "name": "27",
+                                "type": "text",
+                                "label": "(AB)"
+                            },
+                            {
+                                "name": "28",
+                                "type": "text",
+                                "label": "(AC)"
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Values"
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu2.make.com",
+        "notes": []
+    }
+}

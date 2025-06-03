@@ -1,0 +1,407 @@
+{
+  "name": "linkedin-scraper",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1480,
+        1600
+      ],
+      "id": "5b0a2dce-82ca-47a5-bab1-cf92aa35fd61",
+      "name": "When chat message received",
+      "webhookId": "c75fc8db-4a21-4ea1-8e8e-56c5a8e95f1b"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc27b2d9-8de7-43ca-a741-2d150084f78e",
+              "name": "currentStartIndex",
+              "value": 1,
+              "type": "number"
+            },
+            {
+              "id": "fc552c57-4510-4f04-aa09-2294306d0d9f",
+              "name": "maxPages",
+              "value": 10,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1660,
+        1600
+      ],
+      "id": "4fba1cf7-caef-475d-8bbd-cb08cd3bceaf",
+      "name": "Set Fields"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/customsearch/v1",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "REDACTED_API_KEY"
+            },
+            {
+              "name": "cx",
+              "value": "REDACTED_CX_ID"
+            },
+            {
+              "name": "q",
+              "value": "ceo automotive united states site:linkedin.com/in"
+            },
+            {
+              "name": "start",
+              "value": "={{ $runIndex == 0 ? $node[\"Set Fields\"].json.currentStartIndex : $node[\"Pagination Check\"].json.startIndex }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1840,
+        1600
+      ],
+      "id": "0887429c-6248-4a80-a2d4-ef182c245a29",
+      "name": "Search Google"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the response data\nconst response = $input.first().json;\nconst items = response.items || [];\n\n// Track pagination info\nlet nextStartIndex = 1;\nif (response.queries && response.queries.nextPage && response.queries.nextPage[0]) {\n  nextStartIndex = response.queries.nextPage[0].startIndex;\n}\n\n// Calculate if we should continue (Google only allows up to 100 results)\nconst hasMoreResults = nextStartIndex <= 100;\n\n// Process the items and include pagination info in each item\nconst results = items.map(item => {\n  const titleParts = item.title.split(\" - \");\n  return {\n    name: titleParts[0] || null,\n    title: titleParts.slice(1).join(\" - \") || null,\n    link: item.link || null,\n    snippet: item.snippet || null,\n    image: item.pagemap?.cse_thumbnail?.[0]?.src || null,\n    // Add pagination info to each item\n    startIndex: nextStartIndex,\n    hasMoreResults: hasMoreResults\n  };\n});\n\n// If there are no results, return at least one item with pagination info\nif (results.length === 0) {\n  return [{ \n    json: {\n      name: null,\n      title: null,\n      link: null,\n      snippet: null,\n      image: null,\n      startIndex: nextStartIndex,\n      hasMoreResults: false\n    }\n  }];\n}\n\n// Return the processed results\nreturn results.map(r => ({ json: r }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2020,
+        1600
+      ],
+      "id": "2d77d3b6-c330-4258-8f78-2cda81de2ac5",
+      "name": "Extract Results"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "linkedin",
+          "cachedResultUrl": "REDACTED_GOOGLE_SHEET_URL"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "REDACTED_SHEET_URL"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $json.name }}",
+            "title": "={{ $json.title }}",
+            "link": "={{ $json.link }}",
+            "snippet": "={{ $json.snippet }}",
+            "image": "={{ $json.image }}",
+            "results": "={{ $json.hasMoreResults }}",
+            "index": "={{ $json.startIndex }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "snippet",
+              "displayName": "snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "image",
+              "displayName": "image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "index",
+              "displayName": "index",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "results",
+              "displayName": "results",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2380,
+        1600
+      ],
+      "id": "51615129-9049-4ae7-899b-11a278a33ca0",
+      "name": "Add to Google",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED_CREDENTIAL_ID",
+          "name": "Google Sheets Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all input items\nconst inputItems = $input.all();\nconsole.log(\"Input items count:\", inputItems.length);\n\n// Extract pagination values with fallbacks\nlet nextStartIndex = 1;\nlet hasMoreResults = false;\n\n// Try different approaches to find the pagination info\nif (inputItems && inputItems.length > 0) {\n  const firstItem = inputItems[0];\n  \n  // Check direct properties\n  if (firstItem.json) {\n    console.log(\"First item JSON:\", JSON.stringify(firstItem.json));\n    \n    // Check for \"index\" property (instead of startIndex)\n    if (firstItem.json.index !== undefined) {\n      nextStartIndex = firstItem.json.index;\n      console.log(\"Found index:\", nextStartIndex);\n    }\n    \n    // Check for \"results\" property (instead of hasMoreResults)\n    if (firstItem.json.results !== undefined) {\n      hasMoreResults = firstItem.json.results;\n      console.log(\"Found results:\", hasMoreResults);\n    }\n  }\n}\n\n// Return pagination control info\nreturn {\n  json: {\n    continueLoop: hasMoreResults,\n    startIndex: nextStartIndex\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2560,
+        1600
+      ],
+      "id": "3929ef27-324a-497f-871d-8b5e83f4069f",
+      "name": "Pagination"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "faef2862-80a4-465b-9e0b-be5b9753dcbd",
+              "leftValue": "={{ $json.continueLoop }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2740,
+        1600
+      ],
+      "id": "128cf263-98c4-4eba-a783-d3ee9ce1fa18",
+      "name": "Pagination Check"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2200,
+        1600
+      ],
+      "id": "0a61a057-59a3-4020-aa9b-c1373b310ad9",
+      "name": "Wait",
+      "webhookId": "d3bbbd53-2135-45e5-a847-aad35b1c518e"
+    },
+    {
+      "parameters": {
+        "content": "## Google API Instructions\n\n1. Go to [Google Cloud Console](https://console.cloud.google.com/)\n   - Create a new project  \n   - Enable **Custom Search API**  \n   - Go to **Credentials** and copy your **API Key**\n\n2. Go to [Programmable Search Engine](https://programmablesearchengine.google.com/controlpanel/create)\n   - Create a name  \n   - Select **Search entire web**  \n   - Copy the **cx** value\n\n## Usage Limits (Free Tier)\n\n- The free tier of the Google Custom Search API allows **100 requests per day**\n- Each request returns **up to 10 search results**\n- This means you can get **up to 1,000 search results per day** at no cost\n",
+        "height": 500,
+        "width": 360,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        920,
+        1420
+      ],
+      "id": "c1fbefbd-e123-48f4-8514-87291fa95450",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Set Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Fields": {
+      "main": [
+        [
+          {
+            "node": "Search Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Google": {
+      "main": [
+        [
+          {
+            "node": "Extract Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Results": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Google": {
+      "main": [
+        [
+          {
+            "node": "Pagination",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagination": {
+      "main": [
+        [
+          {
+            "node": "Pagination Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagination Check": {
+      "main": [
+        [
+          {
+            "node": "Search Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Add to Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5369523d-b5cd-415f-b6fe-29bb228c5395",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REDACTED_INSTANCE_ID"
+  },
+  "id": "iGpHj7UK0dI5fY67",
+  "tags": [
+    {
+      "createdAt": "2025-03-27T09:59:28.159Z",
+      "updatedAt": "2025-03-27T09:59:28.159Z",
+      "id": "1a5nO4hc89n0BKRU",
+      "name": "youtube"
+    }
+  ]
+}

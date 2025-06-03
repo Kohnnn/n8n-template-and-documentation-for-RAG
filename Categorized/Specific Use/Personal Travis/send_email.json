@@ -1,0 +1,167 @@
+{
+  "name": "🛠 send_email",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "8bcd65bf-6845-43c3-8e22-1b112edaa66b",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -540,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.message.content.to }}",
+        "subject": "={{ $json.message.content.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.message.content.message }}",
+        "options": {
+          "appendAttribution": false,
+          "bccList": "={{ $json.message.content.options.bccList }}",
+          "ccList": "={{ $json.message.content.options.ccList }}",
+          "senderName": "Jeffrey | Limitless AI"
+        }
+      },
+      "id": "d3f1f62f-83f3-4bb0-a51f-6a3d775aec40",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        60,
+        320
+      ],
+      "webhookId": "9a3e48b6-eb92-4e20-b238-28a0a1530bac",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "yRzymoA5pEQGpJTA",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "da9bd71b-df10-4b7d-b3b4-ccc53dbe00f4",
+              "name": "response",
+              "value": "Email Sent",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "81ce85c0-bca1-4be2-869d-c5e15eeb586a",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        280,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Parse the 'query' and output the parameters separately.",
+              "role": "system"
+            },
+            {
+              "content": "={{ JSON.stringify($json.query) }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "8aadeeeb-51ec-4a2f-bce5-84cd7d394e71",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        -300,
+        320
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "{ \"options\": \"{ \\\"appendAttribution\\\": \\\"false\\\", \\\"bccList\\\": \\\"=\\\", \\\"ccList\\\": \\\"=\\\", \\\"senderName\\\": \\\"=\\\" }\", \"to\": \"=\", \"subject\": \"=\", \"message\": \"=\" }"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ecdef3d7-2669-4237-a594-85f6479a7485",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80dda94540258c8a9249877c5128f67d88ca1bcc72725380688b9a5c6a7a5d1f"
+  },
+  "id": "LEhMNgL5okw5OC10",
+  "tags": [
+    {
+      "createdAt": "2024-10-15T06:05:46.125Z",
+      "updatedAt": "2024-10-15T06:05:46.125Z",
+      "id": "9pa7tonVg28zR6sD",
+      "name": "Tools"
+    }
+  ]
+}

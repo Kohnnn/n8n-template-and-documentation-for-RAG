@@ -1,0 +1,902 @@
+{
+    "name": "Ready, Set Captions!",
+    "flow": [
+        {
+            "id": 1,
+            "module": "tally:watchNewResponse",
+            "version": 1,
+            "parameters": {
+                "__IMTHOOK__": 1933756
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTHOOK__": {
+                            "data": {
+                                "editable": "false"
+                            },
+                            "label": "Captions Creator"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTHOOK__",
+                        "type": "hook:tally",
+                        "label": "Webhook",
+                        "required": true
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "eventId",
+                        "type": "text",
+                        "label": "Event ID"
+                    },
+                    {
+                        "name": "responseId",
+                        "type": "text",
+                        "label": "Response ID"
+                    },
+                    {
+                        "name": "submissionId",
+                        "type": "text",
+                        "label": "Submission ID"
+                    },
+                    {
+                        "name": "respondentId",
+                        "type": "text",
+                        "label": "Respondent ID"
+                    },
+                    {
+                        "name": "formId",
+                        "type": "text",
+                        "label": "Form ID"
+                    },
+                    {
+                        "name": "formName",
+                        "type": "text",
+                        "label": "Form Name"
+                    },
+                    {
+                        "name": "createdAt",
+                        "type": "date",
+                        "label": "Created at"
+                    },
+                    {
+                        "name": "fields",
+                        "spec": [
+                            {
+                                "name": "Name 👋🏻",
+                                "type": "text"
+                            },
+                            {
+                                "name": "Email 📧",
+                                "type": "email"
+                            },
+                            {
+                                "name": "Video Upload 🎥",
+                                "spec": [
+                                    {
+                                        "name": "id",
+                                        "type": "text",
+                                        "label": "File ID"
+                                    },
+                                    {
+                                        "name": "name",
+                                        "type": "text",
+                                        "label": "File Name"
+                                    },
+                                    {
+                                        "name": "url",
+                                        "type": "url",
+                                        "label": "File URL"
+                                    },
+                                    {
+                                        "name": "mimeType",
+                                        "type": "text",
+                                        "label": "File Mime Type"
+                                    },
+                                    {
+                                        "name": "size",
+                                        "type": "uinteger",
+                                        "label": "File Size"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "name": "Font Type 📝",
+                                "spec": {
+                                    "type": "text"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "name": "Font Size (pixels) 👀",
+                                "spec": {
+                                    "type": "text"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "name": "Payment 💸 (price)",
+                                "type": "number"
+                            },
+                            {
+                                "name": "Payment 💸 (currency)",
+                                "type": "text"
+                            },
+                            {
+                                "name": "Payment 💸 (name)",
+                                "type": "name"
+                            },
+                            {
+                                "name": "Payment 💸 (email)",
+                                "type": "email"
+                            },
+                            {
+                                "name": "Payment 💸 (link)",
+                                "type": "url"
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Fields"
+                    },
+                    {
+                        "name": "fieldsById",
+                        "spec": [
+                            {
+                                "name": "question_Oap0eY",
+                                "type": "text",
+                                "label": "Name 👋🏻"
+                            },
+                            {
+                                "name": "question_VGR8BM",
+                                "type": "email",
+                                "label": "Email 📧"
+                            },
+                            {
+                                "name": "question_PpM0WB",
+                                "spec": [
+                                    {
+                                        "name": "id",
+                                        "type": "text",
+                                        "label": "File ID"
+                                    },
+                                    {
+                                        "name": "name",
+                                        "type": "text",
+                                        "label": "File Name"
+                                    },
+                                    {
+                                        "name": "url",
+                                        "type": "url",
+                                        "label": "File URL"
+                                    },
+                                    {
+                                        "name": "mimeType",
+                                        "type": "text",
+                                        "label": "File Mime Type"
+                                    },
+                                    {
+                                        "name": "size",
+                                        "type": "uinteger",
+                                        "label": "File Size"
+                                    }
+                                ],
+                                "type": "array",
+                                "label": "Video Upload 🎥"
+                            },
+                            {
+                                "name": "question_oEr5zN",
+                                "spec": {
+                                    "type": "text"
+                                },
+                                "type": "array",
+                                "label": "Font Type 📝"
+                            },
+                            {
+                                "name": "question_G6NqbO",
+                                "spec": {
+                                    "type": "text"
+                                },
+                                "type": "array",
+                                "label": "Font Size (pixels) 👀"
+                            },
+                            {
+                                "name": "question_r5NEb2_price",
+                                "type": "number",
+                                "label": "Payment 💸 (price)"
+                            },
+                            {
+                                "name": "question_r5NEb2_currency",
+                                "type": "text",
+                                "label": "Payment 💸 (currency)"
+                            },
+                            {
+                                "name": "question_r5NEb2_name",
+                                "type": "name",
+                                "label": "Payment 💸 (name)"
+                            },
+                            {
+                                "name": "question_r5NEb2_email",
+                                "type": "email",
+                                "label": "Payment 💸 (email)"
+                            },
+                            {
+                                "name": "question_r5NEb2_link",
+                                "type": "url",
+                                "label": "Payment 💸 (link)"
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Fields by ID"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "cloudinary:UploadResource",
+            "version": 1,
+            "parameters": {
+                "__IMTCONN__": 3716059
+            },
+            "mapper": {
+                "file": "{{1.fields.`Video Upload 🎥`[].url}}",
+                "type": "upload",
+                "folder": "Captions",
+                "file_type": "url",
+                "resourceType": "video"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 267,
+                    "y": 2
+                },
+                "restore": {
+                    "expect": {
+                        "type": {
+                            "mode": "chose",
+                            "label": "Upload"
+                        },
+                        "folder": {
+                            "mode": "chose",
+                            "label": "Captions"
+                        },
+                        "file_type": {
+                            "label": "URL Where The File Stored"
+                        },
+                        "resourceType": {
+                            "mode": "chose",
+                            "label": "video"
+                        },
+                        "use_filename": {
+                            "mode": "chose"
+                        },
+                        "upload_preset": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "cloudinary"
+                            },
+                            "label": "GIF AI (dhwdlspyq)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:cloudinary",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "file_type",
+                        "type": "select",
+                        "label": "File Type",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "data",
+                                "url"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "resourceType",
+                        "type": "select",
+                        "label": "Resource Type",
+                        "required": true
+                    },
+                    {
+                        "name": "upload_preset",
+                        "type": "select",
+                        "label": "Upload Preset"
+                    },
+                    {
+                        "name": "public_id",
+                        "type": "text",
+                        "label": "Public ID"
+                    },
+                    {
+                        "name": "folder",
+                        "type": "select",
+                        "label": "Folder"
+                    },
+                    {
+                        "name": "use_filename",
+                        "type": "boolean",
+                        "label": "Use Filename"
+                    },
+                    {
+                        "name": "type",
+                        "type": "select",
+                        "label": "Type",
+                        "validate": {
+                            "enum": [
+                                "private",
+                                "upload",
+                                "authenticated"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "file",
+                        "type": "url",
+                        "label": "File",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "module": "json2video:addAutomaticSubtitlesFromAudio",
+            "version": 1,
+            "parameters": {
+                "__IMTCONN__": 3731996
+            },
+            "mapper": {
+                "width": "{{2.width}}",
+                "height": "{{2.height}}",
+                "position": "bottom-center",
+                "font_size": "{{1.fields.`Font Size (pixels) 👀`[]}}",
+                "video_url": "{{2.url}}",
+                "resolution": "custom",
+                "word_color": "#ffa500",
+                "font_family": "{{1.fields.`Font Type 📝`[]}}",
+                "voice_language": "en"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 567,
+                    "y": 2
+                },
+                "restore": {
+                    "expect": {
+                        "position": {
+                            "mode": "chose",
+                            "label": "bottom-center"
+                        },
+                        "mute_video": {
+                            "mode": "chose"
+                        },
+                        "resolution": {
+                            "mode": "chose",
+                            "label": "Custom size"
+                        },
+                        "trim_video": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "client_data": {
+                            "mode": "chose"
+                        },
+                        "font_family": {
+                            "mode": "edit"
+                        },
+                        "voice_language": {
+                            "mode": "chose",
+                            "label": "English"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "json2video"
+                            },
+                            "label": "My JSON2Video connection (cal@dainami.ai - admin)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:json2video",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "resolution",
+                        "type": "select",
+                        "label": "Output video resolution",
+                        "validate": {
+                            "enum": [
+                                "full-hd",
+                                "instagram-story",
+                                "squared",
+                                "custom"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "video_url",
+                        "type": "text",
+                        "label": "Video url"
+                    },
+                    {
+                        "name": "mute_video",
+                        "type": "boolean",
+                        "label": "Mute video"
+                    },
+                    {
+                        "name": "audio_url",
+                        "type": "text",
+                        "label": "Audio url"
+                    },
+                    {
+                        "name": "voice_language",
+                        "type": "select",
+                        "label": "Voice language",
+                        "validate": {
+                            "enum": [
+                                "en",
+                                "ca",
+                                "zh",
+                                "zh-TW",
+                                "da",
+                                "nl",
+                                "fr",
+                                "fi",
+                                "de",
+                                "el",
+                                "hi",
+                                "hi-Latn",
+                                "id",
+                                "it",
+                                "ja",
+                                "ko",
+                                "ms",
+                                "pt",
+                                "pt-BR",
+                                "ru",
+                                "es",
+                                "es-419",
+                                "sv",
+                                "th",
+                                "tr",
+                                "uk",
+                                "vi"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "trim_video",
+                        "type": "select",
+                        "label": "Trim video",
+                        "validate": {
+                            "enum": [
+                                "-2",
+                                "-1"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "font_family",
+                        "type": "select",
+                        "label": "Font family",
+                        "validate": {
+                            "enum": [
+                                "Arial",
+                                "Libre Baskerville",
+                                "Lobster",
+                                "Luckiest Guy",
+                                "Nanum Pen Script",
+                                "Nunito",
+                                "Pacifico",
+                                "Roboto",
+                                "Korean",
+                                "Korean Bold",
+                                "Chinese Simplified",
+                                "Chinese Traditional"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "font_size",
+                        "type": "number",
+                        "label": "Font size"
+                    },
+                    {
+                        "name": "word_color",
+                        "type": "text",
+                        "label": "Word color"
+                    },
+                    {
+                        "name": "line_color",
+                        "type": "text",
+                        "label": "Line color"
+                    },
+                    {
+                        "name": "outline_width",
+                        "type": "number",
+                        "label": "Outline width"
+                    },
+                    {
+                        "name": "position",
+                        "type": "select",
+                        "label": "Position",
+                        "validate": {
+                            "enum": [
+                                "top-left",
+                                "top-center",
+                                "top-right",
+                                "center-left",
+                                "center-center",
+                                "center-right",
+                                "bottom-left",
+                                "bottom-center",
+                                "bottom-right",
+                                "mid-bottom-center",
+                                "mid-top-center"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "make_webhook_url",
+                        "type": "text",
+                        "label": "Webhook URL"
+                    },
+                    {
+                        "name": "client_data",
+                        "spec": [
+                            {
+                                "name": "key",
+                                "type": "text",
+                                "label": "Key"
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Client data"
+                    },
+                    {
+                        "name": "width",
+                        "type": "integer",
+                        "label": "Width"
+                    },
+                    {
+                        "name": "height",
+                        "type": "integer",
+                        "label": "Height"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 5,
+            "module": "util:FunctionSleep",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "duration": "30"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 867,
+                    "y": 2
+                },
+                "restore": {},
+                "expect": [
+                    {
+                        "name": "duration",
+                        "type": "uinteger",
+                        "label": "Delay",
+                        "required": true,
+                        "validate": {
+                            "max": 300,
+                            "min": 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": 6,
+            "module": "json2video:waitForAMovieToRender",
+            "version": 1,
+            "parameters": {
+                "__IMTCONN__": 3731996
+            },
+            "mapper": {
+                "project": "{{4.project}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1167,
+                    "y": 2
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "json2video"
+                            },
+                            "label": "My JSON2Video connection (cal@dainami.ai - admin)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:json2video",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "project",
+                        "type": "text",
+                        "label": "Project ID",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 7,
+            "module": "http:ActionGetFile",
+            "version": 3,
+            "parameters": {
+                "handleErrors": false
+            },
+            "mapper": {
+                "url": "{{6.movie.url}}",
+                "method": "get",
+                "serializeUrl": false,
+                "shareCookies": false
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1438,
+                    "y": 2
+                },
+                "restore": {},
+                "parameters": [
+                    {
+                        "name": "handleErrors",
+                        "type": "boolean",
+                        "label": "Evaluate all states as errors (except for 2xx and 3xx )",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL",
+                        "required": true
+                    },
+                    {
+                        "name": "serializeUrl",
+                        "type": "boolean",
+                        "label": "Serialize URL",
+                        "required": true
+                    },
+                    {
+                        "name": "method",
+                        "type": "hidden",
+                        "label": "Method"
+                    },
+                    {
+                        "name": "shareCookies",
+                        "type": "boolean",
+                        "label": "Share cookies with other HTTP modules",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 8,
+            "module": "google-email:ActionCreateDraft",
+            "version": 2,
+            "parameters": {
+                "account": 2483316
+            },
+            "mapper": {
+                "cc": [],
+                "to": [
+                    "{{1.fields.`Email 📧`}}"
+                ],
+                "bcc": [],
+                "html": "<div>\n<h1>Ready, Set, Captions! 🪄</h1>\n</div>\n<div>\n<p>Hey {{1.fields.`Name 👋🏻`}}!</p>\n<p>We&rsquo;ve worked a little magic and created something just for you. Your video now has captions that bring every moment to life&mdash;ready to steal the show! ✨</p>\n<p>Want to share the fun and keep creating? Let&rsquo;s caption another video and take the creativity to the next level! 🎉</p>\n<div><a href=\"https://aicaptions.carrd.co/\">Caption another video! ✨</a></div>\n<div>&nbsp;</div>\n</div>\n<div>Cheers to endless creativity,</div>\n<div>Cal</div>",
+                "folder": "[Gmail]/Drafts",
+                "subject": "{{1.fields.`Name 👋🏻`}}, Your Caption's Ready! 🥳",
+                "attachments": [
+                    {
+                        "data": "{{7.data}}",
+                        "fileName": "{{7.fileName}}"
+                    }
+                ]
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1738,
+                    "y": 2
+                },
+                "restore": {
+                    "expect": {
+                        "cc": {
+                            "mode": "chose"
+                        },
+                        "to": {
+                            "mode": "chose",
+                            "items": [
+                                null
+                            ]
+                        },
+                        "bcc": {
+                            "mode": "chose"
+                        },
+                        "folder": {
+                            "mode": "chose",
+                            "path": [
+                                "Drafts",
+                                "Drafts"
+                            ]
+                        },
+                        "attachments": {
+                            "mode": "chose",
+                            "items": [
+                                null
+                            ]
+                        }
+                    },
+                    "parameters": {
+                        "account": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google-restricted"
+                            },
+                            "label": "My Google Restricted connection (cal@dainami.ai)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "account",
+                        "type": "account:google-restricted",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "folder",
+                        "type": "folder",
+                        "label": "Folder",
+                        "required": true
+                    },
+                    {
+                        "name": "to",
+                        "spec": {
+                            "name": "value",
+                            "type": "email",
+                            "label": "Email address",
+                            "required": true
+                        },
+                        "type": "array",
+                        "label": "To"
+                    },
+                    {
+                        "name": "subject",
+                        "type": "text",
+                        "label": "Subject"
+                    },
+                    {
+                        "name": "html",
+                        "type": "text",
+                        "label": "Content"
+                    },
+                    {
+                        "name": "attachments",
+                        "spec": [
+                            {
+                                "name": "fileName",
+                                "type": "filename",
+                                "label": "File name",
+                                "required": true,
+                                "semantic": "file:name"
+                            },
+                            {
+                                "name": "data",
+                                "type": "buffer",
+                                "label": "Data",
+                                "required": true,
+                                "semantic": "file:data"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Attachments"
+                    },
+                    {
+                        "name": "cc",
+                        "spec": {
+                            "name": "value",
+                            "type": "email",
+                            "label": "Email address",
+                            "required": true
+                        },
+                        "type": "array",
+                        "label": "Copy recipient"
+                    },
+                    {
+                        "name": "bcc",
+                        "spec": {
+                            "name": "value",
+                            "type": "email",
+                            "label": "Email address",
+                            "required": true
+                        },
+                        "type": "array",
+                        "label": "Blind copy recipient"
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": true,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "us1.make.com"
+    }
+}

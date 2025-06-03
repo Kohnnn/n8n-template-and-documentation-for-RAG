@@ -1,0 +1,818 @@
+{
+  "name": "LINKEDIN_URLS",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "797a1705-2ca7-4b62-a0c5-973d4f3e41d9",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2160,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "profiles",
+        "options": {}
+      },
+      "id": "7220b01e-d79c-4300-8c4d-8c15847f3d5e",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        1460
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a237dcb9-3fa4-4b10-bcb5-cf9c85c5d7b9",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -1600,
+        1860
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "nGGDL5hikjbUKYSX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7aafc126-b5f5-4127-a137-84f3aa9f62aa",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -320,
+        1420
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "9e315a42-c240-4616-8c84-4b1a3e130c92",
+      "name": "No Operation, do nothing1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        1680
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6dd98ba4-2067-4284-ab60-f926473c80e4",
+              "name": "=name",
+              "value": "={{ $('Loop Over Items1').item.json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "3e08cc22-d1bd-4bca-9fe2-9982b719d36a",
+              "name": "title",
+              "value": "={{ $('Loop Over Items1').item.json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "b54b7ce8-e16f-42e6-9206-a8938b082f3c",
+              "name": "linkedinUrl",
+              "value": "={{ $('Loop Over Items1').item.json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "b7b3fbf8-f3cf-4fa2-9443-608386fea78b",
+              "name": "company",
+              "value": "={{ $('Loop Over Items1').item.json.company }}",
+              "type": "string"
+            },
+            {
+              "id": "cfffdb6e-6e57-455a-af6f-d57bab5828cb",
+              "name": "followers",
+              "value": "={{ $('Loop Over Items1').item.json.followers }}",
+              "type": "string"
+            },
+            {
+              "id": "36e73404-500d-4e48-87d2-d9f22f81b949",
+              "name": "campaign",
+              "value": "={{ $('Campaign Setter').item.json.campaign }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1cc044ac-fb97-4bc6-ab30-6ff2470a8db4",
+      "name": "set lead1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        60,
+        1440
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "061a000f-4718-4c36-b343-3a60d81ec020",
+              "name": "response",
+              "value": "=The campaign : {{ $('Campaign Setter').item.json.campaign }} is added to the database \nNumber of leads : {{ $('merge responses').item.json.total_profiles }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "87a47f98-2ca9-48e4-bfa9-c516034827d7",
+      "name": "Ai response1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -100,
+        1360
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appeydbEhLDzg3BMX",
+          "mode": "list",
+          "cachedResultName": "linkedin_leads",
+          "cachedResultUrl": "https://airtable.com/appeydbEhLDzg3BMX"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbls1S8Sx7y38WRtY",
+          "mode": "list",
+          "cachedResultName": "leads",
+          "cachedResultUrl": "https://airtable.com/appeydbEhLDzg3BMX/tbls1S8Sx7y38WRtY"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "title": "{{    }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "campaign",
+              "displayName": "campaign",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "firstName",
+              "displayName": "firstName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "lastName",
+              "displayName": "lastName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "linkedinUrl",
+              "displayName": "linkedinUrl",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "292bfbed-8d30-4bb5-9b9d-33072181394e",
+      "name": "Airtable3",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        220,
+        1440
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "IP5Yp0tje5zXvRcU",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appeydbEhLDzg3BMX",
+          "mode": "list",
+          "cachedResultName": "linkedin_leads",
+          "cachedResultUrl": "https://airtable.com/appeydbEhLDzg3BMX"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllFlVKKdmoKr2vC",
+          "mode": "list",
+          "cachedResultName": "duplicates",
+          "cachedResultUrl": "https://airtable.com/appeydbEhLDzg3BMX/tbllFlVKKdmoKr2vC"
+        },
+        "returnAll": false,
+        "options": {}
+      },
+      "id": "e50648e2-e8ae-4de8-b0e3-4e5636493d44",
+      "name": "Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        400,
+        1640
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "IP5Yp0tje5zXvRcU",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteRecord",
+        "base": {
+          "__rl": true,
+          "value": "appeydbEhLDzg3BMX",
+          "mode": "list",
+          "cachedResultName": "linkedin_leads",
+          "cachedResultUrl": "https://airtable.com/appeydbEhLDzg3BMX"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllFlVKKdmoKr2vC",
+          "mode": "list",
+          "cachedResultName": "duplicates",
+          "cachedResultUrl": "https://airtable.com/appeydbEhLDzg3BMX/tbllFlVKKdmoKr2vC"
+        },
+        "id": "={{ $json.id }}"
+      },
+      "id": "edc259b8-ed3a-404f-952f-f5d43d16da0a",
+      "name": "Airtable1",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        820,
+        1660
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "IP5Yp0tje5zXvRcU",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "bf134761-7dc0-4d0c-a157-6068aa5932ee",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        580,
+        1640
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "10307461-2e69-4d0d-aec2-1db4434c9349",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        1440
+      ],
+      "webhookId": "7a554e44-1fa1-405c-9078-3241f1246ccf"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.query }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "job_title",
+              "description": "The job title to search for (e.g Chief Technical officer, CTO)"
+            },
+            {
+              "name": "company_type",
+              "description": "The type of company (e.g Startup, early stage)"
+            },
+            {
+              "name": "location",
+              "description": "The location to search in (e.g France)"
+            },
+            {
+              "name": "company_size",
+              "description": "The size of the company (e.g, small , large)"
+            },
+            {
+              "name": "industry",
+              "description": "The industry of the company (e,g, healthcare)"
+            },
+            {
+              "name": "lead_number",
+              "description": "number of leads to get"
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "You are an advanced extraction algorithm with deep knowledge of business roles, terminology, and industry dynamics. Your task is to analyze input text and extract relevant information, while also considering the broader context and potential applications of the extracted data. Your goal is to be comprehensive and inclusive in your extractions to support a wide range of business use cases.\n\nCarefully analyze the input text to extract the following details:\njob_title: [Primary Title], [Alternative Title 1], [Alternative Title 2], [Alternative Title 3], [Common Abbreviation], [Related Role]\ncompany_type: [Primary Type], [Alternative Type 1], [Alternative Type 2], [Alternative Type 3], [Startup Indicator], [Broad Category]\nlocation: [Primary Location], [Alternative Location 1], [Alternative Location 2], [Alternative Location 3], [Country], [Region], [Continent]\ncompany_size: [Primary Size], [Alternative Size 1], [Alternative Size 2], [Alternative Size 3], [Exact Number if Provided], [Range]\nindustry: [Primary Industry], [Related Industry 1], [Related Industry 2], [Related Industry 3], [General Industry Term], [Broader Sector]\nlead_number: [Number of profiles to get]\n\nGuidelines:\n- For job titles, include the full title, common abbreviations, and related roles that might use different terminology but have similar responsibilities.\n- For company type, always include \"startup\" if mentioned, and provide relevant alternatives based on the context. Include broader categories that the company type might fall under.\n- For locations, include city names, country names, regions, and continents. Be specific about countries or cities mentioned, especially for regions like the Middle East, but also include broader geographical terms.\n- For company size, use exact numbers if provided, include alternative descriptive terms, and provide size ranges.\n- For industries, use the specific industry mentioned as the primary industry, include related industries, and provide both specific and general relevant terms. Also include broader sector classifications.\n- For lead_number, extract the specific number if provided. If not found, default to 100 to ensure a substantial dataset.\n- If any field is not explicitly mentioned or cannot be confidently inferred, use \"\" as the primary entry, but strive to fill in as many alternative fields as possible based on context and general knowledge.\n\nAdditional Considerations:\n- Identify potential real-world applications and benefits of the extracted information, such as in recruitment, market analysis, or business intelligence.\n- Explore innovative ways to enhance the extraction algorithm, such as incorporating natural language processing techniques or presenting the information in novel formats.\n- Analyze the input text for patterns, trends, or connections that could be leveraged to improve the extraction process and the quality of the output.\n- Consider how the extracted information could be used in various business contexts and try to provide data that would be valuable across different use cases.\n\nRemember: While accuracy remains essential, the algorithm should strive to provide comprehensive, creative, and well-structured information. Err on the side of inclusivity rather than being overly restrictive in your extractions."
+        }
+      },
+      "id": "d1e54306-8752-4986-beed-90ac1c24eb84",
+      "name": "Information Extractor",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "98bc3b22-a393-4b71-a3a6-4d02aba9e3e5",
+              "name": "campaign",
+              "value": "={{ $json.output.job_title }}_{{ $json.output.company_type }}_{{ $json.output.location }}_{{ $json.output.company_size }}_{{ $json.output.industry }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "32787c1a-b683-4d5a-9790-f28fd59942bc",
+      "name": "Campaign Setter",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1700,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract the values from the Information Extractor node\nconst jobTitle = $node[\"Information Extractor\"].json.output.job_title || \"\";\nconst companyType = $node[\"Information Extractor\"].json.output.company_type || \"\";\nconst location = $node[\"Information Extractor\"].json.output.location || \"\";\nconst companySize = $node[\"Information Extractor\"].json.output.company_size || \"\";\nconst industry = $node[\"Information Extractor\"].json.output.industry || \"\";\nconst lead_number = $node[\"Information Extractor\"].json.output.lead_number || \"100\";\n\n// Function to process and limit terms (with reduced limits)\nfunction processTerms(input, limit = 3) { // Reduced default limit to 3\n  return input.split(/\\s*(?:OR|,)\\s*/)\n               .map(term => term.trim())\n               .filter(term => term.length > 0)\n               .slice(0, limit)  // Limit to top 3 terms per category\n               // Only add quotes if term contains special characters like parentheses\n               .map(term => term.includes('(') || term.includes(')') ? `\"${term}\"` : term)\n               .join(' OR ');\n}\n\n// Process each category with stricter limits\nconst jobTitleQuery = processTerms(jobTitle, 3);         // Reduced from 5\nconst companyTypeQuery = processTerms(companyType, 2);   // Reduced from 4\nconst locationQuery = processTerms(location, 2);         // Reduced from 6\nconst companySizeQuery = processTerms(companySize, 2);   // Reduced from 3\nconst industryQuery = processTerms(industry, 2);         // Reduced from 5\n\n// Construct the optimized base search query\nconst baseQuery = `site:linkedin.com/in/ (${jobTitleQuery}) (${companyTypeQuery}) (${locationQuery}) -formerly`;\n\n// Calculate pagination info\nconst resultsPerPage = 100;\nconst totalPages = Math.ceil(parseInt(lead_number) / resultsPerPage);\n\n// Function to remove empty parentheses\nfunction removeEmptyParentheses(query) {\n  return query.replace(/\\(\\s*\\)/g, '').replace(/\\s+/g, ' ').trim();\n}\n\n// Optimize the query\nconst optimizedQuery = removeEmptyParentheses(baseQuery);\n\n// Create array of requests with correct num values\nconst requests = [];\nfor(let i = 0; i < totalPages; i++) {\n    // Calculate remaining results\n    const remainingResults = parseInt(lead_number) - (i * resultsPerPage);\n    // Use 100 or remaining results, whichever is smaller\n    const numResults = Math.min(resultsPerPage, remainingResults);\n    \n    requests.push({\n        json: {\n            q: optimizedQuery,\n            num: numResults.toString(),\n            start: (i * 100).toString(),\n        }\n    });\n}\n\n// Return array of request objects\nreturn requests;"
+      },
+      "id": "e992644a-446c-45af-b597-fa69a768d302",
+      "name": "Google URLs Generator",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1540,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8f179907-c0ac-4b53-a6e1-c28ce54c38d7",
+      "name": "Serp iterator",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1360,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "api_key",
+              "value": "ad6fb28cb9f2ed294d02fce1564857c9651219fec72148c096449191ee20563f"
+            },
+            {
+              "name": "num",
+              "value": "={{ $json.num }}"
+            },
+            {
+              "name": "q",
+              "value": "={{ $json.q }}"
+            },
+            {
+              "name": "start",
+              "value": "={{ $json.start }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "16cb1a25-14fd-4c8f-a536-f332c67066e5",
+      "name": "serp API endpoint",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1180,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Function to extract essential profile data\nfunction extractProfileData(result) {\n    if (!result) return null;\n    \n    return {\n        name: result.title?.split(\"-\")[0]?.trim() || \"\",\n        title: result.title?.split(\"-\").slice(1).join(\"-\")?.trim() || \"\",\n        link: result.link || \"\",\n        company: result.title?.split(\"-\").slice(1).join(\"-\")?.trim() || \"\",\n        snippet: result.snippet || \"\",\n        followers: result.displayed_link?.includes(\"followers\") ? \n            result.displayed_link?.replace(/\\+|\\s+followers/g, \"\").trim() : \"\",\n    };\n}\n\n// Initialize results array\nlet combinedResults = [];\n\n// Process all batches\nlet i = 0;\ndo {\n    try {\n        // Get items from current batch\n        const currentBatch = $(\"serp API endpoint\").all(0, i);\n        \n        // Process each SERP response in the batch\n        currentBatch.forEach(item => {\n            if (item?.json?.organic_results) {\n                const profiles = item.json.organic_results\n                    .map(extractProfileData)\n                    .filter(profile => profile !== null);\n                    \n                combinedResults = combinedResults.concat(profiles);\n            }\n        });\n        \n        i++;\n    } catch (error) {\n        // No more batches to process\n        break;\n    }\n} while (true);\n\n// Remove duplicates based on LinkedIn profile URL\nconst uniqueResults = Array.from(new Map(\n    combinedResults.map(item => [item.link, item])\n).values());\n\n// Return the final merged results\nreturn [{ json: {\n    total_profiles: uniqueResults.length,\n    profiles: uniqueResults\n}}];"
+      },
+      "id": "d30ee38a-8a58-498f-94cc-84de51a0777b",
+      "name": "merge responses",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -860,
+        1460
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a5260c4c-777f-4e2e-ab3e-b94f4e83577e",
+              "leftValue": "={{ $('merge responses').item.json.total_profiles }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b44b295a-3ac9-416b-b516-ac6312599bc4",
+      "name": "condition2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -560,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c807098e-66d4-4a75-8666-78bd66b1526e",
+              "leftValue": "={{ $('Serp iterator').context[\"noItemsLeft\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "91a497e9-e9fd-4ed4-bbe7-3da110c5a2a6",
+              "leftValue": "={{ $json.search_information.organic_results_state }}",
+              "rightValue": "Fully empty",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "f21b3910-8942-4552-83b0-070b0e61628e",
+      "name": "contition",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1020,
+        1600
+      ]
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "10 CEOs of marketing agencies in the United States"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "condition2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Ai response1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "set lead1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set lead1": {
+      "main": [
+        [
+          {
+            "node": "Airtable3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Airtable1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Campaign Setter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Campaign Setter": {
+      "main": [
+        [
+          {
+            "node": "Google URLs Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google URLs Generator": {
+      "main": [
+        [
+          {
+            "node": "Serp iterator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Serp iterator": {
+      "main": [
+        [],
+        [
+          {
+            "node": "serp API endpoint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "serp API endpoint": {
+      "main": [
+        [
+          {
+            "node": "contition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge responses": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "condition2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contition": {
+      "main": [
+        [
+          {
+            "node": "merge responses",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Serp iterator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fd60f402-f8ff-481f-a84c-410e8efb5d78",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3c86e354e45b8162b89661f407701f5928599ce175989d36f2229bdce7ef15d7"
+  },
+  "id": "ZkX0EcGzNr90d4Uz",
+  "tags": []
+}

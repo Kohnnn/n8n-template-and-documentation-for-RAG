@@ -1,0 +1,110 @@
+{
+  "name": "check-availability-support",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "b1eed9db-c1ca-4b15-8430-86ab4890a655",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "55338a26-5e21-4b52-849a-541e2acafdbe",
+      "name": "Webhook",
+      "webhookId": "b1eed9db-c1ca-4b15-8430-86ab4890a655"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "pre-call-router",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 274432454,
+          "mode": "list",
+          "cachedResultName": "escalation-roster",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=274432454"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        220,
+        0
+      ],
+      "id": "f001a925-1d50-4853-984f-f9ff00cffa8e",
+      "name": "Get Escalation Roster",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get input data dynamically from previous node\nconst inputData = $input.all(); // Fetches all rows from the previous node\n\n// Get today's day name dynamically\nconst daysOfWeek = [\"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"];\nconst today = daysOfWeek[new Date().getDay()];\n// onst today = \"Sunday\"; // Example: \"Sunday\"\n\n\n// Find the person assigned for today\nconst escalatedPerson = inputData.find(person => person.json[today] === \"x\");\n\n// Return the phone number (or null if no one is assigned)\nreturn escalatedPerson ? [{ json: { phoneNumber: escalatedPerson.json.number } }] : [{ json: { phoneNumber: null } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        0
+      ],
+      "id": "64cde8cf-7a81-4ae0-8716-3d3de2f62031",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Escalation Roster": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get Escalation Roster",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e761008d-1be1-4603-a30d-cff75756a4c0",
+  "meta": {
+    "instanceId": "INSTANCE_ID_PLACEHOLDER"
+  },
+  "id": "dv4ZpPr3sUoPiPp0",
+  "tags": [
+    {
+      "createdAt": "2025-03-08T09:03:42.515Z",
+      "updatedAt": "2025-03-08T09:03:42.515Z",
+      "id": "aivmgOWAAiWi9vqa",
+      "name": "demo-caller"
+    }
+  ]
+}

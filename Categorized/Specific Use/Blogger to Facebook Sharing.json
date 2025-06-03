@@ -1,0 +1,143 @@
+{
+    "name": "Share new Blogger posts on your Facebook Page",
+    "flow": [
+        {
+            "id": 1,
+            "module": "blogger:TriggerNewPost",
+            "version": 4,
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                }
+            }
+        },
+        {
+            "id": 2,
+            "module": "facebook-pages:CreatePost",
+            "version": 6,
+            "parameters": {},
+            "mapper": {
+                "name": "{{1.event.pulseName}}",
+                "page_id": "114598053287779"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "page_id": {
+                            "mode": "chose",
+                            "label": "Test 2019"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "facebook"
+                            },
+                            "label": "My Facebook connection (Development Make)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:facebook",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "page_id",
+                        "type": "select",
+                        "label": "Page",
+                        "required": true
+                    },
+                    {
+                        "name": "message",
+                        "type": "text",
+                        "label": "Message"
+                    },
+                    {
+                        "name": "link",
+                        "type": "url",
+                        "label": "Link"
+                    },
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Link name"
+                    },
+                    {
+                        "name": "description",
+                        "type": "text",
+                        "label": "Link description"
+                    },
+                    {
+                        "name": "date",
+                        "type": "date",
+                        "label": "Date"
+                    },
+                    {
+                        "name": "page_id",
+                        "type": "select",
+                        "label": "Page",
+                        "required": true
+                    },
+                    {
+                        "name": "message",
+                        "type": "text",
+                        "label": "Message"
+                    },
+                    {
+                        "name": "link",
+                        "type": "url",
+                        "label": "Link"
+                    },
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Link name"
+                    },
+                    {
+                        "name": "description",
+                        "type": "text",
+                        "label": "Link description"
+                    },
+                    {
+                        "name": "date",
+                        "type": "date",
+                        "label": "Date"
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu2.make.com",
+        "notes": []
+    }
+}

@@ -1,0 +1,706 @@
+{
+  "name": "Reddit smallbusiness gatherer",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "search",
+        "subreddit": "smallbusiness",
+        "keyword": "n8n",
+        "limit": 10,
+        "additionalFields": {
+          "sort": "relevance"
+        }
+      },
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        -440
+      ],
+      "id": "10c31219-2d0c-44b7-9ba9-2c3101b4da4f",
+      "name": "Reddit",
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "dXCEeKCOoWs4sgB4",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "22371a34-5dbb-4056-9e7b-cd4d9abf0a23",
+              "leftValue": "={{ $json.ups }}",
+              "rightValue": 2,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "9d5eae5b-2fe1-4d7c-b28a-a823583e25e5",
+              "leftValue": "={{ $json.selftext }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -580,
+        -440
+      ],
+      "id": "7c7fb12f-1d11-48be-8f1a-4498ed41ccec",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "13319290-46b6-455e-8500-332faba97f72",
+              "name": "subreddit",
+              "value": "={{ $json.subreddit_name_prefixed }}",
+              "type": "string"
+            },
+            {
+              "id": "d115889f-5650-4dbf-86dd-7f6ca5fcc325",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "2057578c-73e4-4d68-a94b-98c0fd6ed984",
+              "name": "content",
+              "value": "={{ $json.selftext }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -340,
+        -540
+      ],
+      "id": "19e2884b-607c-472f-97b6-b2e1716a7bd8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -160,
+        -540
+      ],
+      "id": "ce9c49a3-0b03-4340-9d1e-fdb3c7a10368",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        440,
+        -380
+      ],
+      "id": "acd622ac-5eaa-4dad-8ca4-0071678ea215"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "typeVersion": 2,
+      "position": [
+        80,
+        -540
+      ],
+      "id": "7cb02af0-c02a-48ba-9363-7a09581cfad5",
+      "name": "Summarization Chain"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        40,
+        -360
+      ],
+      "id": "08be9c25-5633-4c51-9934-a8371a284e64",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "5krpkZfNfxFzpiFH",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "workspaceId": "wsos9oy9",
+        "projectId": "p0vsjio30no2uaa",
+        "table": "m2wy7ucy5vwk309",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Subreddit",
+              "fieldValue": "={{ $('Loop Over Items').item.json.subreddit }}"
+            },
+            {
+              "fieldName": "Title",
+              "fieldValue": "={{ $('Loop Over Items').item.json.title }}"
+            },
+            {
+              "fieldName": "Content",
+              "fieldValue": "={{ $('Loop Over Items').item.json.content }}"
+            },
+            {
+              "fieldName": "Summary",
+              "fieldValue": "={{ $json.response.text }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        440,
+        -540
+      ],
+      "id": "bac16142-bf51-4f6f-bc17-05caf3cbce8a",
+      "name": "NocoDB",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "QsaglPF6sFyQVqlf",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -960,
+        -440
+      ],
+      "id": "4afe5807-bf0a-4548-8e7f-3c1ef2752614",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "subreddit": "freelance",
+        "keyword": "automation",
+        "limit": 10,
+        "additionalFields": {
+          "sort": "relevance"
+        }
+      },
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        60
+      ],
+      "id": "37c0717e-e139-4e9b-8114-512a19ca213e",
+      "name": "Reddit1",
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "dXCEeKCOoWs4sgB4",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "22371a34-5dbb-4056-9e7b-cd4d9abf0a23",
+              "leftValue": "={{ $json.ups }}",
+              "rightValue": 2,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "9d5eae5b-2fe1-4d7c-b28a-a823583e25e5",
+              "leftValue": "={{ $json.selftext }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -580,
+        60
+      ],
+      "id": "ec205619-275a-4493-87d1-2f5845c2fefd",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "13319290-46b6-455e-8500-332faba97f72",
+              "name": "subreddit",
+              "value": "={{ $json.subreddit_name_prefixed }}",
+              "type": "string"
+            },
+            {
+              "id": "74f3461f-10cb-4edf-bc38-2da43aa625d9",
+              "name": "Post Link",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "d115889f-5650-4dbf-86dd-7f6ca5fcc325",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "2057578c-73e4-4d68-a94b-98c0fd6ed984",
+              "name": "content",
+              "value": "={{ $json.selftext }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -340,
+        -40
+      ],
+      "id": "f23cb9b4-9dfb-4e3c-95ba-8cc09bce9ca9",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -160,
+        -40
+      ],
+      "id": "cbe22fc5-56ab-4045-b38b-b7c4e51886b7",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        440,
+        120
+      ],
+      "id": "42c3ffb9-a3d3-4af7-a163-9be8479a9386"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "typeVersion": 2,
+      "position": [
+        80,
+        -40
+      ],
+      "id": "d26ad17d-35b4-420c-a2eb-1acba10398d0",
+      "name": "Summarization Chain1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        40,
+        140
+      ],
+      "id": "e6c7ed38-1ece-43d3-b667-cc681c4fb3f7",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "5krpkZfNfxFzpiFH",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "workspaceId": "wsos9oy9",
+        "projectId": "p0vsjio30no2uaa",
+        "table": "m2wy7ucy5vwk309",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Subreddit",
+              "fieldValue": "={{ $('Loop Over Items1').item.json.subreddit }}"
+            },
+            {
+              "fieldName": "Title",
+              "fieldValue": "={{ $('Loop Over Items1').item.json.title }}"
+            },
+            {
+              "fieldName": "Content",
+              "fieldValue": "={{ $('Loop Over Items1').item.json.content }}"
+            },
+            {
+              "fieldName": "Summary",
+              "fieldValue": "={{ $json.response.text }}"
+            },
+            {
+              "fieldName": "Post Link",
+              "fieldValue": "={{ $('Loop Over Items1').item.json['Post Link'] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        440,
+        -40
+      ],
+      "id": "15a4ab08-90df-4396-b6b5-f224e7add040",
+      "name": "NocoDB1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "QsaglPF6sFyQVqlf",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 7,
+              "triggerAtMinute": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -960,
+        60
+      ],
+      "id": "56d63547-bf51-4e43-a83b-58f1aa51cfbd",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "content": "Business idea scraper from reddit for n8n and automation.",
+        "height": 480,
+        "width": 1620
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1000,
+        -640
+      ],
+      "typeVersion": 1,
+      "id": "821efba7-857a-4fff-99a5-69e6d83191f1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Freelance work scraper from Reddit for automation work",
+        "height": 480,
+        "width": 1620
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1000,
+        -140
+      ],
+      "typeVersion": 1,
+      "id": "97c93512-388f-4496-bf91-11996e86348c",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Reddit": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarization Chain": {
+      "main": [
+        [
+          {
+            "node": "NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Reddit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reddit1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Summarization Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarization Chain1": {
+      "main": [
+        [
+          {
+            "node": "NocoDB1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarization Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB1": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Reddit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "370369a0-e14b-49cc-943d-8ac8c138eaba",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b6d0384ceaa512c62c6ed3d552d6788e2c507d509518a50872d7cdc005f831f6"
+  },
+  "id": "hN1yivUipqmJFCjk",
+  "tags": []
+}

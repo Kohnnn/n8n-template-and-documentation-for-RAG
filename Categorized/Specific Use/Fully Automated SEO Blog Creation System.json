@@ -1,0 +1,403 @@
+{
+  "name": "Content Repurpose",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "YT Content Script",
+        "formDescription": "Input to generate multiple content pieces",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "YT Script",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Upload Thumbnail",
+              "fieldType": "file",
+              "multipleFiles": false
+            },
+            {
+              "fieldLabel": "Title"
+            }
+          ]
+        },
+        "options": {
+          "buttonLabel": "Send Content"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -1120,
+        -440
+      ],
+      "id": "34ec484f-f343-4d76-a397-12af5b736c8a",
+      "name": "On form submission",
+      "webhookId": "3e6a673a-5438-4a88-be1b-89e8b26530dc"
+    },
+    {
+      "parameters": {
+        "person": "8COcGPwAI0",
+        "text": "=⚠️ {{ $json.output.headline }}\n\n{{ $json.output.introduction}}\n\n🎯 Here is how we built it\n\n1. {{ $json.output.technicalSteps[0] }}\n\n2. {{ $json.output.technicalSteps[1] }}\n\n3. {{ $json.output.technicalSteps[2] }}\n\n🔥 Here is how it can help you ->\n\n{{ $json.output.benefits[0] }}\n\n{{ $json.output.benefits[1] }}\n\n{{ $json.output.benefits[2] }}\n\n✅ {{ $json.output.callToAction }}\n",
+        "shareMediaCategory": "IMAGE",
+        "binaryPropertyName": "=data",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        260,
+        -460
+      ],
+      "id": "36705bcc-5246-4fb9-bd70-6d460ecc8a12",
+      "name": "LinkedIn",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "WofMyTyDoDQgkPHX",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        -780,
+        -200
+      ],
+      "id": "084d920c-5fa5-4cdd-a740-0380b291eb52",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "nE2h31TdwtwDh91R",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {
+          "responseFormat": "json_object"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -520,
+        -240
+      ],
+      "id": "94962dfc-300a-4ba6-a238-775cca7d915c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "OA8HhLF6GTOXf74S",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "=Here is the YouTube Script \n{{ $('On form submission').item.json['YT Script'] }}\nRespond in the following schema\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"headline\": {\n      \"type\": \"string\",\n      \"description\": \"An attention-grabbing title highlighting the core value of the technical solution.\"\n    },\n    \"introduction\": {\n      \"type\": \"string\",\n      \"description\": \"A brief single sentence summary explaining what the post is about and why it is valuable.\"\n    },\n    \"technicalSteps\": {\n      \"type\": \"array\",\n      \"description\": \"A list of 3 sequential steps to implement the solution.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"benefits\": {\n      \"type\": \"array\",\n      \"description\": \"A list of 3 key advantages of implementing the solution.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"credibilityElements\": {\n      \"type\": \"array\",\n      \"description\": \"Supporting data, experience, or validation points that build credibility.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"callToAction\": {\n      \"type\": \"string\",\n      \"description\": \"A clear, compelling CTA prompting the reader to engage in a single sentence\"\n    }\n  },\n  \"required\": [\n    \"headline\",\n    \"introduction\",\n    \"technicalSteps\",\n    \"benefits\",\n    \"callToAction\"\n  ],\n  \"additionalProperties\": false\n}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "# Persona Prompt: Lead Magnet Post Writer\n\n## Persona\nYou are an experienced lead magnet post writer who excels at transforming technical YouTube scripts—detailing innovative solutions or templates—into high-converting, reader-friendly posts. You combine technical expertise with persuasive storytelling to craft content that not only informs but also compels action.\n\n## Context\nYou will receive a YouTube script that explains a technical solution or template (for example, building an automated newsletter agent using AI and APIs). The script includes detailed technical steps, real-time examples, and insights into the process. Your goal is to convert this content into a concise, engaging lead magnet post that highlights the solution’s value and encourages readers to take action.\n\n## Instructions on How to Process the YouTube Script\n1. **Analyze the Script:**\n   - Read through the entire YouTube script to grasp the complete technical process and the unique benefits it offers.\n   - Identify key technical steps, innovative elements, examples, and data points that build credibility.\n   - Note engaging phrases and any specific calls-to-action mentioned.\n\n2. **Extract Key Elements:**\n   - **Benefits & Outcomes:** Pinpoint the main advantages of the solution (e.g., automation, real-time data integration, ease-of-use).\n   - **Technical Process:** Outline the sequential steps and tools used (such as using AI agents, API integrations, and specific tool configurations).\n   - **Unique Selling Propositions:** Highlight any standout features or insights that differentiate the solution from standard methods.\n\n3. **Craft an Engaging Headline:**\n   - Create a bold, attention-grabbing headline that immediately communicates the breakthrough or key benefit of the technical solution.\n   - Ensure the headline is provocative and promises value.\n\n4. **Develop the Narrative:**\n   - Write a concise, engaging summary of the technical solution.\n   - Break down the process into digestible bullet points or numbered steps, emphasizing clarity and ease of implementation.\n   - Simplify complex technical jargon where possible to ensure accessibility without sacrificing technical credibility.\n\n5. **Integrate Clear Calls-to-Action (CTAs):**\n   - End the post with a direct, compelling CTA that instructs the reader on how to obtain further information, such as a free template or detailed guide.\n   - Ensure the CTA is simple, actionable, and designed to prompt immediate engagement (e.g., “Comment ‘TECH’ to get your free template”).\n\n## Output Instructions\n- **Format:**\n  - The output should be a standalone lead magnet post written.\n  - Use headings, bullet points, numbered lists, and bold text to clearly structure the content without any formatting\n\n- **Content Requirements:**\n  - **Headline:** An attention-grabbing headline that highlights the key benefit or breakthrough of the technical solution.\n  - **Technical Breakdown:** A succinct summary of the technical solution, including:\n    - Key steps in the process.\n    - Tools or technologies used.\n    - Any important data points or examples that build authority.\n  - **Benefits & Outcomes:** Clearly list the advantages and practical benefits of implementing the solution.\n  - **Credibility Elements:** Incorporate any relevant statistics, technical details, or success indicators that support the solution's effectiveness.\n  - **Call-to-Action:** A final, compelling CTA that tells the reader exactly how to engage (e.g., “Comment ‘TECH’ to receive your free template”).\n\n- **Style and Tone:**\n  - Maintain an engaging, conversational tone that balances technical detail with clarity.\n  - Ensure the post is persuasive, making complex ideas easy to understand and immediately actionable.\n  - The content should be both informative and conversion-focused, designed to capture leads effectively.\n\n- **Final Check:**\n  - Verify that the lead magnet post is self-contained and does not reference the original YouTube script.\n  - Ensure the post is free of errors, formatted for easy scanning, and optimized to capture and convert your target audience.\n- - No sentence should be more than 8 words"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -800,
+        -660
+      ],
+      "id": "321a675b-d2ff-41cf-a37e-4b12be7e6a57",
+      "name": "Claude Sonnet 3.5"
+    },
+    {
+      "parameters": {
+        "options": {
+          "prompt": "Instructions:\n--------------\n{instructions}\n\nReply with only the json mentioned by the user\n--------------\nCompletion:\n--------------\n{completion}\n--------------\n\nAbove, the Completion did not satisfy the constraints given in the Instructions.\nError:\n--------------\n{error}\n--------------\n\nStrictly reply with the JSON"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        -260
+      ],
+      "id": "44ed42e1-408a-4bbc-97c0-bdb313b1bd4e",
+      "name": "Auto-fixing Output Parser"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"headline\": {\n      \"type\": \"string\",\n      \"description\": \"An attention-grabbing title highlighting the core value of the technical solution.\"\n    },\n    \"introduction\": {\n      \"type\": \"string\",\n      \"description\": \"A brief single sentence summary explaining what the post is about and why it is valuable.\"\n    },\n    \"technicalSteps\": {\n      \"type\": \"array\",\n      \"description\": \"A list of 3 sequential steps to implement the solution.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"benefits\": {\n      \"type\": \"array\",\n      \"description\": \"A list of 3 key advantages of implementing the solution.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"credibilityElements\": {\n      \"type\": \"array\",\n      \"description\": \"Supporting data, experience, or validation points that build credibility.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"callToAction\": {\n      \"type\": \"string\",\n      \"description\": \"A clear, compelling CTA prompting the reader to engage in a single sentence\"\n    }\n  },\n  \"required\": [\n    \"headline\",\n    \"introduction\",\n    \"technicalSteps\",\n    \"benefits\",\n    \"callToAction\"\n  ],\n  \"additionalProperties\": false\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -60,
+        -100
+      ],
+      "id": "c78ff5c2-04b0-48ce-94b9-90098c057535",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an editor\n\nYou have two content pieces written by two different writers to you and your goal is to select one piece out of both of them which you believe is the most well written to hook the user\n\nPost  option one\n {{ $json.output }}\n\nPost Option 2\n{{ $('Claude Sonnet 3.5').item.json.output.headline }}\n{{ $('Claude Sonnet 3.5').item.json.output.introduction }}\n{{ $('Claude Sonnet 3.5').item.json.output.technicalSteps }}\n{{ $('Claude Sonnet 3.5').item.json.output.benefits }}\n{{ $('Claude Sonnet 3.5').item.json.output.callToAction }}\n\nAnd finally output in the following format\nRespond in the following schema\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"headline\": {\n      \"type\": \"string\",\n      \"description\": \"An attention-grabbing title highlighting the core value of the technical solution.\"\n    },\n    \"introduction\": {\n      \"type\": \"string\",\n      \"description\": \"A brief single sentence summary explaining what the post is about and why it is valuable.\"\n    },\n    \"technicalSteps\": {\n      \"type\": \"array\",\n      \"description\": \"A list of 3 sequential steps to implement the solution.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"benefits\": {\n      \"type\": \"array\",\n      \"description\": \"A list of 3 key advantages of implementing the solution.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"credibilityElements\": {\n      \"type\": \"array\",\n      \"description\": \"Supporting data, experience, or validation points that build credibility.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"callToAction\": {\n      \"type\": \"string\",\n      \"description\": \"A clear, compelling CTA prompting the reader to engage in a single sentence\"\n    }\n  },\n  \"required\": [\n    \"headline\",\n    \"introduction\",\n    \"technicalSteps\",\n    \"benefits\",\n    \"callToAction\"\n  ],\n  \"additionalProperties\": false\n}\n\nStrictly reply with the post JSON ",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a editor json agent Respond strictly in a JSON format\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -280,
+        -460
+      ],
+      "id": "1db76260-9bff-414e-917b-a0939b3e7576",
+      "name": "Editor Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the YouTube Script {{ $('On form submission').item.json['YT Script'] }}\n\nRespond in the following schema\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"headline\": {\n      \"type\": \"string\",\n      \"description\": \"An attention-grabbing title highlighting the core value of the technical solution.\"\n    },\n    \"introduction\": {\n      \"type\": \"string\",\n      \"description\": \"A brief single sentence summary explaining what the post is about and why it is valuable.\"\n    },\n    \"technicalSteps\": {\n      \"type\": \"array\",\n      \"description\": \"A list of 3 sequential steps to implement the solution.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"benefits\": {\n      \"type\": \"array\",\n      \"description\": \"A list of 3 key advantages of implementing the solution.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"credibilityElements\": {\n      \"type\": \"array\",\n      \"description\": \"Supporting data, experience, or validation points that build credibility.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"callToAction\": {\n      \"type\": \"string\",\n      \"description\": \"A clear, compelling CTA prompting the reader to engage in a single sentence\"\n    }\n  },\n  \"required\": [\n    \"headline\",\n    \"introduction\",\n    \"technicalSteps\",\n    \"benefits\",\n    \"callToAction\"\n  ],\n  \"additionalProperties\": false\n}\n\nReply in one shot with the final post in the specific json format",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "# Persona Prompt: Lead Magnet Post Writer\n\n## Persona\nYou are an experienced lead magnet post writer who excels at transforming technical YouTube scripts—detailing innovative solutions or templates—into high-converting, reader-friendly posts. You combine technical expertise with persuasive storytelling to craft content that not only informs but also compels action.\n\n## Context\nYou will receive a YouTube script that explains a technical solution or template (for example, building an automated newsletter agent using AI and APIs). The script includes detailed technical steps, real-time examples, and insights into the process. Your goal is to convert this content into a concise, engaging lead magnet post that highlights the solution’s value and encourages readers to take action.\n\n## Instructions on How to Process the YouTube Script\n1. **Analyze the Script:**\n   - Read through the entire YouTube script to grasp the complete technical process and the unique benefits it offers.\n   - Identify key technical steps, innovative elements, examples, and data points that build credibility.\n   - Note engaging phrases and any specific calls-to-action mentioned.\n\n2. **Extract Key Elements:**\n   - **Benefits & Outcomes:** Pinpoint the main advantages of the solution (e.g., automation, real-time data integration, ease-of-use).\n   - **Technical Process:** Outline the sequential steps and tools used (such as using AI agents, API integrations, and specific tool configurations).\n   - **Unique Selling Propositions:** Highlight any standout features or insights that differentiate the solution from standard methods.\n\n3. **Craft an Engaging Headline:**\n   - Create a bold, attention-grabbing headline that immediately communicates the breakthrough or key benefit of the technical solution.\n   - Ensure the headline is provocative and promises value.\n\n4. **Develop the Narrative:**\n   - Write a concise, engaging summary of the technical solution.\n   - Break down the process into digestible bullet points or numbered steps, emphasizing clarity and ease of implementation.\n   - Simplify complex technical jargon where possible to ensure accessibility without sacrificing technical credibility.\n\n5. **Integrate Clear Calls-to-Action (CTAs):**\n   - End the post with a direct, compelling CTA that instructs the reader on how to obtain further information, such as a free template or detailed guide.\n   - Ensure the CTA is simple, actionable, and designed to prompt immediate engagement (e.g., “Comment ‘TECH’ to get your free template”).\n\n## Output Instructions\n- **Format:**\n  - The output should be a standalone lead magnet post written.\n  - Use headings, bullet points, numbered lists, and bold text to clearly structure the content without any formatting\n\n- **Content Requirements:**\n  - **Headline:** An attention-grabbing headline that highlights the key benefit or breakthrough of the technical solution.\n  - **Technical Breakdown:** A succinct summary of the technical solution, including:\n    - Key steps in the process.\n    - Tools or technologies used.\n    - Any important data points or examples that build authority.\n  - **Benefits & Outcomes:** Clearly list the advantages and practical benefits of implementing the solution.\n  - **Credibility Elements:** Incorporate any relevant statistics, technical details, or success indicators that support the solution's effectiveness.\n  - **Call-to-Action:** A final, compelling CTA that tells the reader exactly how to engage (e.g., “Comment ‘TECH’ to receive your free template”).\n\n- **Style and Tone:**\n  - Maintain an engaging, conversational tone that balances technical detail with clarity.\n  - Ensure the post is persuasive, making complex ideas easy to understand and immediately actionable.\n  - The content should be both informative and conversion-focused, designed to capture leads effectively.\n\n- **Final Check:**\n  - Verify that the lead magnet post is self-contained and does not reference the original YouTube script.\n  - Ensure the post is free of errors, formatted for easy scanning, and optimized to capture and convert your target audience.\n- No sentence should be more than 8 words\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -640,
+        -460
+      ],
+      "id": "d1e7d974-1fe9-4328-b9b0-f78cc178ce57",
+      "name": "gpt 4O MINI",
+      "alwaysOutputData": false,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.imgbb.com/1/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-type",
+              "value": "multipart/form-data"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "Upload_Thumbnail"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1a7f6771-d313-43e6-9898-ac5fd42b2f91",
+      "name": "Upload Img to ImgBB for URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -920,
+        -440
+      ],
+      "notesInFlow": true,
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "T8GoilMKeME1gEhv",
+          "name": "Query Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Upload Img to ImgBB for URL').item.json.data.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        -460
+      ],
+      "id": "a40251e2-303d-4fad-a28a-368812383232",
+      "name": "Get image from BB"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Upload Img to ImgBB for URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Claude Sonnet 3.5",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Editor Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "gpt 4O MINI",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude Sonnet 3.5": {
+      "main": [
+        [
+          {
+            "node": "gpt 4O MINI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Editor Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Editor Agent": {
+      "main": [
+        [
+          {
+            "node": "Get image from BB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt 4O MINI": {
+      "main": [
+        [
+          {
+            "node": "Editor Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn": {
+      "main": [
+        []
+      ]
+    },
+    "Upload Img to ImgBB for URL": {
+      "main": [
+        [
+          {
+            "node": "Claude Sonnet 3.5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get image from BB": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1
+  },
+  "versionId": "89c0df75-7df6-4757-a052-a1a575aaf1e5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0c41c750680e1a5e41d8cb44deb55d23c5eeea6cf7ad0f07ed2638044289a28c"
+  },
+  "id": "Ac2Ju969Lfv3nrjB",
+  "tags": [
+    {
+      "createdAt": "2025-02-03T21:05:38.855Z",
+      "updatedAt": "2025-02-03T21:05:38.855Z",
+      "id": "iwCFpDBSJXgOvHkF",
+      "name": "YouTube Template"
+    }
+  ]
+}

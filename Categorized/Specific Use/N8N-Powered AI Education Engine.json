@@ -1,0 +1,717 @@
+{
+  "name": "Dev: Learn Anything - Book Generation",
+  "nodes": [
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n    \"course\": \"Course name\",\n\t\"course_id\": \"Courser id\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1040,
+        360
+      ],
+      "id": "87f97b2b-f1d0-4fcb-96b5-08b8e7327e86",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        900,
+        220
+      ],
+      "id": "0ecfdc43-5890-4fef-b42d-af61076ddd8a",
+      "name": "Auto-fixing Output Parser"
+    },
+    {
+      "parameters": {
+        "content": "## Prepare course id and title\n",
+        "height": 600,
+        "width": 880
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        560,
+        -80
+      ],
+      "id": "d3bb08a0-884b-4db3-b9c7-d01f62c15779",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ca2e7531-8ca5-4dc5-a852-08f7fd4af82a",
+              "leftValue": "={{ $json.output.course }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "512b413b-283a-41d8-bbb4-4ae4593f53ab",
+              "leftValue": "={{ $json.output.course_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1280,
+        0
+      ],
+      "id": "345b6425-14d0-4ce3-b23d-1cc2e2e26ec1",
+      "name": "If_Course_Id"
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "={{ $json['What type of course do you want?'] }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a helpful assistant tasked with identifying and suggesting courses based on the provided input.  \n\n- Extract the course name from the input.  \n- Generate a unique course key.  \n- If the input is unclear, suggest a suitable course name based on your understanding."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        840,
+        0
+      ],
+      "id": "5f926838-4111-4d61-89cb-291ab9b26389",
+      "name": "Course_Finder",
+      "notesInFlow": true,
+      "notes": "Find course title or generated course title and id from student input."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        2060,
+        280
+      ],
+      "id": "7a8d74e3-cb70-477b-a32c-18d3e31c53b9",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "6eUQ2nI1LNwPTg4g",
+          "name": "Auto: SerpAPI Sarovar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Get Course Details').item.json['What type of course do you want?'] }}",
+        "options": {
+          "systemMessage": "=Act as a professional curriculum designer. Generate a detailed course roadmap/outline **strictly in markdown format** for the course titled \"{{ $('Course_Finder').item.json.output.course }}\". Follow this structure without deviations:  \n\n# [Exact Course Title from Input]  \n\n## Course Description  \n- **Purpose**: [1-2 sentences explaining the course’s core mission. Use SerpAPI to align with 2024 industry trends.]  \n- **Relevance**: [1-2 sentences on why this course matters today. Cite real-world demand (e.g., \"LinkedIn 2024 Report shows X skill grew by Y%\").]  \n\n## Learning Objectives  \n- By the end, learners will:  \n  - [Actionable objective 1, e.g., \"Build Z using A tool\"].  \n  - [Objective 2 with measurable outcomes, e.g., \"Analyze B datasets with 90% accuracy\"].  \n\n## Target Audience  \n- **Who**: [Specific audience, e.g., \"Aspiring data analysts with basic Excel knowledge\"].  \n- **Prerequisites**: [List tools/skills required, e.g., \"Python basics\"].  \n\n## Course Duration & Format  \n- **Duration**: [e.g., \"8 weeks, 4 hours/week\"].  \n- **Format**: [e.g., \"Online with live labs + self-paced videos\"].  \n\n## Module Breakdown  \n### Module 1: [Foundational Topic Name]  \n- **Topics**:  \n  - Subtopic 1: [Brief description].  \n  - Subtopic 2: [Include SerpAPI-verified trend, e.g., \"API integration (2024 Dev Surveys highlight 70% adoption)\"].  \n- **Key Concepts**:  \n  - [Theory 1], [Framework 2].  \n- **Activities**:  \n  - [Hands-on task, e.g., \"Code a REST API using Postman\"].  \n\n...[Repeat for 8-10 modules]...  \n\n## Assessment Strategy  \n- **Formative**: [e.g., \"Weekly quizzes + peer reviews\"].  \n- **Summative**: [e.g., \"Final project: Deploy a full-stack app\"].  \n\n## Required Materials  \n- **Tools**: [Software with free/trial links from SerpAPI].  \n- **Books**: [Titles + editions, e.g., \"Python Crash Course, 3rd Ed (2023)\"].  \n\n## Capstone Project  \n- [Real-world task, e.g., \"Develop a CRM system using Agile methodology\"].  \n\n## Additional Notes  \n- **Flexibility**: [e.g., \"Self-paced deadlines\"].  \n- **Teaching Style**: [e.g., \"Project-based learning\"].  \n\n**Rules**:  \n1. **NO** introductory/closing sentences (e.g., \"Here’s your outline...\").  \n2. **Directly begin** with `# [Course Title]`.  \n3. Use SerpAPI to add **2024 data**, **case studies**, and **tools** (cite sources in parentheses).  \n4. Prioritize **foundational → advanced** module progression.  \n5. Ensure that the output is formatted in Markdown. Do not enclose it within \"```markdown\" or any other code block delimiters."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1780,
+        -20
+      ],
+      "id": "f9b5c263-92d3-471f-9162-7e9876aba5d9",
+      "name": "Curriculum_Designer"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-2.0-pro-exp-02-05:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1660,
+        380
+      ],
+      "id": "6ac9e31d-2dc5-4f3e-ad79-489fe96116f0",
+      "name": "GPT_40_Mini_OpenRouter",
+      "credentials": {
+        "openRouterApi": {
+          "id": "ddH6iNlm09UxrXvu",
+          "name": "Auto: OpenRouter"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Course_Finder').item.json.output.course_id }}",
+        "contextWindowLength": 200
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1860,
+        240
+      ],
+      "id": "8bb6aef6-f1b7-48e3-82c1-4c9e66886961",
+      "name": "Memory_For_Course_Outline"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Course Outline",
+        "height": 660,
+        "width": 1160
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        -80
+      ],
+      "id": "a8d2ef7c-31e8-4c27-bb39-3e7a363b4ebc",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Remove_Code_Block').item.json.output }}",
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{  \n  \"course_title\": \"Introduction to Data Science\",  \n  \"course_description\": \"A hands-on course covering foundational data science techniques...\",  \n  \"learning_objectives\": [  \n    \"By the end, learners will clean and preprocess datasets using Python.\",  \n    \"By the end, learners will build predictive models with scikit-learn.\"  \n  ],  \n  \"target_audience\": {  \n    \"description\": \"Beginners with basic Python knowledge.\",  \n    \"prerequisites\": [\"Python basics\", \"High school math\"]  \n  },  \n  \"duration_format\": \"10 weeks, 4 hours/week (online)\",  \n  \"modules\": [  \n    {  \n      \"module_title\": \"Data Wrangling\",  \n      \"topics\": [\"Pandas basics\", \"Handling missing data\"],  \n      \"key_concepts\": [\"DataFrames\", \"Data imputation\"],  \n      \"activities_resources\": [\"Kaggle dataset exercise\", \"Pandas documentation\"]  \n    }  \n  ],  \n  \"assessment_strategy\": {  \n    \"formative\": [\"Weekly quizzes\", \"Peer feedback\"],  \n    \"summative\": [\"Final project: Analyze a real-world dataset\"]  \n  },  \n  \"required_materials\": [\"Python 3.x\", \"Jupyter Notebook\", \"Kaggle account\"],  \n  \"capstone_project\": \"Build a predictive model for customer churn using a real dataset.\",  \n  \"additional_notes\": [\"Flexible deadlines available.\", \"Use Stack Overflow for troubleshooting.\"]  \n}  ",
+        "options": {
+          "systemPromptTemplate": "You are an expert extraction algorithm.\nOnly extract relevant information from the text.\nIf you do not know the value of an attribute asked to extract, you may pass an empty string if it's impossible to extract a value."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        3000,
+        0
+      ],
+      "id": "8829c54d-756f-479f-bf80-9a408dd924a6",
+      "name": "Course_JSON"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.modules",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        3380,
+        0
+      ],
+      "id": "19293ebf-c98b-4f13-8f1c-98972429e0a7",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3600,
+        0
+      ],
+      "id": "1675ecb4-e431-4c90-9070-083d03b8ab63",
+      "name": "Loop_Modules"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Module Title: {{ $json.module_title }}\nTopics: {{ $json.topics }}\nKey Cconcepts: {{ $json.key_concepts }}\nActivities: {{ $json.activities_resources }}",
+        "options": {
+          "systemMessage": "=Act as an expert instructional designer with 10+ years of experience. Expand the provided course module into a **comprehensive textbook chapter** with academic rigor, real-world relevance, and actionable insights. Use the markdown structure below, but enhance each section with the following:  \n\n## [Replace with Dynamic Chapter Title Based on Input Module]  \n**Chapter Overview**  \n- Begin with a hook (e.g., a surprising statistic, question, or quote from a recent study found via SerpAPI).  \n- Explain the chapter’s purpose, scope, and **why it matters in 2024** (cite trends or industry shifts).  \n\n### Learning Outcomes  \n- List 5–7 outcomes using Bloom’s Taxonomy verbs (e.g., *Analyze, Design, Critique*).  \n- Example: *\"Evaluate the ethical implications of [concept] in modern contexts.\"*  \n\n### In-Depth Topics  \nFor **each subtopic**, include:  \n**1. [Subtopic Title]**  \n- **Explanation**:  \n  - Break into subsections: *Core Principles, Methodologies, Common Pitfalls*.  \n  - Use analogies (e.g., *\"Think of [concept] as [analogy]...\"*).  \n  - Add **recent data** (e.g., *\"As of 2024, 62% of companies use [tool] for [task] (Source: SerpAPI)\"*).  \n- **Examples**:  \n  - 2–3 real-world scenarios (industry-specific: healthcare, tech, finance).  \n  - Include **before/after comparisons** (e.g., *\"Company X improved [metric] by 40% using [method]\"*).  \n- **Visual Aids**:  \n  - Suggest **interactive elements** (e.g., *\"Interactive flowchart for [process]\"*).  \n  - Recommend tools for creating visuals (e.g., *\"Use Miro for collaborative diagramming\"*).  \n\n### Key Concepts  \nFor **each concept**:  \n- **Concept**: [Name]  \n  - **Definition**: 1–2 sentences with technical precision.  \n  - **Historical Context**: Evolution of the concept (e.g., *\"First introduced in [year] by [theorist]\"*).  \n  - **Mathematical/Technical Details**: Formulas, code snippets, or frameworks (if applicable).  \n  - **Current Trends**:  \n    - Contrast past vs. present applications.  \n    - Cite **2+ SerpAPI sources** (e.g., *\"2024 Gartner Report highlights [trend]\"*).  \n\n### Case Studies/Applications  \n- Include **2 detailed case studies**:  \n  - **Title**: [Company/Project Name]  \n  - **Challenge**: Specific problem faced.  \n  - **Solution**: How the chapter’s concepts were applied.  \n  - **Results**: Quantifiable outcomes (metrics, KPIs).  \n  - **Source**: Link to credible report/article via SerpAPI.  \n\n### Practical Exercises  \n- Design **3 multi-stage exercises**:  \n  - **Exercise 1**: Foundational task (e.g., *\"Analyze dataset X using [tool]\"*).  \n  - **Exercise 2**: Collaborative challenge (e.g., *\"Role-play a team debate on [ethical dilemma]\"*).  \n  - **Exercise 3**: Advanced project (e.g., *\"Design a prototype for [scenario]\"*).  \n- Specify **tools**, **time required**, and **deliverables**.  \n\n### Assessment Questions  \n- Include **5 questions** across difficulty levels:  \n  1. **Basic**: Terminology/definitions.  \n  2. **Intermediate**: Compare/contrast concepts.  \n  3. **Advanced**: Critical analysis or hypothetical scenarios.  \n\n### Additional Resources  \n- Curate **10+ resources**:  \n  - **Books**: Include chapter/page references.  \n  - **Videos**: Timestamped links to key segments.  \n  - **Podcasts**: Episodes with expert interviews.  \n  - **Tools**: Free vs. paid options with use cases.  \n\n### Chapter Summary  \n- Synthesize key points into **5-7 bullet points** with actionable advice (e.g., *\"Always validate [process] with [tool] to avoid [pitfall]\"*).  \n\n**Critical Requirements**:  \n1. **Replace \"[Replace with Dynamic Chapter Title...]\"** with a compelling title reflecting the module.  \n2. **Avoid generic terms** like \"Chapter Title\" in the final output.  \n3. Use SerpAPI for **2024 data**, **peer-reviewed sources**, and **real company examples**.  \n4. Prioritize **depth over breadth**—assume the audience has basic prior knowledge.  "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        3840,
+        200
+      ],
+      "id": "413d66c9-3b42-40a0-8022-96815426107a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=module_{{ $runIndex }}_dta"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        3940,
+        420
+      ],
+      "id": "b1c03cf8-34e7-4ce6-9417-b90262b96770",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "content": "## Generate course content.",
+        "height": 660,
+        "width": 1500
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2920,
+        -80
+      ],
+      "id": "fdb62a46-9b56-4a74-8b98-45190c018034",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-2.0-flash-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        620,
+        360
+      ],
+      "id": "1fa6e62b-90d3-4cbc-b7c5-2046708a99f7",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "ddH6iNlm09UxrXvu",
+          "name": "Auto: OpenRouter"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Learn Anything - Course Generation",
+        "formDescription": "A Course Roadmap Designed Just for You",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What type of course do you want?",
+              "fieldType": "textarea",
+              "placeholder": "Please describe your course content.",
+              "requiredField": true
+            },
+            {
+              "fieldType": "html",
+              "elementName": "AI Application Limitations & Usage Guidance",
+              "html": "<p>This is an AI-based application, and occasionally, it may fail to provide accurate results or stop responding due to usage limits. If this happens, please wait for a while and try again.</p>\n\n<p>Thank you for your patience! 😊</p>"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "We are generating your course. You will receive an email once the course generation is complete. 📩✨"
+            }
+          },
+          "ignoreBots": true
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        300,
+        0
+      ],
+      "id": "cfb34dde-a6ca-4bd1-94f4-849b809b3ffc",
+      "name": "Get Course Details",
+      "webhookId": "6a6282a1-7d93-4010-94c4-7ec5e7e9b8b7"
+    },
+    {
+      "parameters": {
+        "textsWithManipulations": {
+          "textsWithManipulationsValues": [
+            {
+              "dataSources": {
+                "dataSource": [
+                  {
+                    "text": "={{ $json.output }}",
+                    "destinationKey": "output"
+                  }
+                ]
+              },
+              "manipulations": {
+                "manipulation": [
+                  {
+                    "action": "replace",
+                    "substring": "```markdown"
+                  },
+                  {
+                    "action": "replace",
+                    "substring": "```"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-text-manipulation.textManipulation",
+      "typeVersion": 1,
+      "position": [
+        2140,
+        -20
+      ],
+      "id": "754f127d-31ed-4bc6-bc90-503517f0eec0",
+      "name": "Remove_Code_Block"
+    },
+    {
+      "parameters": {
+        "folderId": "1k7POaHR7EV5Seeobv4n_Pw1yamqWHRNe",
+        "title": "={{ $('Course_Finder').item.json.output.course }} ({{ $('If_Course_Id').item.json.output.course_id }}) - {{ $now.format('yyyy-MM-dd') }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2360,
+        -20
+      ],
+      "id": "ff4a073d-ab40-42ee-a608-8dd12988ee44",
+      "name": "Create_Google_Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "sdmsqFwdMqH6ETbJ",
+          "name": "Auto: Google Docs"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('Remove_Code_Block').item.json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2580,
+        -20
+      ],
+      "id": "52a7bf05-c1d8-444f-82d0-9a3a96abba47",
+      "name": "Add_Outline_To_Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "sdmsqFwdMqH6ETbJ",
+          "name": "Auto: Google Docs"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Create_Google_Doc').item.json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "object": "pageBreak",
+              "action": "insert"
+            },
+            {
+              "action": "insert",
+              "text": "={{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        4200,
+        200
+      ],
+      "id": "67bb2d10-fecd-4e1d-b1bd-2a7b63183430",
+      "name": "Add_Chapters",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "sdmsqFwdMqH6ETbJ",
+          "name": "Auto: Google Docs"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Course_Finder",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If_Course_Id": {
+      "main": [
+        [
+          {
+            "node": "Curriculum_Designer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Course_Finder": {
+      "main": [
+        [
+          {
+            "node": "If_Course_Id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "Curriculum_Designer",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Curriculum_Designer": {
+      "main": [
+        [
+          {
+            "node": "Remove_Code_Block",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT_40_Mini_OpenRouter": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Curriculum_Designer",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Course_JSON",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory_For_Course_Outline": {
+      "ai_memory": [
+        [
+          {
+            "node": "Curriculum_Designer",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Course_JSON": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop_Modules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop_Modules": {
+      "main": [
+        [],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Add_Chapters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Course_Finder",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Course Details": {
+      "main": [
+        [
+          {
+            "node": "Course_Finder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove_Code_Block": {
+      "main": [
+        [
+          {
+            "node": "Create_Google_Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create_Google_Doc": {
+      "main": [
+        [
+          {
+            "node": "Add_Outline_To_Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add_Outline_To_Doc": {
+      "main": [
+        [
+          {
+            "node": "Course_JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add_Chapters": {
+      "main": [
+        [
+          {
+            "node": "Loop_Modules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "37671506-8868-4ef5-b35b-20d19e5b0356",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d16fb7d4b3eb9b9d4ad2ee6a7fbae593d73e9715e51f583c2a0e9acd1781c08e"
+  },
+  "id": "uoM4rkVDtW8mBA12",
+  "tags": [
+    {
+      "createdAt": "2024-12-24T14:42:57.431Z",
+      "updatedAt": "2024-12-24T14:42:57.431Z",
+      "id": "Gn3tpBR22XFwUwBD",
+      "name": "Development"
+    }
+  ]
+}

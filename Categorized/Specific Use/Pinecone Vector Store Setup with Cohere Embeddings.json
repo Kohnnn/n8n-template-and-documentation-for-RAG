@@ -1,0 +1,345 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "file",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "file",
+              "fieldType": "file",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -440,
+        -140
+      ],
+      "id": "a3da1441-b7a1-4667-922b-a3be8e9d899a",
+      "name": "On form submission",
+      "webhookId": "9afa436e-debb-4ec8-95a9-6a8751da98ed"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "ai",
+          "mode": "list",
+          "cachedResultName": "ai"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -140
+      ],
+      "id": "63dbc017-ce9f-413b-b87d-dea202ecf195",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Sgtuh2VEHz0RRSut",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "embed-multilingual-v3.0"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        60
+      ],
+      "id": "8aaeb2bd-0563-4785-a659-a02eb3b34f62",
+      "name": "Embeddings Cohere",
+      "credentials": {
+        "cohereApi": {
+          "id": "DZBWqw2kkfFWi0sQ",
+          "name": "CohereApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        60
+      ],
+      "id": "ffa8d39a-5f26-496f-bed7-9907517b7990",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        20,
+        240
+      ],
+      "id": "2781a63a-f6cd-42f0-9b5f-f36ae454fefc",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        300,
+        -160
+      ],
+      "id": "79ad99dd-f70d-4fca-8414-c683015fa90f",
+      "name": "When chat message received",
+      "webhookId": "eaa37afe-6ad3-4d1d-b861-0a1406094e48"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainRetrievalQa",
+      "typeVersion": 1.4,
+      "position": [
+        520,
+        -160
+      ],
+      "id": "51713736-d4e7-4116-923d-56cd52f5f2ac",
+      "name": "Question and Answer Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        380,
+        80
+      ],
+      "id": "a9bd4efa-374f-4aab-a0e5-d1d04efb2914",
+      "name": "Mistral Cloud Chat Model",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "RwxZKsl1JbmQAhpz",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.retrieverVectorStore",
+      "typeVersion": 1,
+      "position": [
+        580,
+        60
+      ],
+      "id": "38790834-c04a-4187-9bdb-ba457bf4182e",
+      "name": "Vector Store Retriever"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "ai",
+          "mode": "list",
+          "cachedResultName": "ai"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        520,
+        220
+      ],
+      "id": "839cf678-2e12-4609-9796-8ed6a0468d1b",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Sgtuh2VEHz0RRSut",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "embed-multilingual-v3.0"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
+      "typeVersion": 1,
+      "position": [
+        620,
+        380
+      ],
+      "id": "aff2ee92-421e-407a-b199-e5558c251d71",
+      "name": "Embeddings Cohere1",
+      "credentials": {
+        "cohereApi": {
+          "id": "DZBWqw2kkfFWi0sQ",
+          "name": "CohereApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Use this to upload documents to your vector store",
+        "height": 660,
+        "width": 700
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -500,
+        -260
+      ],
+      "typeVersion": 1,
+      "id": "61f7b6fb-51fb-4c81-ab9d-2dd857d773b2",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Use this to chat your document",
+        "height": 780,
+        "width": 640
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        -260
+      ],
+      "typeVersion": 1,
+      "id": "3ab4a67d-120c-4309-b5be-c6f76035eba1",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Cohere": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Cloud Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Retriever": {
+      "ai_retriever": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "ai_retriever",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Retriever",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Cohere1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a79b0871-2468-42df-9684-d4fe016edc7c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b6d0384ceaa512c62c6ed3d552d6788e2c507d509518a50872d7cdc005f831f6"
+  },
+  "id": "f5gTGZ2mU8KpkW91",
+  "tags": []
+}

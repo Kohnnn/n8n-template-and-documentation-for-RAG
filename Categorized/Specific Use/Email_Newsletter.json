@@ -1,0 +1,283 @@
+{
+  "name": "daily-email-agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Please generate a daily briefing with the following specifications:\n\nOUTPUT FORMAT:\nThe response must be a JSON object with exactly two fields:\n1. \"subject\" - A string containing the email subject line: \"Daily Outdoor Retail Industry Briefing for Joolca B2B Sales - {{ $json[\"Readable date\"] }}\"\n2. \"body\" - A string containing HTML-formatted email with basic structure:\n\n<html>\n<body style=\"font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;\">\n  <!-- Title -->\n  <h1>Daily Outdoor Retail Industry Briefing for Joolca B2B Sales - {{ $json[\"Readable date\"] }}</h1>\n  \n  <!-- Section 1 -->\n  <h2>1. ECONOMIC SNAPSHOT (USA)</h2>\n  <!-- Include consumer spending trends, economic indicators, and regional trends -->\n  <hr>\n  \n  <!-- Section 2 -->\n  <h2>2. KEY RETAILER UPDATES</h2>\n  <!-- Include updates for all 13 retailers -->\n  <hr>\n  \n  <!-- Section 3 -->\n  <h2>3. OUTDOOR/CAMPING INDUSTRY TRENDS</h2>\n  <!-- Include equipment innovations, seasonal trends, competitor launches, supply chain changes -->\n  <hr>\n  \n  <!-- Section 4 -->\n  <h2>4. B2B SALES OPPORTUNITIES</h2>\n  <!-- Include trade shows, store openings, buying patterns, partnership opportunities -->\n  <hr>\n  \n  <!-- Section 5 -->\n  <h2>5. CONVERSATION STARTERS</h2>\n  <!-- Include 3-5 conversation starters -->\n  \n  <!-- Footer -->\n  <div style=\"margin-top: 30px; padding-top: 15px; border-top: 1px solid #e1e1e1; font-size: 12px; color: #666666;\">\n    <p>For more details, engage with industry reports and direct communications with partners.</p>\n  </div>\n</body>\n</html>\n\nCONTENT REQUIREMENTS:\n- Section 1: Include consumer spending trends with percentages, economic indicators, and regional trends\n- Section 2: Provide one update for each of the 13 retailers (REI, Cabela's/Bass Pro Shops, Dick's Sporting Goods, Academy Sports, Toys for Trucks, Scheels, North 40 Outfitters, Vance Outdoors, Gander Mountain, Rackstarz, Jax Outdoor Gear, Al's Sporting Goods, Rack Attack)\n- Section 3: Cover equipment innovations (relevant to portable water heaters), seasonal trends, competitor launches, and supply chain\n- Section 4: Include trade shows with dates, store expansions, buying patterns, and partnership opportunities\n- Section 5: Create 3-5 numbered talking points for sales conversations with specific facts\n\nIMPORTANT FORMATTING NOTES:\n- Include source links for facts and statistics in parentheses: (<a href=\"#\">Source Name</a>)\n- Each data point should have a linked source when possible\n- Use bullet points (• format) for lists and retailer updates\n- Format should closely match the example image with clean, minimal styling\n- Include proper categorization of content under subheadings (like \"Latest Consumer Spending Trends\", \"Relevant Economic Indicators\", \"Regional Economic Trends\", etc.)\n- For retailer updates, organize with retailer name in bold followed by bullet points for their updates",
+        "hasOutputParser": true,
+        "options": {
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        300,
+        -200
+      ],
+      "id": "d301ee21-5f60-485a-82ae-5d0be728bc0a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the web",
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"model\": \"gpt-4o\",\n    \"tools\": [{ \"type\": \"web_search_preview\" }],\n    \"input\": \"{web_search_question}\"\n  }",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "{web_search_question}",
+              "description": "The question to search"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        380,
+        100
+      ],
+      "id": "6ec2faa3-b15b-4374-a6e1-d431b32fd07d",
+      "name": "HTTP Request",
+      "credentials": {
+        "openAiApi": {
+          "id": "[REDACTED]",
+          "name": "[REDACTED]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        0
+      ],
+      "id": "34a8cd6d-e311-41d2-94e5-cae07abd6388",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "[REDACTED]",
+          "name": "[REDACTED]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        120,
+        -200
+      ],
+      "id": "d7ce75b2-e060-4d9d-875b-913448124fda",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "[REDACTED]",
+        "subject": "={{ $('AI Agent').item.json.output.subject }}",
+        "message": "={{ $('AI Agent').item.json.output.body }}",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1000,
+        -200
+      ],
+      "id": "a556628d-9ea6-495b-944a-da3a42552116",
+      "name": "Gmail",
+      "webhookId": "[REDACTED]",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REDACTED]",
+          "name": "[REDACTED]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"subject\": \"string\",\n\t\"body\": \"string\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        580,
+        60
+      ],
+      "id": "06e1a5c0-09f0-4f2e-a670-2f0d814f81cb",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "formattedText",
+        "options": {
+          "fileName": "Detailed Web Search Report"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        820,
+        -200
+      ],
+      "id": "b5d14bb6-5b7d-4b62-a18d-2099ad91dd76",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Function Node code\n// This assumes the input contains the AI Agent data in $json\nconst workflowData = $input.item.json;\n\nfunction extractWebSearchData(workflowData) {\n  const results = [];\n  \n  // Find all intermediateSteps that contain HTTP_Request actions\n  const steps = workflowData.intermediateSteps;\n  \n  steps.forEach(step => {\n    if (step.action && step.action.tool === \"HTTP_Request\") {\n      // Extract the web search question\n      const question = step.action.toolInput.web_search_question;\n      \n      // Parse the JSON response from the observation\n      let responseData;\n      try {\n        responseData = JSON.parse(step.observation);\n      } catch (error) {\n        console.error('Error parsing observation JSON:', error);\n        return;\n      }\n      \n      // Extract the search results text\n      let resultText = '';\n      if (responseData && \n          responseData.output && \n          responseData.output[1] && \n          responseData.output[1].content && \n          responseData.output[1].content[0] && \n          responseData.output[1].content[0].text) {\n        resultText = responseData.output[1].content[0].text;\n      }\n      \n      // Add to our results array\n      results.push({\n        question,\n        result: resultText\n      });\n    }\n  });\n  \n  return results;\n}\n\nfunction formatWebSearchResults(results) {\n  let output = \"Web Search Results\\n\\n\";\n  \n  results.forEach((item, index) => {\n    // Add the question\n    output += `Web Search Question ${index + 1}:\\n${item.question}\\n\\n`;\n    \n    // Add the result\n    output += `Search Results ${index + 1}:\\n${item.result}\\n\\n`;\n    \n    // Add separator if not the last item\n    if (index < results.length - 1) {\n      output += \"----------\\n\\n\";\n    }\n  });\n  \n  return output;\n}\n\n// Extract the data\nconst extractedData = extractWebSearchData(workflowData);\n\n// Format the results\nconst formattedResults = formatWebSearchResults(extractedData);\n\n// Return the formatted text that can be written to a file or used in your workflow\nreturn {\n  formattedText: formattedResults\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        -200
+      ],
+      "id": "0b3048db-21e3-4590-ba9a-d0a13691b8ea",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "[REDACTED]",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "[REDACTED]"
+  },
+  "id": "[REDACTED]",
+  "tags": [
+    {
+      "createdAt": "2025-03-27T09:59:28.159Z",
+      "updatedAt": "2025-03-27T09:59:28.159Z",
+      "id": "[REDACTED]",
+      "name": "youtube"
+    }
+  ]
+}

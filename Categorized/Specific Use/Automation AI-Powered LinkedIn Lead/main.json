@@ -1,0 +1,346 @@
+{
+  "name": "main",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "eac7f6fe-e8c7-4979-b706-ba397353bee7",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        440,
+        1720
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b4763b80-58e1-4ac3-bbc1-474216e46e12",
+              "leftValue": "={{ $json.user }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "941d97ec-0c2b-49af-91c6-b76200b6f666",
+      "name": "Bot check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "ce2212b6-4f61-4fe3-a8d6-1ba79eb2a249",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        540,
+        2100
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "nGGDL5hikjbUKYSX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Trigger').item.json.text }}",
+        "contextWindowLength": 20
+      },
+      "id": "9dc92ddd-663e-4566-b529-04b4e5250989",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        2100
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.channel }}",
+          "mode": "id"
+        },
+        "text": "On it ! Let me see what i can do ",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "image",
+              "icon_url": "https://avatars.slack-edge.com/2024-10-27/7944358420852_5b952a7f3db49f68a3ab_192.png"
+            }
+          }
+        }
+      },
+      "id": "126747fb-41ce-4a00-b7fe-d81165d530f0",
+      "name": "Init Message",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        1900
+      ],
+      "webhookId": "5fc6f251-eb0b-48e1-9a5b-0951a6a009b9",
+      "credentials": {
+        "slackApi": {
+          "id": "ueUKgTzMZX60IuLQ",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $('Trigger').item.json.channel }}",
+          "mode": "id"
+        },
+        "timestamp": "={{ $('Init Message').item.json[\"message_timestamp\"] }}"
+      },
+      "id": "84789bc8-3a58-4581-b8c2-b84d8cd65ca8",
+      "name": "delete init message",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        1900
+      ],
+      "webhookId": "02c3d2ce-619b-4850-829f-cca3b8ff85d0",
+      "credentials": {
+        "slackApi": {
+          "id": "ueUKgTzMZX60IuLQ",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $('Trigger').item.json.channel }}",
+          "mode": "id"
+        },
+        "text": "={{ $('AI Agent').item.json.output }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "0ac37fe9-dbdf-48fe-886f-550b7b893c81",
+      "name": "Final response",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        1900
+      ],
+      "webhookId": "5fc6f251-eb0b-48e1-9a5b-0951a6a009b9",
+      "credentials": {
+        "slackApi": {
+          "id": "ueUKgTzMZX60IuLQ",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Get_linkedin_urls",
+        "description": "Use this tool if the user is looking for leads \n\nfor example : Get me CEOs of Startups in the UK",
+        "workflowId": {
+          "__rl": true,
+          "value": "ZkX0EcGzNr90d4Uz",
+          "mode": "list",
+          "cachedResultName": "LINKEDIN_URLS"
+        }
+      },
+      "id": "dc1094ef-58da-45f6-b03d-a2a036bf5a95",
+      "name": "Get_linkedin_urls",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        820,
+        2100
+      ]
+    },
+    {
+      "parameters": {
+        "trigger": [
+          "any_event"
+        ],
+        "watchWorkspace": true,
+        "options": {}
+      },
+      "id": "d47e1ef5-1d19-4c90-8c0c-03d45cbfdb43",
+      "name": "Trigger",
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1900
+      ],
+      "webhookId": "46e3a0d6-7730-4336-8c49-3876c9c178d3",
+      "credentials": {
+        "slackApi": {
+          "id": "ueUKgTzMZX60IuLQ",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Trigger').item.json.text }}",
+        "options": {
+          "systemMessage": "You are a lead generation AI Agent designed to find business contacts efficiently. Your primary role is to find business leads based on role, location, and number requirements.\n\nTool:\nGet_linkedin_urls: Find business contacts based on:\n- Job type/role (CEO, founder, etc.)\n- Location\n- Number of leads\n\nOperating Logic:\nWhen all 3 parameters present: Use Get_linkedin_urls with the parameters\nWhen parameters missing: Ask for missing information conversationally\n\nExample Responses:\nUser: \"3 CEOs in the UK\" \nAssistant: I'll find 3 CEO leads in the UK for you. (Use Get_linkedin_urls with: CEO, UK, 3)\n\nUser: \"london 5 cto\"\nAssistant: I'll search for 5 CTO leads in London. (Use Get_linkedin_urls with: CTO, London, 5)\n\nUser: \"find me 3 ceos\"\nAssistant: In which location would you like me to find the CEO leads?\n\nUser: \"10 founders\"\nAssistant: Where would you like me to find these founder leads?\n\nIf the user gave all the information required and you run the tool successfully then give back a success message."
+        }
+      },
+      "id": "6e428ade-0d7b-4e6e-8b35-6ce2f31228f2",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        540,
+        1900
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Bot check": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Init Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Init Message": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "delete init message": {
+      "main": [
+        [
+          {
+            "node": "Final response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_linkedin_urls": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Bot check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "delete init message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "11f9abef-e1a9-44e3-a2b8-369baaea52eb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3c86e354e45b8162b89661f407701f5928599ce175989d36f2229bdce7ef15d7"
+  },
+  "id": "OlAcNtvLt9D0L3J0",
+  "tags": []
+}

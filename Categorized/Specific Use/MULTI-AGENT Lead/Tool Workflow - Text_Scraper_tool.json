@@ -1,0 +1,209 @@
+{
+  "name": "🛠 Text Scraper tool",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "bfd4fb8b-03fb-4c5b-967c-5dc922cc458c",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        340,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "253c2b17-c749-4f0a-93e8-5ff74f1ce49b",
+              "name": "domain",
+              "value": "={{ $json.query }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "19e90e5a-e886-4f72-8676-cec05c429864",
+      "name": "Set domain (text)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        540,
+        280
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ed0f1505-82b6-4393-a0d8-088055137ec9",
+              "name": "domain",
+              "value": "={{ $json.domain.startsWith(\"http\") ? $json.domain : \"http://\" + $json.domain }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e704b7aa-6722-4c79-949e-c936a9a6d848",
+      "name": "Add protocool to domain (text)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        740,
+        280
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.domain }}",
+        "options": {}
+      },
+      "id": "854b8e3d-4e8f-44f1-a87d-97ffa73232ff",
+      "name": "Get website (text)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        940,
+        280
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.data }}",
+        "options": {
+          "ignore": "a,img"
+        }
+      },
+      "id": "cfd251fc-bba1-4f8f-b1f6-3cfa522ffffa",
+      "name": "Convert HTML to Markdown",
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        1140,
+        280
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b1c7ff8-06a7-448b-99b7-5ede4b2e0bf0",
+              "name": "response",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "30993096-9511-483d-aa6d-a1112e3f7d26",
+      "name": "Set response (text)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        1340,
+        280
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "https://www.davidsonrealestategroup.com"
+        }
+      }
+    ],
+    "Set response (text)": [
+      {
+        "json": {
+          "response": "Toggle Navigation\n\nHome2024-10-24T22:40:38-04:00 \n\nLoading...\n\n## The Davidson Group\n\n#### Your Real Estate Partners\n\n## Featured Neighborhoods\n\n2024-08-27T09:11:31-04:00\n\n#### \n\n## \n\n2024-08-27T09:17:04-04:00\n\n#### \n\n## \n\n2024-08-27T09:17:12-04:00\n\n#### \n\n## \n\n2024-08-27T09:17:22-04:00\n\n#### \n\n## \n\n2024-08-27T09:17:29-04:00\n\n#### \n\n## \n\n2024-08-27T09:17:37-04:00\n\n#### \n\n## \n\n2024-08-27T09:17:46-04:00\n\n#### \n\n## \n\n2024-08-27T09:17:53-04:00\n\n#### \n\n## \n\n2024-08-27T09:18:03-04:00\n\n#### \n\n## \n\n2024-08-27T09:18:12-04:00\n\n#### \n\n## \n\n2024-08-27T09:18:20-04:00\n\n#### \n\n## \n\n2024-08-27T09:18:32-04:00\n\n#### \n\n## \n\n## \n\nPremier  \nLas Vegas  \nReal Estate  \nTeam\n\n## \n\nPremier  \nLas Vegas  \nReal Estate Team\n\n**The Davidson Real Estate Group** is the premier Las Vegas real estate team with a proven track record of success using custom high impact marketing strategies, hard work, and the knowledge and expertise that comes with nearly 20 years of experience in the real estate and mortgage industries. My team and I can help you successfully sell and/or buy anywhere in the Valley. From traditional sales, short sales and foreclosures, probate sales, high rise properties, first time home buyers, seasoned real estate clients, and real estate investors we’ve done just about everything.\n\nWe will always put our client’s interests first and it would be our pleasure to help you achieve your real estate goals. We understand that every client has different goals, time frames, concerns, and sometimes issues to overcome in order to move forward. When we start working together we will create a personalized strategic plan to help you reach your goal, and we will work at your pace and in the time frame that works best for you.\n\n**The Davidson Real Estate Group** is the premier Las Vegas real estate team with a proven track record of success using custom high impact marketing strategies, hard work, and the knowledge and expertise that comes with nearly 20 years of experience in the real estate and mortgage industries. My team and I can help you successfully sell and/or buy anywhere in the Valley. From traditional sales, short sales and foreclosures, probate sales, high rise properties, first time home buyers, seasoned real estate clients, and real estate investors we’ve done just about everything.\n\nWe will always put our client’s interests first and it would be our pleasure to help you achieve your real estate goals. We understand that every client has different goals, time frames, concerns, and sometimes issues to overcome in order to move forward. When we start working together we will create a personalized strategic plan to help you reach your goal, and we will work at your pace and in the time frame that works best for you.\n\n## Listing Your Property\n\nThe decision to sell is a big one, let us help!\n\n### The Selling Process\n\nOur strategic process and high impact marketing will help you to sell your home as quickly and for as much money as possible with minimal stress.\n\n## What's Your Home Worth?\n\nSetting the Right Price Matters\n\n### FREE Home Valuation\n\nWe are here to get your house aggressively marketed to sell as quickly as possible and for the best price!\n\n## Buying a New Home\n\nWe have helped hundreds of buyers!\n\n### The Buying Process\n\nOur goal is simply to ensure that we help you find the perfect home, and that achieve this as efficiently and stress free for you as possible.\n\n## Mortgage Calculator\n\nKnow Your Budget Before You Start\n\n### What Can You Afford?\n\nPlease use our tools to make your home search and buying experience as stress free and rewarding for you and your family as possible.\n\n## Hot Properties\n\n## What Clients Say\n\n> “We were from out of town and met Steve through word of mouth. He was able to help us on really short notice and accommodated our needs while we were in town for only a few days. He has been extremely helpful throughout the whole process and even after closing. Definitely could not have closed on our house without his help.”\n\n**— D. Eng**\n\n> “I have used Steve Davidson on the purchase and sale of 3 of my homes now in the Las Vegas Valley. The team was so responsive to all my calls and needs I also referred them to my friends and my brother for the sale of his home. I would without a doubt recommend Steve and his team to get the job done.”\n\n**— Shannon**\n\n> “Steve has been our Realtor for over 10 years and has helped us buy and sell many properties. Steve Davidson is extremely professional and has always done an excellent job for us. We have referred friends and family members to him and we will continue to work with whenever we decide to buy or sell more properties in the future.”\n\n**— Mohammad**\n\n> “Steve found the perfect house for me, coordinated all the appointments, helped negotiate a great price, even set me up with an amazing mortgage company and service contacts. I really appreciated the extremely fast responsiveness from him and his whole support team. I highly recommend Steve and the Davidson Real Estate Group.”\n\n**— David W.**\n\n> “Steve Davidson is amazing!!! We have utilized his services on more than one occasion – both as buyers and sellers! He is kind, professional, and so knowledgeable about everything real estate. The best part is that his communication skills are excellent. We highly recommend him and will definitely use him in the future. Thank you so much Steve!”\n\n**— Nikki**\n\n## What Clients Say\n\n> “Steve Davidson is amazing!!! We have utilized his services on more than one occasion – both as buyers and sellers! He is kind, professional, and so knowledgeable about everything real estate. The best part is that his communication skills are excellent. We highly recommend him and will definitely use him in the future. Thank you so much Steve!”\n\n**— Nikki**\n\n> “Steve has been our Realtor for over 10 years and has helped us buy and sell many properties. Steve Davidson is extremely professional and has always done an excellent job for us. We have referred friends and family members to him and we will continue to work with whenever we decide to buy or sell more properties in the future.”\n\n**— Mohammad**\n\n> “Steve found the perfect house for me, coordinated all the appointments, helped negotiate a great price, even set me up with an amazing mortgage company and service contacts. I really appreciated the extremely fast responsiveness from him and his whole support team. I highly recommend Steve and the Davidson Real Estate Group.”\n\n**— David W.**\n\n> “I have used Steve Davidson on the purchase and sale of 3 of my homes now in the Las Vegas Valley. The team was so responsive to all my calls and needs I also referred them to my friends and my brother for the sale of his home. I would without a doubt recommend Steve and his team to get the job done.”\n\n**— Shannon**\n\n> “We were from out of town and met Steve through word of mouth. He was able to help us on really short notice and accommodated our needs while we were in town for only a few days. He has been extremely helpful throughout the whole process and even after closing. Definitely could not have closed on our house without his help.”\n\n**— D. Eng**\n\n## Our Team\n\n##### Steve Davidson\n\n###### Realtor® / Owner\n\n##### Angie Hatcher\n\n###### Realtor®\n\n##### Ashley Ward\n\n###### Realtor®\n\n##### Kim Davidson\n\n###### Realtor®\n\n##### Jennifer Siverhus\n\n###### Realtor®\n\n## Video Gallery\n\n### Re-Tell\n\nNews, ideas, and insights on telling your retailing story.\n\n### LATEST  \n**NEWS**\n\n* ####\n\n## \n\n We know that having an accurate read on the market is central to your success whether you’re \\[...\\]\n\n* ####\n\n## \n\n What are the pros and cons of instant cash buyer offers vs listing your house on the \\[...\\]\n\n* ####\n\n## \n\n Lots of folks wonder about the Las Vegas weather. Las Vegas is in a subtropical hot desert \\[...\\]\n\n## \n\nSend Us a  \nMESSAGE\n\nFirst Name(Required)\n\nLast Name(Required)\n\nEmail Address(Required)\n\nPhone Number\n\nComments or Questions\n\nI agree to be contacted by Davidson Real Estate Group via call, email, and text. To opt-out, you can reply 'stop' at any time or click the unsubscribe link in the emails. Message and data rates may apply.(Required)\n\nYes \n\nNo \n\nCAPTCHA\n\nName\n\nThis field is for validation purposes and should be left unchanged.\n\nSend Message \n\nΔ\n\n© 2011-2024 Steve Davidson Real Estate Group | All Rights Reserved |  |  | \n\nSteve Davidson, Realtor® | NV RE Lic# S.0077479  \n1780 W Horizon Ridge Parkway #100 Henderson, NV 89012\n\nAgent Reputation – \n\nThis website uses cookies and third party services. \n\nAccessibility Tools"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set domain (text)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set domain (text)": {
+      "main": [
+        [
+          {
+            "node": "Add protocool to domain (text)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add protocool to domain (text)": {
+      "main": [
+        [
+          {
+            "node": "Get website (text)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get website (text)": {
+      "main": [
+        [
+          {
+            "node": "Convert HTML to Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert HTML to Markdown": {
+      "main": [
+        [
+          {
+            "node": "Set response (text)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c8528a9d-cc4b-41a8-908e-3abcbb36579f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80dda94540258c8a9249877c5128f67d88ca1bcc72725380688b9a5c6a7a5d1f"
+  },
+  "id": "BFPvEgF6ZrgAjYRp",
+  "tags": []
+}

@@ -1,0 +1,261 @@
+{
+  "name": "post-call-processing",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "2ebd9ddc-2ba2-4ec8-9982-98b12c221462",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -420,
+        -100
+      ],
+      "id": "baa17d09-7fa4-4af2-9987-0c10258772ac",
+      "name": "Webhook",
+      "webhookId": "2ebd9ddc-2ba2-4ec8-9982-98b12c221462"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Review the conversation log and generate a JSON output of the below format:\n\n{\n\"summary\": \"a string\",\n\"sentiment\": \"positive, negative or neutral\",\n\"improvements\": \"how the call could have been improved\",\n\"customer_name\": \"the customers first name\"\n}",
+              "role": "system"
+            },
+            {
+              "content": "=Transcript: {{ $json.body.call.transcript }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        80,
+        -160
+      ],
+      "id": "c92a35e9-e11b-4f2b-bd61-f708ae619de5",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1be4455e-9978-4a6a-ab64-f16dc86f59d7",
+              "leftValue": "={{ $json.body.event }}",
+              "rightValue": "call_analyzed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -200,
+        -100
+      ],
+      "id": "39b60e27-80ad-4a83-a422-ebee576d1da0",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "n8n-retell-caller",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 776806594,
+          "mode": "list",
+          "cachedResultName": "call-log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=776806594"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "summary": "={{ $json.message.content.summary }}",
+            "sentiment": "={{ $json.message.content.sentiment }}",
+            "improvements": "={{ $json.message.content.improvements }}",
+            "date": "={{ new Date().toISOString().replace(\"T\", \" \").split(\".\")[0] }}",
+            "conversation-log": "={{ $('If').item.json.body.call.transcript }}",
+            "number": "='{{ $('If').item.json.body.call.from_number }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "number",
+              "displayName": "number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversation-log",
+              "displayName": "conversation-log",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sentiment",
+              "displayName": "sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "improvements",
+              "displayName": "improvements",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        440,
+        -160
+      ],
+      "id": "b37da64b-7c95-4d95-bd43-32de95901452",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets Auth"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "60d20433-a510-4c68-b8c5-d07e7dbcdfda",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "INSTANCE_ID_PLACEHOLDER"
+  },
+  "id": "XTEGXZVxnq3gpr71",
+  "tags": [
+    {
+      "createdAt": "2025-03-08T09:03:42.515Z",
+      "updatedAt": "2025-03-08T09:03:42.515Z",
+      "id": "aivmgOWAAiWi9vqa",
+      "name": "demo-caller"
+    }
+  ]
+}

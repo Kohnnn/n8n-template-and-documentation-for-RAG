@@ -1,0 +1,171 @@
+{
+  "name": "🛠 create_calendar_event",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "9d8e5de3-25e5-4c14-9110-4829898e5119",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        300,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "jeffrey.custodio@limitlessai.digital",
+          "mode": "list",
+          "cachedResultName": "jeffrey.custodio@limitlessai.digital"
+        },
+        "start": "={{ $json.message.content.start }}",
+        "end": "={{ $json.message.content.end }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $json.message.content.attendees }}"
+          ],
+          "description": "={{ $json.message.content.description }}",
+          "summary": "={{ $json.message.content.summary }}"
+        }
+      },
+      "id": "e6942aec-f549-4b1a-8459-633cc0f28d38",
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [
+        900,
+        320
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "praf4eMdiW1keofp",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "580ef44b-f272-44b4-9218-72a9e1455e3b",
+              "name": "response",
+              "value": "The event was created",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "92c6d63b-ba8f-4375-9c19-33c4ae7f9cf3",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Parse the 'query' and output the parameters separately.\nFor the attendees parameter, make it a stringified list that is comma separated.",
+              "role": "system"
+            },
+            {
+              "content": "={{ JSON.stringify($json.query) }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "9757b072-82c7-4a9f-afce-854031bf4fb5",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        520,
+        320
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "{ \"start\": \"=\", \"end\": \"=\", \"additionalFields\": \"{ \\\"attendees\\\": \\\\\"attendee1@example.com\\\\\",\\\\\"attendee2@example.com\\\\\", \\\"description\\\": \\\"=\\\", \\\"summary\\\": \\\"=\\\" }\" }"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2cf102c0-3704-4782-a97e-b7717b74d3a3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80dda94540258c8a9249877c5128f67d88ca1bcc72725380688b9a5c6a7a5d1f"
+  },
+  "id": "6dWwncANeZLFMcZ5",
+  "tags": [
+    {
+      "createdAt": "2024-10-15T06:05:46.125Z",
+      "updatedAt": "2024-10-15T06:05:46.125Z",
+      "id": "9pa7tonVg28zR6sD",
+      "name": "Tools"
+    }
+  ]
+}

@@ -1,0 +1,824 @@
+{
+  "name": "🛠 URL Scraper tool",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "53c1c016-7983-4eba-a91d-da2a0523d805",
+              "name": "response",
+              "value": "=urls: {{ JSON.stringify($json.data) }}\nemails: {{ $json.emails }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "45044167-85ba-4f32-8ab4-2f1c43d3645e",
+      "name": "Set response (URL)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        2980,
+        120
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "707465c4-7b4f-4385-ae2b-c67dfe431bec",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2740,
+        120
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "include": "specifiedFields",
+        "fieldsToInclude": "title,href",
+        "options": {}
+      },
+      "id": "2c2fcec2-f406-4688-aa56-5d7eb3baae66",
+      "name": "Aggregate URLs",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2500,
+        240
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "d01ea6a8-7e75-40d4-98f2-25d42b245f36",
+              "leftValue": "={{ $json.href.isUrl() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "467a5173-8e6c-41d6-a036-fc0f5ae634b3",
+      "name": "Filter out invalid URLs",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        2280,
+        240
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "04ced063-09f0-496c-9b28-b8095f9e2297",
+              "name": "href",
+              "value": "={{ $json.href.startsWith(\"/\") ? $('Add protocool to domain (URL)').item.json[\"domain\"] + $json.href : $json.href }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "title",
+        "options": {}
+      },
+      "id": "1a73eaed-506c-4ec5-bde7-d042d42a37b0",
+      "name": "Set domain to path",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        2060,
+        240
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "href",
+        "options": {}
+      },
+      "id": "cf77bdcd-bc4b-4f87-8a7f-02ac42d1568d",
+      "name": "Remove duplicated",
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        240
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "5b9b7353-bd04-4af2-9480-8de135ff4223",
+              "leftValue": "={{ $json.href }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d996bcd3-93ab-4a46-9073-8b4fc958ff4a",
+      "name": "Filter out empty hrefs",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        240
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "id": "3271b4d1-5e3f-4c83-9f27-cba0c292c3ca",
+      "name": "Split out URLs",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        240
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $json.output; // Assuming data is an array\n\n// Define regex for email matching\nconst emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.(?!png|jpg|gif|jpeg)[a-zA-Z]{2,}/g;\n\n// Extract emails from href fields\nconst emails = data\n    .map(item => item.href) // Extract href property\n    .filter(href => href) // Ensure href is not null or undefined\n    .flatMap(href => href.match(emailRegex) || []); // Apply regex and handle null matches\n\nconsole.log(emails);\n\nreturn { json: { emails } };\n"
+      },
+      "id": "29d6424b-fbb3-4bb1-9ef8-d19f1a535763",
+      "name": "Extract Emails",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1400,
+        0
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "emails"
+            }
+          ]
+        },
+        "options": {
+          "mergeLists": true
+        }
+      },
+      "id": "d2c6022b-a936-46cf-a314-f0be9dde7f98",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1620,
+        0
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "emails",
+        "options": {}
+      },
+      "id": "790fca3e-5b55-4ad7-b268-8a790adaa0c5",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1860,
+        0
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "emails",
+        "options": {}
+      },
+      "id": "22668500-a426-4153-bd92-37e1342f6061",
+      "name": "Remove Duplicates1",
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        2100,
+        0
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "output",
+              "cssSelector": "a",
+              "returnValue": "attribute",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dda1c7e3-ee58-4325-a7cf-bc7baeaac5f0",
+      "name": "Retrieve URLs",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1140,
+        120
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.domain }}",
+        "options": {}
+      },
+      "id": "5a7d7cdf-2a7d-462e-99cd-b61ca01abee5",
+      "name": "Get website (URL)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        920,
+        120
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ed0f1505-82b6-4393-a0d8-088055137ec9",
+              "name": "domain",
+              "value": "={{ $json.domain.startsWith(\"http\") ? $json.domain : \"http://\" + $json.domain }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "500bf250-691b-47d3-990d-59f60823a3e7",
+      "name": "Add protocool to domain (URL)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        740,
+        120
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "253c2b17-c749-4f0a-93e8-5ff74f1ce49b",
+              "name": "domain",
+              "value": "={{ $json.query }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bccdd568-136f-41d9-bae8-216005e7b814",
+      "name": "Set domain (URL)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        520,
+        120
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "id": "01beb201-c4c4-455a-9ab2-33b10b95eb5a",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        320,
+        120
+      ]
+    }
+  ],
+  "pinData": {
+    "Aggregate URLs": [
+      {
+        "json": {
+          "data": [
+            {
+              "href": "https://www.davidsonrealestategroup.com/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/buy/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/buy/guide/"
+            },
+            {
+              "href": "https://steve.thelasvegashomesearch.vegas/featured-listing"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/affordability-calculator/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/mortgage-calculator/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/relocation-guide/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/market-reports/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/henderson/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/las-vegas/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/north-las-vegas/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/boulder-city/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/sell/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/sell/guide/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/sell/marketing/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/in-depth-home-valuation/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/recent-sales/"
+            },
+            {
+              "href": "https://davidsonrealestategroup.hifello.com/lp/66ed51ab9de905002ec671a3"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/home-sale-calculator/"
+            },
+            {
+              "href": "https://search.davidsonrealestategroup.com/idx/search/address"
+            },
+            {
+              "href": "https://steve.thelasvegashomesearch.vegas/listing"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/new-construction/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/about/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/meet-the-team/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/reviews/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/steve-davidson-realtor-las-vegas/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/blog/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/videos/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/market-updates/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/neighborhoods/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/neighborhoods/anthem-country-club/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/neighborhoods/anthem-highlands/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/neighborhoods/green-valley-ranch/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/neighborhoods/inspirada/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/neighborhoods/lake-las-vegas/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/neighborhoods/madeira-canyon/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/neighborhoods/mountains-edge/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/neighborhoods/seven-hills/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/neighborhoods/southern-highlands/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/neighborhoods/summerlin/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/neighborhoods/sun-city-anthem/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/neighborhoods/sun-city-macdonald-ranch/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/contact/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/leave-feedback/"
+            },
+            {
+              "title": "Posts by Steve Davidson",
+              "href": "https://www.davidsonrealestategroup.com/author/stevedavidson/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/about/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/sell/"
+            },
+            {
+              "href": "https://search.davidsonrealestategroup.com/idx/search/advanced"
+            },
+            {
+              "href": "https://search.davidsonrealestategroup.com/idx/homevaluation"
+            },
+            {
+              "href": "https://davidsonrealestategroup.hifello.com/lp/66ec35157c9b26002c56580f"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/sell"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/cma"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/buy"
+            },
+            {
+              "href": "https://search.davidsonrealestategroup.com/idx/mortgage"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/reviews/"
+            },
+            {
+              "title": "steve-davidson",
+              "href": "https://www.davidsonrealestategroup.com/wp-content/uploads/2022/03/steve-davidson-600x609.jpg"
+            },
+            {
+              "href": "https://search.davidsonrealestategroup.com/idx/agent/208158/steven-c-davidson"
+            },
+            {
+              "href": "https://search.davidsonrealestategroup.com/idx/agent/208157/angie-m-hatcher"
+            },
+            {
+              "href": "https://search.davidsonrealestategroup.com/idx/agent/208155/ashley-ward"
+            },
+            {
+              "href": "https://search.davidsonrealestategroup.com/idx/agent/208156/kimberly-a-davidson"
+            },
+            {
+              "href": "https://search.davidsonrealestategroup.com/idx/agent/208160/jennifer-siverhus"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/videos/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/blog/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/las-vegas-extended-weather-forecast/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/las-vegas-market-report/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/instant-cash-buyers-vs-traditional-sales/"
+            },
+            {
+              "href": "https://goo.gl/maps/XmG9wBkbfCZQiqoa7"
+            },
+            {
+              "title": "Facebook",
+              "href": "https://www.facebook.com/DavidsonRealEstateGroupNV"
+            },
+            {
+              "title": "Instagram",
+              "href": "https://www.instagram.com/davidsonregroup/"
+            },
+            {
+              "title": "LinkedIn",
+              "href": "https://www.linkedin.com/in/SteveDavidson-DavidsonGroup/"
+            },
+            {
+              "href": "https://lasvegashomesearchpro.hsidx.com/@l8816?lat=36.08544550089762&lng=-115.15445502540395&zoom=10"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/privacy-policy/"
+            },
+            {
+              "href": "https://www.davidsonrealestategroup.com/dmca/"
+            },
+            {
+              "href": "https://search.davidsonrealestategroup.com/idx/sitemap"
+            },
+            {
+              "href": "https://www.agentreputation.net/real-estate-website-design/"
+            },
+            {
+              "href": "https://search.davidsonrealestategroup.com/idx/contact"
+            }
+          ]
+        }
+      }
+    ],
+    "Remove Duplicates1": [
+      {
+        "json": {
+          "emails": "steve@davidsonrealestategroup.com"
+        }
+      }
+    ],
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "https://www.davidsonrealestategroup.com"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Set response (URL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate URLs": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Filter out invalid URLs": {
+      "main": [
+        [
+          {
+            "node": "Aggregate URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set domain to path": {
+      "main": [
+        [
+          {
+            "node": "Filter out invalid URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove duplicated": {
+      "main": [
+        [
+          {
+            "node": "Set domain to path",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter out empty hrefs": {
+      "main": [
+        [
+          {
+            "node": "Remove duplicated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split out URLs": {
+      "main": [
+        [
+          {
+            "node": "Filter out empty hrefs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Emails": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve URLs": {
+      "main": [
+        [
+          {
+            "node": "Extract Emails",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split out URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get website (URL)": {
+      "main": [
+        [
+          {
+            "node": "Retrieve URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add protocool to domain (URL)": {
+      "main": [
+        [
+          {
+            "node": "Get website (URL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set domain (URL)": {
+      "main": [
+        [
+          {
+            "node": "Add protocool to domain (URL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set domain (URL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "df63a43c-3928-4de1-a3db-83f7a6e41370",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80dda94540258c8a9249877c5128f67d88ca1bcc72725380688b9a5c6a7a5d1f"
+  },
+  "id": "Cwbem0oN3UF172Mo",
+  "tags": []
+}

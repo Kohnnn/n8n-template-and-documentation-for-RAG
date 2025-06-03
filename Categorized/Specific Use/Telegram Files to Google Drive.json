@@ -1,0 +1,110 @@
+{
+    "name": "Save new Telegram files to Google Drive",
+    "flow": [
+        {
+            "id": 2,
+            "module": "telegram:WatchUpdates",
+            "version": 1,
+            "parameters": {},
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTHOOK__": {
+                            "data": {},
+                            "label": "Choose a hook"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTHOOK__",
+                        "type": "hook:telegramapi",
+                        "label": "Webhook"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "module": "telegram:DownloadFile",
+            "version": 1,
+            "parameters": {},
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {},
+                            "label": "Choose an account"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:telegram",
+                        "label": "Connection"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 6,
+            "module": "google-drive:uploadAFile",
+            "version": 4,
+            "parameters": {},
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {},
+                            "label": "Choose an account"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google-restricted",
+                        "label": "Connection"
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": true,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu2.make.com",
+        "notes": []
+    }
+}

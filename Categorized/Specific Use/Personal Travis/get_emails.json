@@ -1,0 +1,227 @@
+{
+  "name": "🛠 get_emails",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "ffaef166-70a9-4e68-969f-26e3b57e6138",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        120,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 10,
+        "simple": false,
+        "filters": {
+          "labelIds": [
+            "INBOX",
+            "UNREAD"
+          ],
+          "receivedAfter": "={{ $json.message.content }}"
+        },
+        "options": {}
+      },
+      "id": "61490783-6a20-469b-b0db-be18cc924ae0",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        260
+      ],
+      "webhookId": "94e8c128-f0cc-49bd-b93e-3a782fd0e63f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "yRzymoA5pEQGpJTA",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "message.content"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4f0ee728-acbc-4dd3-80ef-903d4fbdb8d5",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b62b8886-2025-4034-aa89-d118b0d5a422",
+              "name": "response",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "89232748-f395-4a38-8db6-7ec6bbbf5bcc",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1520,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo-0125",
+          "mode": "list",
+          "cachedResultName": "GPT-3.5-TURBO-0125"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your job is to identify the date specified by the user based on the JSON.query as user input. Today's is {{ $now }}\n\nExample #1. If the query asks for today, you must return today's date.\n\nExample #2. If the query asks for yesterday, you must return the day before today's date.\n\nDo not explain your response, only output the date.",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.query }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "88d09b5f-fe82-484a-ae47-25991c38fb32",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        300,
+        260
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo-0125",
+          "mode": "list",
+          "cachedResultName": "GPT-3.5-TURBO-0125"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your role is to summarize emails that you will provided with. Give a concise and direct-to-the-point summary of the retrieved emails. Do not include text such as \"Summary:\" or other unrelated details from the main messageto your response. Summarize only the main message content.\n\nMake sure to include important information such as:\nFrom: {{ $json.headers.from }}\nEmail summary: {{ $json.text }}",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a08a1b1d-691f-4d21-b6ad-9b8f87267fa4",
+      "name": "OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        900,
+        260
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f9188ff3-626d-48ca-abc4-d877237fc253",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80dda94540258c8a9249877c5128f67d88ca1bcc72725380688b9a5c6a7a5d1f"
+  },
+  "id": "mnMK5Kjr7BhEXUMc",
+  "tags": []
+}

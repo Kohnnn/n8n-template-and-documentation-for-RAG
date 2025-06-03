@@ -1,0 +1,499 @@
+{
+  "name": "🚀 Bank Statement Encoder",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1DatJQjZIsrvKSHu-87Wy5dd_bIN90xdV",
+          "mode": "list",
+          "cachedResultName": "Bank Statements",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1DatJQjZIsrvKSHu-87Wy5dd_bIN90xdV"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "74617359-eb05-4ff5-a013-b9a81ec04d27",
+      "name": "Google Drive Trigger",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        220
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "79osOU3HrUmKvwFs",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "72b6626c-6462-4a39-8e1f-164d2ece39b3",
+      "name": "Download Bank Statements",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        0,
+        220
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "79osOU3HrUmKvwFs",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "id": "2346a9d1-f2be-474c-8400-e371851610ca",
+      "name": "Extract from File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        180,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6fc467f7-07ac-455a-82ff-b125091f544e",
+              "name": "output",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e3639cda-0016-46b2-b67d-8a28bd0e2771",
+      "name": "get data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "transactions",
+        "options": {}
+      },
+      "id": "f8ed8533-96ca-48f8-ad09-7a105eac4496",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.output }}"
+            },
+            {
+              "content": "You are a text parsing assistant for banks statement of account document. Your task is to parse the text from a given 'output' containing the bank statement data to separate each bank transactions with corresponding amounts. Output your response such that each transactions can be recorded separately by another node.",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "48868ffc-9205-4a60-939e-28d033f405d6",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        620,
+        220
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "jr6eat9mC7fylVIR",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e29f70c2-5f12-4d63-8c0e-d76416475959",
+              "name": "transactions",
+              "value": "={{ $json.message.content.transactions }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3cc2c59c-5815-46f0-bad9-e4f14d0f1338",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1000,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1LifYlAuUy2cfVyV9NS58M2ybusfIo6ZEh_6jq0khuV0",
+          "mode": "list",
+          "cachedResultName": "Spending Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LifYlAuUy2cfVyV9NS58M2ybusfIo6ZEh_6jq0khuV0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Transactions",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LifYlAuUy2cfVyV9NS58M2ybusfIo6ZEh_6jq0khuV0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $json.date }}",
+            "Credit": "={{ $json.credit }}",
+            "Transactions": "={{ $json.description }}",
+            "Debit": "={{ $json.debit }}",
+            "Balance": "={{ $json.balance }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Month",
+              "displayName": "Month",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transactions",
+              "displayName": "Transactions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Credit",
+              "displayName": "Credit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Debit",
+              "displayName": "Debit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Balance",
+              "displayName": "Balance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fb9b2951-8e64-4432-aa84-2808da3b3beb",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1440,
+        220
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1L2lmeqRkdaY3Wya",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "OpenAI": [
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": {
+              "transactions": [
+                {
+                  "date": "10/02/2024",
+                  "description": "DIRECT DEPOSIT - ACME CORP PAYROLL",
+                  "credit": 2456.78,
+                  "balance": 5702.45
+                },
+                {
+                  "date": "10/03/2024",
+                  "description": "AMAZON.COM PURCHASE",
+                  "debit": 89.99,
+                  "balance": 5612.46
+                },
+                {
+                  "date": "10/05/2024",
+                  "description": "WHOLE FOODS MARKET",
+                  "debit": 156.43,
+                  "balance": 5456.03
+                },
+                {
+                  "date": "10/07/2024",
+                  "description": "ATM WITHDRAWAL - 5TH AVE",
+                  "debit": 200,
+                  "balance": 5256.03
+                },
+                {
+                  "date": "10/08/2024",
+                  "description": "STARBUCKS COFFEE",
+                  "debit": 5.75,
+                  "balance": 5250.28
+                },
+                {
+                  "date": "10/10/2024",
+                  "description": "MOBILE TRANSFER FROM SAVINGS",
+                  "credit": 1000,
+                  "balance": 6250.28
+                },
+                {
+                  "date": "10/12/2024",
+                  "description": "NETFLIX SUBSCRIPTION",
+                  "debit": 15.99,
+                  "balance": 6234.29
+                },
+                {
+                  "date": "10/15/2024",
+                  "description": "RENT PAYMENT - CITY APARTMENTS",
+                  "debit": 1850,
+                  "balance": 4384.29
+                },
+                {
+                  "date": "10/15/2024",
+                  "description": "MOBILE DEPOSIT - CHECK #1234",
+                  "credit": 1435.67,
+                  "balance": 5819.96
+                },
+                {
+                  "date": "10/18/2024",
+                  "description": "CON EDISON - UTILITY PAYMENT",
+                  "debit": 124.56,
+                  "balance": 5695.4
+                },
+                {
+                  "date": "10/20/2024",
+                  "description": "VERIZON WIRELESS",
+                  "debit": 85.99,
+                  "balance": 5609.41
+                },
+                {
+                  "date": "10/22/2024",
+                  "description": "TARGET",
+                  "debit": 178.45,
+                  "balance": 5430.96
+                },
+                {
+                  "date": "10/25/2024",
+                  "description": "ATM DEPOSIT",
+                  "credit": 500,
+                  "balance": 5930.96
+                },
+                {
+                  "date": "10/28/2024",
+                  "description": "UBER RIDE",
+                  "debit": 32.45,
+                  "balance": 5898.51
+                },
+                {
+                  "date": "10/30/2024",
+                  "description": "GROCERY STORE - TRADER JOE’S",
+                  "debit": 128.28,
+                  "balance": 5770.23
+                },
+                {
+                  "date": "10/31/2024",
+                  "description": "MONTHLY MAINTENANCE FEE",
+                  "debit": 12,
+                  "balance": 5758.23
+                },
+                {
+                  "date": "10/31/2024",
+                  "description": "INTEREST EARNED",
+                  "credit": 0.45,
+                  "balance": 5758.68
+                }
+              ]
+            },
+            "refusal": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download Bank Statements",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Bank Statements": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "get data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get data": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c96331ef-2339-4639-a8be-c7681ad8f8cd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80dda94540258c8a9249877c5128f67d88ca1bcc72725380688b9a5c6a7a5d1f"
+  },
+  "id": "MOkTIzSehNmLGJCS",
+  "tags": []
+}

@@ -1,0 +1,51 @@
+---
+url: "https://docs.browserless.io/baas/v1/libraries/php"
+title: "PHP (cURL) | Browserless.io"
+---
+
+[Skip to main content](https://docs.browserless.io/baas/v1/libraries/php#__docusaurus_skipToContent_fallback)
+
+Version: v1
+
+DEPRECATION WARNING
+
+This documentation is for BaaS v1, which is no longer actively supported. If you are a new user, please refer to the updated documentation for [BaaS v2](https://docs.browserless.io/baas/libraries/php) or [BrowserQL](https://docs.browserless.io/browserql/start).
+
+Browserless can run in PHP by using cURL.
+Here's a small example:
+
+```codeBlockLines_p187
+<?php
+
+$curl = curl_init();
+
+curl_setopt_array($curl, [\
+  CURLOPT_URL => "https://chrome.browserless.io/screenshot?token=xxxxxx",\
+  CURLOPT_RETURNTRANSFER => true,\
+  CURLOPT_ENCODING => "",\
+  CURLOPT_MAXREDIRS => 10,\
+  CURLOPT_TIMEOUT => 30,\
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,\
+  CURLOPT_CUSTOMREQUEST => "POST",\
+  CURLOPT_POSTFIELDS => "{\n  \"url\": \"https://example.com/\",\n\t\"options\": {\n\t\t\"fullPage\": true,\n\t\t\"encoding\": \"base64\"\n\t}\n}",\
+  CURLOPT_HTTPHEADER => [\
+    "Content-Type: application/json"\
+  ],\
+]);
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+
+curl_close($curl);
+
+if ($err) {
+  echo "cURL Error #:" . $err;
+} else {
+  echo $response;
+}
+
+```
+
+This will simply take a screenshot of the Example website and return it encoded in base64 format, however it'll give you a great starting place for using our APIs through cURL in PHP.
+
+Be sure to [let us know if you have questions or issues](https://www.browserless.io/contact).
